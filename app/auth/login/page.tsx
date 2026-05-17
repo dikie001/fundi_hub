@@ -2,9 +2,23 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { Mail, Lock, Eye, EyeOff, Loader2, Chrome, Facebook } from "lucide-react"
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  Loader2,
+  Chrome,
+  Facebook,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
@@ -46,7 +60,9 @@ export default function LoginPage() {
         {/* Logo/Branding */}
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold text-primary">FundiHub</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Find trusted skilled experts</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Find trusted skilled experts
+          </p>
         </div>
 
         {/* Login Card */}
@@ -64,7 +80,7 @@ export default function LoginPage() {
                   Email Address
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                  <Mail className="absolute top-3 left-3 h-5 w-5 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
@@ -84,35 +100,47 @@ export default function LoginPage() {
                   <Label htmlFor="password" className="text-sm font-medium">
                     Password
                   </Label>
-                  <Link href="/auth/forgot-password" className="text-xs text-primary hover:underline">
+                  <Link
+                    href="/auth/forgot-password"
+                    className="text-xs text-primary hover:underline"
+                  >
                     Forgot password?
                   </Link>
                 </div>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                  <Lock className="absolute top-3 left-3 h-5 w-5 text-muted-foreground" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10"
+                    className="pr-10 pl-10"
                     disabled={isLoading}
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                    className="absolute top-3 right-3 text-muted-foreground hover:text-foreground"
                     disabled={isLoading}
                   >
-                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
                   </button>
                 </div>
               </div>
 
               {/* Sign In Button */}
-              <Button type="submit" className="w-full" disabled={isLoading} size="lg">
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isLoading}
+                size="lg"
+              >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isLoading ? "Signing in..." : "Sign In"}
               </Button>
@@ -124,7 +152,9 @@ export default function LoginPage() {
                 <div className="w-full border-t border-border" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                <span className="bg-card px-2 text-muted-foreground">
+                  Or continue with
+                </span>
               </div>
             </div>
 
@@ -158,7 +188,10 @@ export default function LoginPage() {
             {/* Sign Up Link */}
             <div className="text-center text-sm">
               Don&apos;t have an account?{" "}
-              <Link href="/auth/signup" className="font-medium text-primary hover:underline">
+              <Link
+                href="/auth/signup"
+                className="font-medium text-primary hover:underline"
+              >
                 Sign up
               </Link>
             </div>
@@ -167,7 +200,10 @@ export default function LoginPage() {
             <div className="border-t border-border pt-4">
               <p className="text-center text-xs text-muted-foreground">
                 Having trouble? Contact us at{" "}
-                <a href="mailto:calvincewise@gmail.com" className="text-primary hover:underline">
+                <a
+                  href="mailto:calvincewise@gmail.com"
+                  className="text-primary hover:underline"
+                >
                   support@fundihub.com
                 </a>
               </p>

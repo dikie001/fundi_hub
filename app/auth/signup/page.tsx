@@ -2,9 +2,25 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { Mail, Lock, Eye, EyeOff, User, Loader2, Chrome, Facebook, CheckCircle } from "lucide-react"
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  User,
+  Loader2,
+  Chrome,
+  Facebook,
+  CheckCircle,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
@@ -66,7 +82,9 @@ export default function SignupPage() {
         {/* Logo/Branding */}
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold text-primary">FundiHub</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Join Africa's trusted skilled worker platform</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Join Africa's trusted skilled worker platform
+          </p>
         </div>
 
         {/* Signup Card */}
@@ -111,7 +129,7 @@ export default function SignupPage() {
                   Full Name
                 </Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                  <User className="absolute top-3 left-3 h-5 w-5 text-muted-foreground" />
                   <Input
                     id="name"
                     name="name"
@@ -132,7 +150,7 @@ export default function SignupPage() {
                   Email Address
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                  <Mail className="absolute top-3 left-3 h-5 w-5 text-muted-foreground" />
                   <Input
                     id="email"
                     name="email"
@@ -153,7 +171,7 @@ export default function SignupPage() {
                   Password
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                  <Lock className="absolute top-3 left-3 h-5 w-5 text-muted-foreground" />
                   <Input
                     id="password"
                     name="password"
@@ -161,28 +179,35 @@ export default function SignupPage() {
                     placeholder="Create a strong password"
                     value={formData.password}
                     onChange={handleInputChange}
-                    className="pl-10 pr-10"
+                    className="pr-10 pl-10"
                     disabled={isLoading}
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                    className="absolute top-3 right-3 text-muted-foreground hover:text-foreground"
                     disabled={isLoading}
                   >
-                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
                   </button>
                 </div>
               </div>
 
               {/* Confirm Password Field */}
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-sm font-medium">
+                <Label
+                  htmlFor="confirmPassword"
+                  className="text-sm font-medium"
+                >
                   Confirm Password
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                  <Lock className="absolute top-3 left-3 h-5 w-5 text-muted-foreground" />
                   <Input
                     id="confirmPassword"
                     name="confirmPassword"
@@ -190,17 +215,21 @@ export default function SignupPage() {
                     placeholder="Confirm your password"
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
-                    className="pl-10 pr-10"
+                    className="pr-10 pl-10"
                     disabled={isLoading}
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                    className="absolute top-3 right-3 text-muted-foreground hover:text-foreground"
                     disabled={isLoading}
                   >
-                    {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -217,11 +246,17 @@ export default function SignupPage() {
                   />
                   <span className="text-xs text-muted-foreground">
                     I agree to the{" "}
-                    <Link href="/terms" className="text-primary hover:underline">
+                    <Link
+                      href="/terms"
+                      className="text-primary hover:underline"
+                    >
                       Terms of Service
                     </Link>{" "}
                     and{" "}
-                    <Link href="/privacy" className="text-primary hover:underline">
+                    <Link
+                      href="/privacy"
+                      className="text-primary hover:underline"
+                    >
                       Privacy Policy
                     </Link>
                   </span>
@@ -229,7 +264,12 @@ export default function SignupPage() {
               </div>
 
               {/* Sign Up Button */}
-              <Button type="submit" className="w-full" disabled={isLoading || !agreedToTerms} size="lg">
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isLoading || !agreedToTerms}
+                size="lg"
+              >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isLoading ? "Creating account..." : "Create Account"}
               </Button>
@@ -241,7 +281,9 @@ export default function SignupPage() {
                 <div className="w-full border-t border-border" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">Or sign up with</span>
+                <span className="bg-card px-2 text-muted-foreground">
+                  Or sign up with
+                </span>
               </div>
             </div>
 
@@ -275,7 +317,10 @@ export default function SignupPage() {
             {/* Sign In Link */}
             <div className="text-center text-sm">
               Already have an account?{" "}
-              <Link href="/auth/login" className="font-medium text-primary hover:underline">
+              <Link
+                href="/auth/login"
+                className="font-medium text-primary hover:underline"
+              >
                 Sign in
               </Link>
             </div>
@@ -285,22 +330,22 @@ export default function SignupPage() {
         {/* Benefits Section */}
         <Card className="mt-6 border-border bg-gradient-to-br from-primary/5 to-transparent">
           <CardContent className="pt-6">
-            <h3 className="mb-3 font-semibold text-sm">Why join FundiHub?</h3>
+            <h3 className="mb-3 text-sm font-semibold">Why join FundiHub?</h3>
             <ul className="space-y-2 text-xs text-muted-foreground">
               <li className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                <CheckCircle className="h-4 w-4 flex-shrink-0 text-green-500" />
                 Access to verified skilled workers
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                <CheckCircle className="h-4 w-4 flex-shrink-0 text-green-500" />
                 Direct communication via WhatsApp & calls
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                <CheckCircle className="h-4 w-4 flex-shrink-0 text-green-500" />
                 Transparent pricing, no hidden fees
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                <CheckCircle className="h-4 w-4 flex-shrink-0 text-green-500" />
                 Community of trusted experts
               </li>
             </ul>

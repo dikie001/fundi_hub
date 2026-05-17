@@ -4,7 +4,13 @@ import Link from "next/link"
 import { useState } from "react"
 import { Mail, Loader2, ArrowLeft, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
@@ -29,7 +35,9 @@ export default function ForgotPasswordPage() {
         {/* Logo/Branding */}
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold text-primary">FundiHub</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Find trusted skilled experts</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Find trusted skilled experts
+          </p>
         </div>
 
         {/* Reset Password Card */}
@@ -39,7 +47,8 @@ export default function ForgotPasswordPage() {
               <CardHeader>
                 <CardTitle className="text-2xl">Reset Password</CardTitle>
                 <CardDescription>
-                  Enter your email address and we&apos;ll send you a link to reset your password
+                  Enter your email address and we&apos;ll send you a link to
+                  reset your password
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -50,7 +59,7 @@ export default function ForgotPasswordPage() {
                       Email Address
                     </Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                      <Mail className="absolute top-3 left-3 h-5 w-5 text-muted-foreground" />
                       <Input
                         id="email"
                         type="email"
@@ -65,8 +74,15 @@ export default function ForgotPasswordPage() {
                   </div>
 
                   {/* Submit Button */}
-                  <Button type="submit" className="w-full" disabled={isLoading} size="lg">
-                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={isLoading}
+                    size="lg"
+                  >
+                    {isLoading && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     {isLoading ? "Sending..." : "Send Reset Link"}
                   </Button>
                 </form>
@@ -97,7 +113,8 @@ export default function ForgotPasswordPage() {
               <CardContent className="space-y-4">
                 <div className="rounded-lg bg-muted p-4">
                   <p className="text-sm text-muted-foreground">
-                    Click the link in your email to reset your password. The link will expire in 24 hours.
+                    Click the link in your email to reset your password. The
+                    link will expire in 24 hours.
                   </p>
                 </div>
 
