@@ -8,8 +8,8 @@ import {
   Eye,
   EyeOff,
   Loader2,
-  Chrome,
-  Facebook,
+  Globe,
+  Users,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -55,7 +55,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-background via-background to-primary/5 px-4 py-12">
       <div className="w-full max-w-md">
         {/* Logo/Branding */}
         <div className="mb-8 text-center">
@@ -168,7 +168,7 @@ export default function LoginPage() {
                 className="w-full"
                 size="lg"
               >
-                <Chrome className="mr-2 h-4 w-4" />
+                <Globe className="mr-2 h-4 w-4" />
                 Google
               </Button>
 
@@ -180,7 +180,7 @@ export default function LoginPage() {
                 className="w-full"
                 size="lg"
               >
-                <Facebook className="mr-2 h-4 w-4" />
+                <Users className="mr-2 h-4 w-4" />
                 Facebook
               </Button>
             </div>

@@ -9,8 +9,8 @@ import {
   EyeOff,
   User,
   Loader2,
-  Chrome,
-  Facebook,
+  Globe,
+  Users,
   CheckCircle,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -77,7 +77,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-background via-background to-primary/5 px-4 py-12">
       <div className="w-full max-w-md">
         {/* Logo/Branding */}
         <div className="mb-8 text-center">
@@ -297,7 +297,7 @@ export default function SignupPage() {
                 className="w-full"
                 size="lg"
               >
-                <Chrome className="mr-2 h-4 w-4" />
+                <Globe className="mr-2 h-4 w-4" />
                 Google
               </Button>
 
@@ -309,7 +309,7 @@ export default function SignupPage() {
                 className="w-full"
                 size="lg"
               >
-                <Facebook className="mr-2 h-4 w-4" />
+                <Users className="mr-2 h-4 w-4" />
                 Facebook
               </Button>
             </div>
@@ -328,24 +328,24 @@ export default function SignupPage() {
         </Card>
 
         {/* Benefits Section */}
-        <Card className="mt-6 border-border bg-gradient-to-br from-primary/5 to-transparent">
+        <Card className="mt-6 border-border bg-linear-to-br from-primary/5 to-transparent">
           <CardContent className="pt-6">
             <h3 className="mb-3 text-sm font-semibold">Why join FundiHub?</h3>
             <ul className="space-y-2 text-xs text-muted-foreground">
               <li className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 flex-shrink-0 text-green-500" />
+                <CheckCircle className="h-4 w-4 shrink-0 text-green-500" />
                 Access to verified skilled workers
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 flex-shrink-0 text-green-500" />
+                <CheckCircle className="h-4 w-4 shrink-0 text-green-500" />
                 Direct communication via WhatsApp & calls
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 flex-shrink-0 text-green-500" />
+                <CheckCircle className="h-4 w-4 shrink-0 text-green-500" />
                 Transparent pricing, no hidden fees
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 flex-shrink-0 text-green-500" />
+                <CheckCircle className="h-4 w-4 shrink-0 text-green-500" />
                 Community of trusted experts
               </li>
             </ul>
