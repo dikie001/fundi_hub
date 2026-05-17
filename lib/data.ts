@@ -45,7 +45,8 @@ export const fundis: Fundi[] = [
     premiumLevel: "top",
     isEmergency: true,
     isNearby: true,
-    description: "15+ years experience in residential and commercial plumbing. 24/7 emergency services available.",
+    description:
+      "15+ years experience in residential and commercial plumbing. 24/7 emergency services available.",
   },
   {
     id: "2",
@@ -61,7 +62,8 @@ export const fundis: Fundi[] = [
     premiumLevel: "verified",
     isEmergency: true,
     isNearby: false,
-    description: "Certified electrician with expertise in wiring, installations, and troubleshooting.",
+    description:
+      "Certified electrician with expertise in wiring, installations, and troubleshooting.",
   },
   {
     id: "3",
@@ -77,7 +79,8 @@ export const fundis: Fundi[] = [
     premiumLevel: "none",
     isEmergency: false,
     isNearby: true,
-    description: "Custom furniture and home renovation specialist. Quality craftsmanship guaranteed.",
+    description:
+      "Custom furniture and home renovation specialist. Quality craftsmanship guaranteed.",
   },
   {
     id: "4",
@@ -93,7 +96,8 @@ export const fundis: Fundi[] = [
     premiumLevel: "top",
     isEmergency: false,
     isNearby: false,
-    description: "Skilled in all welding types. Industrial and domestic projects welcome.",
+    description:
+      "Skilled in all welding types. Industrial and domestic projects welcome.",
   },
   {
     id: "5",
@@ -109,7 +113,8 @@ export const fundis: Fundi[] = [
     premiumLevel: "none",
     isEmergency: false,
     isNearby: true,
-    description: "Interior and exterior painting with attention to detail. Eco-friendly paints available.",
+    description:
+      "Interior and exterior painting with attention to detail. Eco-friendly paints available.",
   },
   {
     id: "6",
@@ -125,6 +130,7 @@ export const fundis: Fundi[] = [
     premiumLevel: "verified",
     isEmergency: true,
     isNearby: false,
-    description: "Engine repairs, maintenance, and diagnostics for all vehicle types.",
+    description:
+      "Engine repairs, maintenance, and diagnostics for all vehicle types.",
   },
 ]

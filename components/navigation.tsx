@@ -21,15 +21,32 @@ export function Navigation() {
             <Link href="/" className="text-sm font-medium hover:text-primary">
               Home
             </Link>
-            <Link href="/categories" className="text-sm font-medium hover:text-primary">
+            <Link
+              href="/categories"
+              className="text-sm font-medium hover:text-primary"
+            >
               Categories
             </Link>
-            <Link href="/refer-earn" className="text-sm font-medium hover:text-primary">
+            <Link
+              href="/refer-earn"
+              className="text-sm font-medium hover:text-primary"
+            >
               Refer & Earn
             </Link>
-            <Link href="/for-fundis" className="text-sm font-medium hover:text-primary">
+            <Link
+              href="/for-fundis"
+              className="text-sm font-medium hover:text-primary"
+            >
               For Fundis
             </Link>
+            <div className="flex items-center gap-3 border-l border-border pl-8">
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/auth/login">Sign In</Link>
+              </Button>
+              <Button size="sm" asChild>
+                <Link href="/auth/signup">Sign Up</Link>
+              </Button>
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -70,6 +87,14 @@ export function Navigation() {
               >
                 For Fundis
               </Link>
+              <div className="border-t border-border py-2">
+                <Button variant="outline" size="sm" asChild className="w-full">
+                  <Link href="/auth/login">Sign In</Link>
+                </Button>
+              </div>
+              <Button size="sm" asChild className="w-full">
+                <Link href="/auth/signup">Sign Up</Link>
+              </Button>
             </div>
           </div>
         )}

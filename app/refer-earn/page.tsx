@@ -2,7 +2,13 @@
 
 import { Navigation } from "@/components/navigation"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, CheckCircle, Zap, Users, TrendingUp } from "lucide-react"
 import Link from "next/link"
@@ -15,7 +21,10 @@ export default function ReferEarnPage() {
       {/* Header */}
       <section className="border-b border-border px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <Link href="/" className="mb-6 flex items-center gap-2 text-primary hover:underline">
+          <Link
+            href="/"
+            className="mb-6 flex items-center gap-2 text-primary hover:underline"
+          >
             <ArrowLeft size={16} />
             Back to Home
           </Link>
@@ -38,7 +47,9 @@ export default function ReferEarnPage() {
                     <CardTitle className="text-lg">Step 1</CardTitle>
                     <CardDescription>Refer a Fundi</CardDescription>
                   </div>
-                  <Badge variant="default" className="text-base">1</Badge>
+                  <Badge variant="default" className="text-base">
+                    1
+                  </Badge>
                 </div>
               </CardHeader>
               <CardContent>
@@ -55,7 +66,9 @@ export default function ReferEarnPage() {
                     <CardTitle className="text-lg">Step 2</CardTitle>
                     <CardDescription>They Register</CardDescription>
                   </div>
-                  <Badge variant="default" className="text-base">2</Badge>
+                  <Badge variant="default" className="text-base">
+                    2
+                  </Badge>
                 </div>
               </CardHeader>
               <CardContent>
@@ -72,7 +85,9 @@ export default function ReferEarnPage() {
                     <CardTitle className="text-lg">Step 3</CardTitle>
                     <CardDescription>They Pay Fee</CardDescription>
                   </div>
-                  <Badge variant="default" className="text-base">3</Badge>
+                  <Badge variant="default" className="text-base">
+                    3
+                  </Badge>
                 </div>
               </CardHeader>
               <CardContent>
@@ -89,7 +104,10 @@ export default function ReferEarnPage() {
                     <CardTitle className="text-lg">Step 4</CardTitle>
                     <CardDescription>You Earn!</CardDescription>
                   </div>
-                  <Badge variant="default" className="bg-green-600 text-base hover:bg-green-700">
+                  <Badge
+                    variant="default"
+                    className="bg-green-600 text-base hover:bg-green-700"
+                  >
                     💰
                   </Badge>
                 </div>
@@ -205,7 +223,9 @@ export default function ReferEarnPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-3xl font-bold text-primary">Ksh 1,000</p>
-                <p className="mt-2 text-sm text-muted-foreground">10 × Ksh 100</p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  10 × Ksh 100
+                </p>
               </CardContent>
             </Card>
 
@@ -216,7 +236,9 @@ export default function ReferEarnPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-3xl font-bold text-blue-600">Ksh 5,000</p>
-                <p className="mt-2 text-sm text-muted-foreground">50 × Ksh 100</p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  50 × Ksh 100
+                </p>
               </CardContent>
             </Card>
 
@@ -227,7 +249,9 @@ export default function ReferEarnPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-3xl font-bold text-green-600">Ksh 10,000</p>
-                <p className="mt-2 text-sm text-muted-foreground">100 × Ksh 100</p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  100 × Ksh 100
+                </p>
               </CardContent>
             </Card>
           </div>
@@ -239,15 +263,16 @@ export default function ReferEarnPage() {
         <div className="mx-auto max-w-7xl">
           <Card className="border-2 border-primary bg-gradient-to-r from-primary/10 to-primary/5">
             <CardHeader className="text-center">
-              <CardTitle className="text-3xl">Ready to Start Earning?</CardTitle>
+              <CardTitle className="text-3xl">
+                Ready to Start Earning?
+              </CardTitle>
               <CardDescription className="mt-2 text-base">
-                Share FundiHub with skilled workers you know and earn commissions
+                Share FundiHub with skilled workers you know and earn
+                commissions
               </CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center gap-4">
-              <Button size="lg">
-                Start Referring
-              </Button>
+              <Button size="lg">Start Referring</Button>
               <Button size="lg" variant="outline" asChild>
                 <a href="tel:+254799112919">Contact for Support</a>
               </Button>

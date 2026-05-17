@@ -36,7 +36,9 @@ export function CategoryCard({ name, icon }: CategoryCardProps) {
     <Link href={`/categories/${name.toLowerCase().replace(/\s+/g, "-")}`}>
       <Card className="transition-all hover:shadow-md">
         <CardContent className="flex flex-col items-center justify-center gap-3 py-8">
-          <div className="text-primary">{iconMap[icon] || <Wrench className="h-8 w-8" />}</div>
+          <div className="text-primary">
+            {iconMap[icon] || <Wrench className="h-8 w-8" />}
+          </div>
           <h3 className="text-center text-sm font-medium">{name}</h3>
         </CardContent>
       </Card>

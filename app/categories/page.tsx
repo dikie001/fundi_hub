@@ -16,7 +16,10 @@ export default function CategoriesPage() {
       {/* Header */}
       <section className="border-b border-border px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <Link href="/" className="mb-6 flex items-center gap-2 text-primary hover:underline">
+          <Link
+            href="/"
+            className="mb-6 flex items-center gap-2 text-primary hover:underline"
+          >
             <ArrowLeft size={16} />
             Back to Home
           </Link>
@@ -32,7 +35,11 @@ export default function CategoriesPage() {
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {categories.map((category) => (
-              <CategoryCard key={category.name} name={category.name} icon={category.icon} />
+              <CategoryCard
+                key={category.name}
+                name={category.name}
+                icon={category.icon}
+              />
             ))}
           </div>
         </div>

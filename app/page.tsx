@@ -4,13 +4,29 @@ import { Navigation } from "@/components/navigation"
 import { FundiCard } from "@/components/fundi-card"
 import { CategoryCard } from "@/components/category-card"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { fundis, categories } from "@/lib/data"
-import { ArrowRight, TrendingUp, MapPin, AlertCircle, Clock, BarChart3, Heart } from "lucide-react"
+import {
+  ArrowRight,
+  TrendingUp,
+  MapPin,
+  AlertCircle,
+  Clock,
+  BarChart3,
+  Heart,
+} from "lucide-react"
 import Link from "next/link"
 
 export default function Home() {
-  const featuredFundis = fundis.filter((f) => f.premiumLevel === "top").slice(0, 3)
+  const featuredFundis = fundis
+    .filter((f) => f.premiumLevel === "top")
+    .slice(0, 3)
   const topRatedFundis = fundis.sort((a, b) => b.rating - a.rating).slice(0, 3)
   const nearbyFundis = fundis.filter((f) => f.isNearby).slice(0, 3)
   const emergencyFundis = fundis.filter((f) => f.isEmergency).slice(0, 3)
@@ -27,15 +43,15 @@ export default function Home() {
               Book Skilled Experts <span className="text-primary">Anytime</span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
-              Find trusted fundis - plumbers, electricians, carpenters, and more. Direct WhatsApp
-              and call buttons for instant communication.
+              Find trusted fundis - plumbers, electricians, carpenters, and
+              more. Direct WhatsApp and call buttons for instant communication.
             </p>
             <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
               <Button size="lg" asChild>
                 <Link href="/categories">Find a Fundi</Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
-                <Link href="/for-fundis">Join as Fundi</Link>
+                <Link href="/auth/signup">Get Started</Link>
               </Button>
             </div>
           </div>
@@ -48,7 +64,9 @@ export default function Home() {
           <div className="mb-8 flex items-center justify-between">
             <div>
               <h2 className="text-3xl font-bold">Featured Fundis</h2>
-              <p className="mt-2 text-muted-foreground">Top & Verified premium experts</p>
+              <p className="mt-2 text-muted-foreground">
+                Top & Verified premium experts
+              </p>
             </div>
             <Link href="/categories">
               <Button variant="outline" className="gap-2">
@@ -70,7 +88,9 @@ export default function Home() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-8">
             <h2 className="text-3xl font-bold">Top Rated Experts</h2>
-            <p className="mt-2 text-muted-foreground">Highest rated fundis on the platform</p>
+            <p className="mt-2 text-muted-foreground">
+              Highest rated fundis on the platform
+            </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {topRatedFundis.map((fundi) => (
@@ -109,7 +129,9 @@ export default function Home() {
                 <AlertCircle className="text-red-500" />
                 24/7 Emergency Services
               </h2>
-              <p className="mt-2 text-muted-foreground">Always available when you need help</p>
+              <p className="mt-2 text-muted-foreground">
+                Always available when you need help
+              </p>
             </div>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -125,11 +147,17 @@ export default function Home() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-8">
             <h2 className="text-3xl font-bold">Popular Categories</h2>
-            <p className="mt-2 text-muted-foreground">Browse fundis by expertise</p>
+            <p className="mt-2 text-muted-foreground">
+              Browse fundis by expertise
+            </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {categories.slice(0, 8).map((category) => (
-              <CategoryCard key={category.name} name={category.name} icon={category.icon} />
+              <CategoryCard
+                key={category.name}
+                name={category.name}
+                icon={category.icon}
+              />
             ))}
           </div>
           <div className="mt-8 text-center">
@@ -159,8 +187,9 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <p className="mb-6 text-muted-foreground">
-                Know skilled workers? Refer them to FundiHub and earn commissions. It&apos;s easy,
-                rewarding, and helps grow the platform.
+                Know skilled workers? Refer them to FundiHub and earn
+                commissions. It&apos;s easy, rewarding, and helps grow the
+                platform.
               </p>
               <Button asChild size="lg">
                 <Link href="/refer-earn">Start Referring Now</Link>
@@ -173,7 +202,9 @@ export default function Home() {
       {/* Why Choose FundiHub */}
       <section className="border-b border-border px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <h2 className="mb-12 text-center text-3xl font-bold">Why Choose FundiHub?</h2>
+          <h2 className="mb-12 text-center text-3xl font-bold">
+            Why Choose FundiHub?
+          </h2>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             <Card>
               <CardHeader>
@@ -182,7 +213,8 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Verified profiles and ratings help you find the right expert for your needs.
+                  Verified profiles and ratings help you find the right expert
+                  for your needs.
                 </p>
               </CardContent>
             </Card>
@@ -194,7 +226,8 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Chat via WhatsApp or call directly. No middleman, just fast connection.
+                  Chat via WhatsApp or call directly. No middleman, just fast
+                  connection.
                 </p>
               </CardContent>
             </Card>
@@ -206,7 +239,8 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Simple, affordable registration and monthly fees. No hidden charges.
+                  Simple, affordable registration and monthly fees. No hidden
+                  charges.
                 </p>
               </CardContent>
             </Card>
@@ -217,7 +251,9 @@ export default function Home() {
       {/* Membership Plans */}
       <section className="border-b border-border px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <h2 className="mb-4 text-center text-3xl font-bold">Fundi Membership Plans</h2>
+          <h2 className="mb-4 text-center text-3xl font-bold">
+            Fundi Membership Plans
+          </h2>
           <p className="mb-12 text-center text-muted-foreground">
             Flexible pricing for every fundi
           </p>
@@ -335,7 +371,10 @@ export default function Home() {
               <h4 className="font-semibold">Support</h4>
               <ul className="mt-4 space-y-2 text-sm">
                 <li>
-                  <a href="mailto:calvincewise@gmail.com" className="hover:text-primary">
+                  <a
+                    href="mailto:calvincewise@gmail.com"
+                    className="hover:text-primary"
+                  >
                     Email Us
                   </a>
                 </li>
@@ -357,7 +396,10 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-8 border-t border-border pt-8 text-center text-sm text-muted-foreground">
-            <p>&copy; 2026 FundiHub. All rights reserved. Africa&apos;s trusted skilled worker platform.</p>
+            <p>
+              &copy; 2026 FundiHub. All rights reserved. Africa&apos;s trusted
+              skilled worker platform.
+            </p>
           </div>
         </div>
       </footer>

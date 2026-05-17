@@ -2,9 +2,26 @@
 
 import { Navigation } from "@/components/navigation"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, DollarSign, TrendingUp, Eye, Shield, Zap, Clock, MessageCircle, Phone, Star } from "lucide-react"
+import {
+  ArrowLeft,
+  DollarSign,
+  TrendingUp,
+  Eye,
+  Shield,
+  Zap,
+  Clock,
+  MessageCircle,
+  Phone,
+  Star,
+} from "lucide-react"
 import Link from "next/link"
 
 export default function ForFundisPage() {
@@ -15,13 +32,17 @@ export default function ForFundisPage() {
       {/* Header */}
       <section className="border-b border-border px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <Link href="/" className="mb-6 flex items-center gap-2 text-primary hover:underline">
+          <Link
+            href="/"
+            className="mb-6 flex items-center gap-2 text-primary hover:underline"
+          >
             <ArrowLeft size={16} />
             Back to Home
           </Link>
           <h1 className="text-4xl font-bold">Join FundiHub</h1>
           <p className="mt-2 text-lg text-muted-foreground">
-            Get online visibility, verified digital profiles, and direct client communication
+            Get online visibility, verified digital profiles, and direct client
+            communication
           </p>
         </div>
       </section>
@@ -38,7 +59,8 @@ export default function ForFundisPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Get discovered by clients actively searching for your services across Kenya and Africa.
+                  Get discovered by clients actively searching for your services
+                  across Kenya and Africa.
                 </p>
               </CardContent>
             </Card>
@@ -50,7 +72,8 @@ export default function ForFundisPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Build trust with clients through verified digital profiles and genuine ratings.
+                  Build trust with clients through verified digital profiles and
+                  genuine ratings.
                 </p>
               </CardContent>
             </Card>
@@ -62,7 +85,8 @@ export default function ForFundisPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Connect with clients via WhatsApp and phone calls - no middleman involved.
+                  Connect with clients via WhatsApp and phone calls - no
+                  middleman involved.
                 </p>
               </CardContent>
             </Card>
@@ -74,7 +98,8 @@ export default function ForFundisPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Access more job leads and expand your client base continuously.
+                  Access more job leads and expand your client base
+                  continuously.
                 </p>
               </CardContent>
             </Card>
@@ -86,7 +111,8 @@ export default function ForFundisPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Build your professional reputation through client reviews and ratings.
+                  Build your professional reputation through client reviews and
+                  ratings.
                 </p>
               </CardContent>
             </Card>
@@ -98,7 +124,8 @@ export default function ForFundisPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Simple, transparent fees with no hidden charges or complicated structures.
+                  Simple, transparent fees with no hidden charges or complicated
+                  structures.
                 </p>
               </CardContent>
             </Card>
@@ -118,7 +145,9 @@ export default function ForFundisPage() {
             {/* Registration Fee */}
             <Card>
               <CardHeader className="pb-4">
-                <CardTitle className="text-2xl">One-Time Registration</CardTitle>
+                <CardTitle className="text-2xl">
+                  One-Time Registration
+                </CardTitle>
                 <div className="mt-2 space-y-1">
                   <p className="text-4xl font-bold text-primary">Ksh 200</p>
                   <CardDescription>One-time only</CardDescription>
@@ -150,7 +179,9 @@ export default function ForFundisPage() {
             <Card className="border-2 border-primary">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-2xl">Monthly Subscription</CardTitle>
+                  <CardTitle className="text-2xl">
+                    Monthly Subscription
+                  </CardTitle>
                   <Badge>POPULAR</Badge>
                 </div>
                 <div className="mt-2 space-y-1">
@@ -197,17 +228,23 @@ export default function ForFundisPage() {
                       <Badge className="bg-blue-600 hover:bg-blue-700">✓</Badge>
                       Verified Badge
                     </p>
-                    <p className="mt-1 text-sm text-muted-foreground">Ksh 300/month</p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Ksh 300/month
+                    </p>
                     <p className="mt-2 text-xs text-muted-foreground">
                       Verified trust badge for credibility
                     </p>
                   </div>
                   <div className="rounded-lg bg-muted p-3">
                     <p className="flex items-center gap-2 font-medium">
-                      <Badge className="bg-amber-600 hover:bg-amber-700">⭐</Badge>
+                      <Badge className="bg-amber-600 hover:bg-amber-700">
+                        ⭐
+                      </Badge>
                       Top & Verified
                     </p>
-                    <p className="mt-1 text-sm text-muted-foreground">Ksh 500/month</p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Ksh 500/month
+                    </p>
                     <p className="mt-2 text-xs text-muted-foreground">
                       Premium visibility + top search ranking
                     </p>
@@ -225,7 +262,9 @@ export default function ForFundisPage() {
       {/* Profile Features */}
       <section className="border-b border-border px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <h2 className="mb-8 text-3xl font-bold">Your FundiHub Profile Includes</h2>
+          <h2 className="mb-8 text-3xl font-bold">
+            Your FundiHub Profile Includes
+          </h2>
           <div className="grid gap-6 md:grid-cols-2">
             <Card>
               <CardHeader>
@@ -236,7 +275,8 @@ export default function ForFundisPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Clients can instantly reach you via WhatsApp to request quotations, send photos/videos, and negotiate directly.
+                  Clients can instantly reach you via WhatsApp to request
+                  quotations, send photos/videos, and negotiate directly.
                 </p>
               </CardContent>
             </Card>
@@ -250,7 +290,8 @@ export default function ForFundisPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Clients can call you directly to discuss urgent repairs, confirm availability, and request emergency services.
+                  Clients can call you directly to discuss urgent repairs,
+                  confirm availability, and request emergency services.
                 </p>
               </CardContent>
             </Card>
@@ -264,7 +305,8 @@ export default function ForFundisPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Build your reputation as clients leave reviews and ratings based on their experience with you.
+                  Build your reputation as clients leave reviews and ratings
+                  based on their experience with you.
                 </p>
               </CardContent>
             </Card>
@@ -278,7 +320,8 @@ export default function ForFundisPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Showcase your work with photos and descriptions to attract more qualified clients.
+                  Showcase your work with photos and descriptions to attract
+                  more qualified clients.
                 </p>
               </CardContent>
             </Card>
@@ -298,7 +341,8 @@ export default function ForFundisPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Create your account with basic information and pay Ksh 200 registration fee.
+                  Create your account with basic information and pay Ksh 200
+                  registration fee.
                 </p>
               </CardContent>
             </Card>
@@ -310,7 +354,8 @@ export default function ForFundisPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Add your expertise, experience, services offered, and photos to your profile.
+                  Add your expertise, experience, services offered, and photos
+                  to your profile.
                 </p>
               </CardContent>
             </Card>
@@ -322,7 +367,8 @@ export default function ForFundisPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Subscribe to monthly plan (Ksh 500) to activate listing and appear in search results.
+                  Subscribe to monthly plan (Ksh 500) to activate listing and
+                  appear in search results.
                 </p>
               </CardContent>
             </Card>
@@ -334,7 +380,8 @@ export default function ForFundisPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Start receiving job leads from clients and grow your business through the platform.
+                  Start receiving job leads from clients and grow your business
+                  through the platform.
                 </p>
               </CardContent>
             </Card>
@@ -347,7 +394,9 @@ export default function ForFundisPage() {
         <div className="mx-auto max-w-7xl">
           <Card className="border-2 border-primary bg-gradient-to-r from-primary/10 to-primary/5">
             <CardHeader className="text-center">
-              <CardTitle className="text-3xl">Ready to Grow Your Business?</CardTitle>
+              <CardTitle className="text-3xl">
+                Ready to Grow Your Business?
+              </CardTitle>
               <CardDescription className="mt-2 text-base">
                 Join thousands of fundis getting more clients through FundiHub
               </CardDescription>
@@ -365,11 +414,17 @@ export default function ForFundisPage() {
           <div className="mt-8 rounded-lg border border-border bg-muted/50 p-6 text-center">
             <p className="text-sm text-muted-foreground">
               Questions? Contact us at{" "}
-              <a href="mailto:calvincewise@gmail.com" className="font-medium text-primary hover:underline">
+              <a
+                href="mailto:calvincewise@gmail.com"
+                className="font-medium text-primary hover:underline"
+              >
                 calvincewise@gmail.com
               </a>{" "}
               or call{" "}
-              <a href="tel:+254799112919" className="font-medium text-primary hover:underline">
+              <a
+                href="tel:+254799112919"
+                className="font-medium text-primary hover:underline"
+              >
                 +254799112919
               </a>
             </p>
