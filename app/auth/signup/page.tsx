@@ -193,11 +193,7 @@ export default function SignupPage() {
                       showPassword ? "Hide password" : "Show password"
                     }
                   >
-                    {showPassword ? (
-                      <EyeOff />
-                    ) : (
-                      <Eye />
-                    )}
+                    {showPassword ? <EyeOff /> : <Eye />}
                   </Button>
                 </div>
               </div>
@@ -234,11 +230,7 @@ export default function SignupPage() {
                         : "Show confirm password"
                     }
                   >
-                    {showConfirmPassword ? (
-                      <EyeOff />
-                    ) : (
-                      <Eye />
-                    )}
+                    {showConfirmPassword ? <EyeOff /> : <Eye />}
                   </Button>
                 </div>
               </div>

@@ -140,11 +140,7 @@ export default function LoginPage() {
                       showPassword ? "Hide password" : "Show password"
                     }
                   >
-                    {showPassword ? (
-                      <EyeOff />
-                    ) : (
-                      <Eye />
-                    )}
+                    {showPassword ? <EyeOff /> : <Eye />}
                   </Button>
                 </div>
               </div>
