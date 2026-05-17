@@ -2,15 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import {
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  Loader2,
-  Globe,
-  Users,
-} from "lucide-react"
+import { Mail, Lock, Eye, EyeOff, Loader2, Globe, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
