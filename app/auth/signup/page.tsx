@@ -2,12 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import {
-  Eye,
-  EyeOff,
-  Loader2,
-} from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -73,29 +68,51 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-linear-to-br from-background via-background to-primary/5 px-4 py-10 sm:px-6">
-      <div className="pointer-events-none absolute top-0 left-0 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
-      <div className="pointer-events-none absolute right-0 bottom-0 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
-
-      <div className="relative mx-auto w-full max-w-md">
-        <div className="mb-6 text-center">
-          <Badge variant="secondary" className="mb-3">
-            New account
-          </Badge>
-          <h1 className="text-4xl font-bold tracking-tight text-primary">FundiHub</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Join Africa&apos;s trusted skilled worker platform.
-          </p>
-        </div>
-
-        <Card className="border-border/70 bg-card/95 shadow-xl backdrop-blur">
-          <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-2xl">Create Account</CardTitle>
-            <CardDescription>Join FundiHub and get started</CardDescription>
+    <div className="relative min-h-screen bg-linear-to-br from-background via-background to-primary/10 px-4 py-8 sm:px-6 sm:py-12">
+      <div className="mx-auto w-full max-w-sm">
+        <Card className="border-border/80 bg-card/95 shadow-xl">
+          <CardHeader className="space-y-1 pb-3">
+            <CardTitle className="text-3xl leading-none font-semibold tracking-tight">
+              Create account
+            </CardTitle>
+            <CardDescription className="text-base">
+              Join FundiHub to connect with trusted experts.
+            </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-5">
+            <div className="grid grid-cols-2 gap-2.5">
+              <Button
+                onClick={handleGoogleSignup}
+                disabled={isLoading}
+                variant="outline"
+                className="w-full"
+                size="lg"
+              >
+                Google
+              </Button>
+
+              <Button
+                onClick={handleFacebookSignup}
+                disabled={isLoading}
+                variant="outline"
+                className="w-full"
+                size="lg"
+              >
+                Facebook
+              </Button>
+            </div>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-border" />
+              </div>
+              <div className="relative flex justify-center text-xs font-medium uppercase">
+                <span className="bg-card px-2 text-muted-foreground">or</span>
+              </div>
+            </div>
+
             <div className="space-y-3">
-              <Label className="text-sm font-medium">I am a:</Label>
+              <Label className="text-sm font-medium">I am:</Label>
               <div className="grid grid-cols-2 gap-3">
                 <Button
                   type="button"
@@ -116,7 +133,7 @@ export default function SignupPage() {
               </div>
             </div>
 
-            <form onSubmit={handleEmailSignup} className="space-y-5">
+            <form onSubmit={handleEmailSignup} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-sm font-medium">
                   Full Name
@@ -135,7 +152,7 @@ export default function SignupPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium">
-                  Email Address
+                  Email address
                 </Label>
                 <Input
                   id="email"
@@ -169,15 +186,17 @@ export default function SignupPage() {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     variant="ghost"
-                    size="icon"
-                    className="absolute top-1/2 right-1 h-7 w-7 -translate-y-1/2"
+                    size="icon-sm"
+                    className="absolute top-1/2 right-1 -translate-y-1/2"
                     disabled={isLoading}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <EyeOff />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Eye />
                     )}
                   </Button>
                 </div>
@@ -206,8 +225,8 @@ export default function SignupPage() {
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     variant="ghost"
-                    size="icon"
-                    className="absolute top-1/2 right-1 h-7 w-7 -translate-y-1/2"
+                    size="icon-sm"
+                    className="absolute top-1/2 right-1 -translate-y-1/2"
                     disabled={isLoading}
                     aria-label={
                       showConfirmPassword
@@ -216,9 +235,9 @@ export default function SignupPage() {
                     }
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <EyeOff />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Eye />
                     )}
                   </Button>
                 </div>
@@ -228,7 +247,9 @@ export default function SignupPage() {
                 <Checkbox
                   id="terms"
                   checked={agreedToTerms}
-                  onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
+                  onCheckedChange={(checked) =>
+                    setAgreedToTerms(checked === true)
+                  }
                   disabled={isLoading}
                 />
                 <Label
@@ -240,7 +261,10 @@ export default function SignupPage() {
                     Terms of Service
                   </Link>{" "}
                   and{" "}
-                  <Link href="/privacy" className="text-primary hover:underline">
+                  <Link
+                    href="/privacy"
+                    className="text-primary hover:underline"
+                  >
                     Privacy Policy
                   </Link>
                 </Label>
@@ -248,47 +272,14 @@ export default function SignupPage() {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="mt-1 w-full"
                 disabled={isLoading || !agreedToTerms}
                 size="lg"
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isLoading ? "Creating account..." : "Create Account"}
+                {isLoading ? "Creating account..." : "Create account"}
               </Button>
             </form>
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-border" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">
-                  Or sign up with
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <Button
-                onClick={handleGoogleSignup}
-                disabled={isLoading}
-                variant="outline"
-                className="w-full"
-                size="lg"
-              >
-                Continue with Google
-              </Button>
-
-              <Button
-                onClick={handleFacebookSignup}
-                disabled={isLoading}
-                variant="outline"
-                className="w-full"
-                size="lg"
-              >
-                Continue with Facebook
-              </Button>
-            </div>
 
             <div className="text-center text-sm">
               Already have an account?{" "}
@@ -302,19 +293,7 @@ export default function SignupPage() {
           </CardContent>
         </Card>
 
-        <Card className="mt-6 border-border/70 bg-linear-to-br from-primary/5 to-transparent">
-          <CardContent className="pt-6">
-            <h3 className="mb-3 text-sm font-semibold">Why join FundiHub?</h3>
-            <ul className="space-y-2 text-xs text-muted-foreground">
-              <li>• Access to verified skilled workers</li>
-              <li>• Direct communication via WhatsApp and calls</li>
-              <li>• Transparent pricing with no hidden fees</li>
-              <li>• Community of trusted experts</li>
-            </ul>
-          </CardContent>
-        </Card>
-
-        <div className="mt-6 flex justify-center gap-4 text-xs text-muted-foreground">
+        <div className="mt-5 flex justify-center gap-4 text-xs text-muted-foreground">
           <Link href="/privacy" className="hover:text-primary">
             Privacy Policy
           </Link>

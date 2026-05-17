@@ -3,7 +3,6 @@
 import Link from "next/link"
 import { useState } from "react"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -48,31 +47,53 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-linear-to-br from-background via-background to-primary/5 px-4 py-10 sm:px-6">
-      <div className="pointer-events-none absolute top-0 right-0 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 left-0 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
-
-      <div className="relative mx-auto w-full max-w-md">
-        <div className="mb-6 text-center">
-          <Badge variant="secondary" className="mb-3">
-            Welcome back
-          </Badge>
-          <h1 className="text-4xl font-bold tracking-tight text-primary">FundiHub</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Sign in to continue finding trusted skilled experts.
-          </p>
-        </div>
-
-        <Card className="border-border/70 bg-card/95 shadow-xl backdrop-blur">
-          <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-2xl">Sign In</CardTitle>
-            <CardDescription>Sign in to your FundiHub account</CardDescription>
+    <div className="relative min-h-screen bg-linear-to-br from-background via-background to-primary/10 px-4 py-8 sm:px-6 sm:py-12">
+      <div className="mx-auto w-full max-w-sm">
+        <Card className="border-border/80 bg-card/95 shadow-xl">
+          <CardHeader className="space-y-1 pb-3">
+            <CardTitle className="text-3xl leading-none font-semibold tracking-tight">
+              Welcome back
+            </CardTitle>
+            <CardDescription className="text-base">
+              Sign in to find trusted experts near you.
+            </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <form onSubmit={handleEmailLogin} className="space-y-5">
+          <CardContent className="space-y-5">
+            <div className="grid grid-cols-2 gap-2.5">
+              <Button
+                onClick={handleGoogleLogin}
+                disabled={isLoading}
+                variant="outline"
+                className="w-full"
+                size="lg"
+              >
+                Google
+              </Button>
+
+              <Button
+                onClick={handleFacebookLogin}
+                disabled={isLoading}
+                variant="outline"
+                className="w-full"
+                size="lg"
+              >
+                Facebook
+              </Button>
+            </div>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-border" />
+              </div>
+              <div className="relative flex justify-center text-xs font-medium uppercase">
+                <span className="bg-card px-2 text-muted-foreground">or</span>
+              </div>
+            </div>
+
+            <form onSubmit={handleEmailLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium">
-                  Email Address
+                  Email address
                 </Label>
                 <Input
                   id="email"
@@ -112,15 +133,17 @@ export default function LoginPage() {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     variant="ghost"
-                    size="icon"
-                    className="absolute top-1/2 right-1 h-7 w-7 -translate-y-1/2"
+                    size="icon-sm"
+                    className="absolute top-1/2 right-1 -translate-y-1/2"
                     disabled={isLoading}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <EyeOff />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Eye />
                     )}
                   </Button>
                 </div>
@@ -128,73 +151,28 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="mt-1 w-full"
                 disabled={isLoading}
                 size="lg"
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isLoading ? "Signing in..." : "Sign In"}
+                {isLoading ? "Signing in..." : "Sign in"}
               </Button>
             </form>
 
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-border" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">
-                  Or continue with
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <Button
-                onClick={handleGoogleLogin}
-                disabled={isLoading}
-                variant="outline"
-                className="w-full"
-                size="lg"
-              >
-                Continue with Google
-              </Button>
-
-              <Button
-                onClick={handleFacebookLogin}
-                disabled={isLoading}
-                variant="outline"
-                className="w-full"
-                size="lg"
-              >
-                Continue with Facebook
-              </Button>
-            </div>
-
             <div className="text-center text-sm">
-              Don&apos;t have an account?{" "}
+              New to FundiHub?{" "}
               <Link
                 href="/auth/signup"
                 className="font-medium text-primary hover:underline"
               >
-                Sign up
+                Create an account
               </Link>
-            </div>
-
-            <div className="border-t border-border pt-4">
-              <p className="text-center text-xs text-muted-foreground">
-                Having trouble? Contact us at{" "}
-                <a
-                  href="mailto:calvincewise@gmail.com"
-                  className="text-primary hover:underline"
-                >
-                  support@fundihub.com
-                </a>
-              </p>
             </div>
           </CardContent>
         </Card>
 
-        <div className="mt-6 flex justify-center gap-4 text-xs text-muted-foreground">
+        <div className="mt-5 flex justify-center gap-4 text-xs text-muted-foreground">
           <Link href="/privacy" className="hover:text-primary">
             Privacy Policy
           </Link>
