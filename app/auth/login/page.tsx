@@ -2,7 +2,8 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { Mail, Lock, Eye, EyeOff, Loader2, Globe, Users } from "lucide-react"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -47,46 +48,43 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-background via-background to-primary/5 px-4 py-12">
-      <div className="w-full max-w-md">
-        {/* Logo/Branding */}
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold text-primary">FundiHub</h1>
+    <div className="relative min-h-screen overflow-hidden bg-linear-to-br from-background via-background to-primary/5 px-4 py-10 sm:px-6">
+      <div className="pointer-events-none absolute top-0 right-0 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 left-0 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
+
+      <div className="relative mx-auto w-full max-w-md">
+        <div className="mb-6 text-center">
+          <Badge variant="secondary" className="mb-3">
+            Welcome back
+          </Badge>
+          <h1 className="text-4xl font-bold tracking-tight text-primary">FundiHub</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Find trusted skilled experts
+            Sign in to continue finding trusted skilled experts.
           </p>
         </div>
 
-        {/* Login Card */}
-        <Card className="border-border shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-2xl">Welcome Back</CardTitle>
+        <Card className="border-border/70 bg-card/95 shadow-xl backdrop-blur">
+          <CardHeader className="space-y-1 pb-4">
+            <CardTitle className="text-2xl">Sign In</CardTitle>
             <CardDescription>Sign in to your FundiHub account</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Email Login Form */}
-            <form onSubmit={handleEmailLogin} className="space-y-4">
-              {/* Email Field */}
+            <form onSubmit={handleEmailLogin} className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium">
                   Email Address
                 </Label>
-                <div className="relative">
-                  <Mail className="absolute top-3 left-3 h-5 w-5 text-muted-foreground" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
-                    disabled={isLoading}
-                    required
-                  />
-                </div>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
+                  required
+                />
               </div>
 
-              {/* Password Field */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password" className="text-sm font-medium">
@@ -100,33 +98,34 @@ export default function LoginPage() {
                   </Link>
                 </div>
                 <div className="relative">
-                  <Lock className="absolute top-3 left-3 h-5 w-5 text-muted-foreground" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pr-10 pl-10"
+                    className="pr-12"
                     disabled={isLoading}
                     required
                   />
-                  <button
+                  <Button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute top-3 right-3 text-muted-foreground hover:text-foreground"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-1/2 right-1 h-7 w-7 -translate-y-1/2"
                     disabled={isLoading}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-5 w-5" />
+                      <EyeOff className="h-4 w-4" />
                     ) : (
-                      <Eye className="h-5 w-5" />
+                      <Eye className="h-4 w-4" />
                     )}
-                  </button>
+                  </Button>
                 </div>
               </div>
 
-              {/* Sign In Button */}
               <Button
                 type="submit"
                 className="w-full"
@@ -138,7 +137,6 @@ export default function LoginPage() {
               </Button>
             </form>
 
-            {/* Divider */}
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-border" />
@@ -150,9 +148,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* OAuth Buttons */}
             <div className="space-y-3">
-              {/* Google Login */}
               <Button
                 onClick={handleGoogleLogin}
                 disabled={isLoading}
@@ -160,11 +156,9 @@ export default function LoginPage() {
                 className="w-full"
                 size="lg"
               >
-                <Globe className="mr-2 h-4 w-4" />
-                Google
+                Continue with Google
               </Button>
 
-              {/* Facebook Login */}
               <Button
                 onClick={handleFacebookLogin}
                 disabled={isLoading}
@@ -172,12 +166,10 @@ export default function LoginPage() {
                 className="w-full"
                 size="lg"
               >
-                <Users className="mr-2 h-4 w-4" />
-                Facebook
+                Continue with Facebook
               </Button>
             </div>
 
-            {/* Sign Up Link */}
             <div className="text-center text-sm">
               Don&apos;t have an account?{" "}
               <Link
@@ -188,7 +180,6 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            {/* Help Links */}
             <div className="border-t border-border pt-4">
               <p className="text-center text-xs text-muted-foreground">
                 Having trouble? Contact us at{" "}
@@ -203,7 +194,6 @@ export default function LoginPage() {
           </CardContent>
         </Card>
 
-        {/* Footer Links */}
         <div className="mt-6 flex justify-center gap-4 text-xs text-muted-foreground">
           <Link href="/privacy" className="hover:text-primary">
             Privacy Policy
