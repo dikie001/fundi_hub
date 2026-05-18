@@ -11,7 +11,7 @@ import {
   Wrench,
   Check,
   ChevronRight,
-  ChevronLeft,
+  UserCheck,
   Phone,
   Mail,
   Lock,
@@ -22,18 +22,14 @@ import {
   Calendar,
   Award,
   CreditCard,
+  Users,
+  MessageSquare,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
 
 type UserType = "client" | "fundi"
 
@@ -54,13 +50,14 @@ type SignupFormData = {
   preferredContact: "whatsapp" | "call" | "email"
 }
 
-const totalSteps = 4
+const totalSteps = 5
 
 const steps = [
-  { id: 1, label: "Account" },
+  { id: 1, label: "Account Type" },
   { id: 2, label: "Basics" },
   { id: 3, label: "Details" },
-  { id: 4, label: "Security" },
+  { id: 4, label: "Contact" },
+  { id: 5, label: "Security" },
 ]
 
 export default function SignupPage() {
@@ -88,24 +85,35 @@ export default function SignupPage() {
     preferredContact: "whatsapp",
   })
 
+  // Dynamic header icon based on current step
+  const StepIcon = useMemo(() => {
+    if (currentStep === 1) return Users
+    if (currentStep === 2) return User
+    if (currentStep === 3) return userType === "fundi" ? Wrench : Briefcase
+    if (currentStep === 4) return MessageSquare
+    return ShieldCheck
+  }, [currentStep, userType])
+
   const stepTitle = useMemo(() => {
-    if (currentStep === 1) return "Choose account type"
-    if (currentStep === 2) return "About you"
+    if (currentStep === 1) return "Choose Account Type"
+    if (currentStep === 2) return "Welcome to FundiHub"
     if (currentStep === 3) {
-      return userType === "fundi" ? "Professional details" : "Project details"
+      return userType === "fundi" ? "Professional Details" : "Project Details"
     }
-    return "Contact & security"
+    if (currentStep === 4) return "Preferred Contact"
+    return "Security Setup"
   }, [currentStep, userType])
 
   const stepDescription = useMemo(() => {
-    if (currentStep === 1) return "Select who you are to begin the onboarding"
-    if (currentStep === 2) return "Enter your basic profile details"
+    if (currentStep === 1) return "Select who you are to begin your personalized onboarding."
+    if (currentStep === 2) return "Let's start with your basic profile details."
     if (currentStep === 3) {
       return userType === "fundi"
-        ? "Describe your expert trade and experience"
-        : "Describe the service details you need"
+        ? "Describe your expert trade and experience level."
+        : "Describe the specific service details you are looking for."
     }
-    return "Setup contact method and password"
+    if (currentStep === 4) return "How should clients or fundis reach you?"
+    return "Choose a strong password to protect your account."
   }, [currentStep, userType])
 
   const updateField = <K extends keyof SignupFormData>(
@@ -182,6 +190,14 @@ export default function SignupPage() {
     }
 
     if (currentStep === 4) {
+      if (!formData.preferredContact) {
+        setStepError("Please select a preferred contact method.")
+        return false
+      }
+      return true
+    }
+
+    if (currentStep === 5) {
       if (!formData.password || !formData.confirmPassword) {
         setStepError("Please enter and confirm your password.")
         return false
@@ -212,12 +228,6 @@ export default function SignupPage() {
   const goBack = () => {
     setStepError("")
     setCurrentStep((prev) => Math.max(1, prev - 1))
-  }
-
-  const handleStepClick = (stepId: number) => {
-    if (stepId >= currentStep) return
-    setStepError("")
-    setCurrentStep(stepId)
   }
 
   const handleEmailSignup = async (e: React.FormEvent) => {
@@ -257,392 +267,376 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="relative min-h-screen bg-linear-to-br from-background via-background to-primary/10 px-4 py-4 sm:px-6 sm:py-8 flex flex-col justify-center items-center overflow-hidden">
-      {/* Background visual graphics */}
-      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-primary/5 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-72 h-72 rounded-full bg-primary/5 blur-3xl pointer-events-none" />
-
-      <div className="w-full max-w-2xl relative z-10">
-        {/* Brand logo container */}
-        <div className="flex flex-col items-center mb-4">
-          <Link href="/" className="flex items-center gap-2 group transition-all duration-300">
+    <div className="min-h-screen bg-background text-foreground px-4 py-8 sm:px-6 sm:py-12 flex flex-col justify-center items-center font-sans select-none">
+      <div className="w-full max-w-md space-y-6">
+        {/* Header containing brand, step progress, and descriptions */}
+        <div className="flex flex-col items-center text-center space-y-4">
+          <Link href="/" className="flex items-center gap-2 group mb-2 transition-transform duration-300 hover:scale-102">
             <Image
               src="/logo.png"
               alt="Fundi Hub Logo"
-              width={36}
-              height={36}
-              className="h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+              width={32}
+              height={32}
+              className="h-8 w-auto object-contain"
               priority
             />
-            <span className="text-xl font-bold tracking-tight bg-linear-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+            <span className="text-lg font-bold tracking-tight text-foreground">
               FundiHub
             </span>
           </Link>
+
+          {/* Standard Icon Container utilizing standard primary color variables */}
+          <div className="p-3 bg-primary/10 border border-primary/20 rounded-xl text-primary flex items-center justify-center">
+            <StepIcon className="h-6 w-6 stroke-[1.8]" />
+          </div>
+
+          <div className="space-y-1.5">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              {stepTitle}
+            </h1>
+            <p className="text-xs text-muted-foreground max-w-xs mx-auto">
+              {stepDescription}
+            </p>
+          </div>
+
+          {/* Segmented Flat Progress Bars (using primary and muted variables) */}
+          <div className="flex gap-1.5 w-full pt-2">
+            {steps.map((s) => (
+              <div
+                key={s.id}
+                className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+                  currentStep >= s.id ? "bg-primary" : "bg-muted"
+                }`}
+              />
+            ))}
+          </div>
         </div>
 
-        <Card className="border-border/60 bg-card/95 backdrop-blur-xs shadow-xl rounded-xl overflow-hidden transition-all duration-300">
-          <CardHeader className="space-y-3 pb-4 pt-5 px-6 border-b border-border/40">
-            {/* Visual Stepper */}
-            <div className="select-none max-w-md mx-auto w-full">
-              <div className="flex items-start justify-between relative">
-                {steps.map((s, idx) => (
-                  <div key={s.id} className="flex-1 last:flex-initial relative flex flex-col items-center">
-                    {/* Connecting Line */}
-                    {idx < steps.length - 1 && (
-                      <div
-                        className={`absolute top-4 left-1/2 right-[-50%] h-0.5 z-0 transition-all duration-500 rounded-full ${
-                          currentStep > s.id ? "bg-primary" : "bg-muted-foreground/15"
-                        }`}
-                      />
-                    )}
-                    
-                    {/* Circle */}
-                    <div
-                      onClick={() => handleStepClick(s.id)}
-                      className={`w-8 h-8 rounded-full flex items-center justify-center border-2 text-xs font-bold transition-all duration-300 cursor-pointer relative z-10 ${
-                        currentStep > s.id
-                          ? "bg-primary border-primary text-primary-foreground shadow-[0_0_8px_rgba(var(--primary),0.3)]"
-                          : currentStep === s.id
-                          ? "bg-primary/10 border-primary text-primary bg-card"
-                          : "bg-muted border-muted-foreground/15 text-muted-foreground bg-card"
-                      }`}
-                    >
-                      {currentStep > s.id ? (
-                        <Check className="h-3.5 w-3.5 stroke-[3.5]" />
-                      ) : (
-                        s.id
-                      )}
-                    </div>
-
-                    {/* Label */}
-                    <span
-                      className={`mt-1.5 text-[10px] font-bold uppercase tracking-wider hidden sm:block transition-colors duration-250 relative z-10 ${
-                        currentStep === s.id
-                          ? "text-primary font-extrabold"
-                          : currentStep > s.id
-                          ? "text-foreground/80"
-                          : "text-muted-foreground/80"
-                      }`}
-                    >
-                      {s.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-1 pt-2 text-center sm:text-left">
-              <CardTitle className="text-xl font-bold tracking-tight text-foreground">
-                {stepTitle}
-              </CardTitle>
-              <CardDescription className="text-xs font-medium text-muted-foreground">
-                {stepDescription}
-              </CardDescription>
-            </div>
-          </CardHeader>
-
-          <CardContent className="p-5 sm:p-6 space-y-4">
-            <form onSubmit={handleEmailSignup} className="space-y-4">
-              {/* STEP 1: Account Type Selection (Condensed Cards) */}
+        {/* Dynamic Registration Card (using standard shadcn Card borders and backgrounds) */}
+        <Card className="border-border bg-card text-card-foreground shadow-lg rounded-xl overflow-hidden p-6 sm:p-8">
+          <CardContent className="p-0">
+            <form onSubmit={handleEmailSignup} className="space-y-5">
+              
+              {/* STEP 1: Account Type Selection (matching the reference styling using Shadcn theme) */}
               {currentStep === 1 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-1 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div className="space-y-3.5 animate-in fade-in slide-in-from-bottom-2 duration-300">
                   <div
                     onClick={() => setUserType("client")}
-                    className={`group relative flex flex-col items-center text-center p-5 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
+                    className={`group flex items-center justify-between p-4.5 rounded-xl border cursor-pointer transition-all duration-200 ${
                       userType === "client"
-                        ? "border-primary bg-primary/5 shadow-md shadow-primary/5 scale-[1.01]"
-                        : "border-border/80 hover:border-primary/45 hover:bg-muted/40 hover:shadow-xs"
+                        ? "border-primary bg-primary/5"
+                        : "border-border bg-card hover:border-primary/50 hover:bg-muted/50"
                     }`}
                   >
-                    <div
-                      className={`p-3 rounded-xl mb-3 transition-all duration-300 ${
-                        userType === "client"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
-                      }`}
-                    >
-                      <User className="h-8 w-8 stroke-[1.8]" />
-                    </div>
-                    <h3 className="font-bold text-base mb-1 text-foreground group-hover:text-primary transition-colors">
-                      I want to Hire
-                    </h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed">
-                      Find, connect, and book skilled experts for home repairs, wiring, cleaning, and more.
-                    </p>
-                    {userType === "client" && (
-                      <div className="absolute top-3 right-3 bg-primary text-primary-foreground rounded-full p-0.5 shadow-md shadow-primary/20">
-                        <Check className="h-3 w-3 stroke-[4]" />
+                    <div className="flex items-center gap-4">
+                      <div className={`p-2.5 rounded-lg transition-colors ${
+                        userType === "client" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground group-hover:text-primary"
+                      }`}>
+                        <User className="h-5 w-5" />
                       </div>
-                    )}
+                      <div className="text-left">
+                        <h3 className="font-semibold text-sm text-card-foreground group-hover:text-primary transition-colors">
+                          I want to Hire
+                        </h3>
+                        <p className="text-[10px] text-muted-foreground mt-0.5 max-w-[200px]">
+                          Find and hire trusted expert fundis.
+                        </p>
+                      </div>
+                    </div>
+                    <div className={`w-5 h-5 rounded-full border-2 transition-all flex items-center justify-center ${
+                      userType === "client" ? "border-primary bg-primary" : "border-muted-foreground/30"
+                    }`}>
+                      {userType === "client" && <Check className="h-3 w-3 text-primary-foreground stroke-[3.5]" />}
+                    </div>
                   </div>
 
                   <div
                     onClick={() => setUserType("fundi")}
-                    className={`group relative flex flex-col items-center text-center p-5 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
+                    className={`group flex items-center justify-between p-4.5 rounded-xl border cursor-pointer transition-all duration-200 ${
                       userType === "fundi"
-                        ? "border-primary bg-primary/5 shadow-md shadow-primary/5 scale-[1.01]"
-                        : "border-border/80 hover:border-primary/45 hover:bg-muted/40 hover:shadow-xs"
+                        ? "border-primary bg-primary/5"
+                        : "border-border bg-card hover:border-primary/50 hover:bg-muted/50"
                     }`}
                   >
-                    <div
-                      className={`p-3 rounded-xl mb-3 transition-all duration-300 ${
-                        userType === "fundi"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
-                      }`}
-                    >
-                      <Wrench className="h-8 w-8 stroke-[1.8]" />
-                    </div>
-                    <h3 className="font-bold text-base mb-1 text-foreground group-hover:text-primary transition-colors">
-                      I am a Fundi (Expert)
-                    </h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed">
-                      Create your expert trade profile, showcase your services, get booked for local jobs, and earn.
-                    </p>
-                    {userType === "fundi" && (
-                      <div className="absolute top-3 right-3 bg-primary text-primary-foreground rounded-full p-0.5 shadow-md shadow-primary/20">
-                        <Check className="h-3 w-3 stroke-[4]" />
+                    <div className="flex items-center gap-4">
+                      <div className={`p-2.5 rounded-lg transition-colors ${
+                        userType === "fundi" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground group-hover:text-primary"
+                      }`}>
+                        <Wrench className="h-5 w-5" />
                       </div>
-                    )}
+                      <div className="text-left">
+                        <h3 className="font-semibold text-sm text-card-foreground group-hover:text-primary transition-colors">
+                          I am a Fundi (Expert)
+                        </h3>
+                        <p className="text-[10px] text-muted-foreground mt-0.5 max-w-[200px]">
+                          Create a profile and find job opportunities.
+                        </p>
+                      </div>
+                    </div>
+                    <div className={`w-5 h-5 rounded-full border-2 transition-all flex items-center justify-center ${
+                      userType === "fundi" ? "border-primary bg-primary" : "border-muted-foreground/30"
+                    }`}>
+                      {userType === "fundi" && <Check className="h-3 w-3 text-primary-foreground stroke-[3.5]" />}
+                    </div>
                   </div>
                 </div>
               )}
 
-              {/* STEP 2: Basic Information (Efficient Layout) */}
+              {/* STEP 2: Basic Information */}
               {currentStep === 2 && (
-                <div className="space-y-3.5 mt-1 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="name" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <User className="h-3.5 w-3.5 text-muted-foreground/80" /> Full Name
-                      </Label>
-                      <Input
-                        id="name"
-                        value={formData.name}
-                        onChange={(e) => updateField("name", e.target.value)}
-                        placeholder="Jane Doe"
-                        disabled={isLoading}
-                        required
-                        className="h-10 px-3 border-border/80 focus-visible:ring-primary rounded-lg text-xs"
-                      />
-                    </div>
+                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="name" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <User className="h-3.5 w-3.5 text-primary" /> Full Name
+                    </Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => updateField("name", e.target.value)}
+                      placeholder="e.g. John Doe"
+                      disabled={isLoading}
+                      required
+                    />
+                  </div>
 
-                    <div className="space-y-1.5">
-                      <Label htmlFor="phone" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <Phone className="h-3.5 w-3.5 text-muted-foreground/80" /> Phone Number
-                      </Label>
-                      <Input
-                        id="phone"
-                        value={formData.phone}
-                        onChange={(e) => updateField("phone", e.target.value)}
-                        placeholder="+254 700 000 000"
-                        disabled={isLoading}
-                        required
-                        className="h-10 px-3 border-border/80 focus-visible:ring-primary rounded-lg text-xs"
-                      />
-                    </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="phone" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <Phone className="h-3.5 w-3.5 text-primary" /> Phone Number
+                    </Label>
+                    <Input
+                      id="phone"
+                      value={formData.phone}
+                      onChange={(e) => updateField("phone", e.target.value)}
+                      placeholder="e.g. +254 700 000 000"
+                      disabled={isLoading}
+                      required
+                    />
                   </div>
 
                   <div className="space-y-1.5">
                     <Label htmlFor="email" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                      <Mail className="h-3.5 w-3.5 text-muted-foreground/80" /> Email Address
+                      <Mail className="h-3.5 w-3.5 text-primary" /> Email Address
                     </Label>
                     <Input
                       id="email"
                       type="email"
                       value={formData.email}
                       onChange={(e) => updateField("email", e.target.value)}
-                      placeholder="jane@example.com"
+                      placeholder="e.g. johndoe@example.com"
                       disabled={isLoading}
                       required
-                      className="h-10 px-3 border-border/80 focus-visible:ring-primary rounded-lg text-xs"
                     />
                   </div>
                 </div>
               )}
 
-              {/* STEP 3: Dynamic Category / Trade Details (Perfect 2x2 Grid) */}
+              {/* STEP 3: Dynamic Category / Trade Details */}
               {currentStep === 3 && userType === "client" && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-1 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="projectCategory" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                      <Briefcase className="h-3.5 w-3.5 text-muted-foreground/80" /> Service Needed
-                    </Label>
-                    <Input
-                      id="projectCategory"
-                      value={formData.projectCategory}
-                      onChange={(e) => updateField("projectCategory", e.target.value)}
-                      placeholder="e.g. Plumbing, Wiring, Painting"
-                      disabled={isLoading}
-                      required
-                      className="h-10 px-3 border-border/80 focus-visible:ring-primary rounded-lg text-xs"
-                    />
-                  </div>
+                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="projectCategory" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                        <Briefcase className="h-3.5 w-3.5 text-primary" /> Service Needed
+                      </Label>
+                      <Input
+                        id="projectCategory"
+                        value={formData.projectCategory}
+                        onChange={(e) => updateField("projectCategory", e.target.value)}
+                        placeholder="e.g. Plumbing, Wiring"
+                        disabled={isLoading}
+                        required
+                      />
+                    </div>
 
-                  <div className="space-y-1.5">
-                    <Label htmlFor="projectLocation" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                      <MapPin className="h-3.5 w-3.5 text-muted-foreground/80" /> Project Location
-                    </Label>
-                    <Input
-                      id="projectLocation"
-                      value={formData.projectLocation}
-                      onChange={(e) => updateField("projectLocation", e.target.value)}
-                      placeholder="City or neighborhood"
-                      disabled={isLoading}
-                      required
-                      className="h-10 px-3 border-border/80 focus-visible:ring-primary rounded-lg text-xs"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label htmlFor="budgetRange" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                      <DollarSign className="h-3.5 w-3.5 text-muted-foreground/80" /> Budget Range (KES)
-                    </Label>
-                    <Input
-                      id="budgetRange"
-                      value={formData.budgetRange}
-                      onChange={(e) => updateField("budgetRange", e.target.value)}
-                      placeholder="e.g. KES 15,000 - 30,000"
-                      disabled={isLoading}
-                      required
-                      className="h-10 px-3 border-border/80 focus-visible:ring-primary rounded-lg text-xs"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label htmlFor="urgency" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                      <Calendar className="h-3.5 w-3.5 text-muted-foreground/80" /> How soon do you need help?
-                    </Label>
-                    <Input
-                      id="urgency"
-                      value={formData.urgency}
-                      onChange={(e) => updateField("urgency", e.target.value)}
-                      placeholder="e.g. Today, This Week, Flexible"
-                      disabled={isLoading}
-                      required
-                      className="h-10 px-3 border-border/80 focus-visible:ring-primary rounded-lg text-xs"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {currentStep === 3 && userType === "fundi" && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-1 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="trade" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                      <Wrench className="h-3.5 w-3.5 text-muted-foreground/80" /> Primary Skill / Trade
-                    </Label>
-                    <Input
-                      id="trade"
-                      value={formData.trade}
-                      onChange={(e) => updateField("trade", e.target.value)}
-                      placeholder="e.g. Electrician, Carpenter"
-                      disabled={isLoading}
-                      required
-                      className="h-10 px-3 border-border/80 focus-visible:ring-primary rounded-lg text-xs"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label htmlFor="yearsExperience" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                      <Award className="h-3.5 w-3.5 text-muted-foreground/80" /> Years of Experience
-                    </Label>
-                    <Input
-                      id="yearsExperience"
-                      value={formData.yearsExperience}
-                      onChange={(e) => updateField("yearsExperience", e.target.value)}
-                      placeholder="e.g. 5"
-                      disabled={isLoading}
-                      required
-                      className="h-10 px-3 border-border/80 focus-visible:ring-primary rounded-lg text-xs"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label htmlFor="serviceArea" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                      <MapPin className="h-3.5 w-3.5 text-muted-foreground/80" /> Service Area Coverage
-                    </Label>
-                    <Input
-                      id="serviceArea"
-                      value={formData.serviceArea}
-                      onChange={(e) => updateField("serviceArea", e.target.value)}
-                      placeholder="Counties or towns served"
-                      disabled={isLoading}
-                      required
-                      className="h-10 px-3 border-border/80 focus-visible:ring-primary rounded-lg text-xs"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label htmlFor="nationalId" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                      <CreditCard className="h-3.5 w-3.5 text-muted-foreground/80" /> National ID Number
-                    </Label>
-                    <Input
-                      id="nationalId"
-                      value={formData.nationalId}
-                      onChange={(e) => updateField("nationalId", e.target.value)}
-                      placeholder="For background safety"
-                      disabled={isLoading}
-                      required
-                      className="h-10 px-3 border-border/80 focus-visible:ring-primary rounded-lg text-xs"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* STEP 4: Contact & Security (Horizontal + Slim Design) */}
-              {currentStep === 4 && (
-                <div className="space-y-3.5 mt-1 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-bold text-foreground">
-                      Preferred Communication
-                    </Label>
-                    <div className="grid grid-cols-3 gap-2">
-                      <button
-                        type="button"
-                        onClick={() => updateField("preferredContact", "whatsapp")}
-                        className={`flex items-center justify-center gap-1.5 py-2 px-1 rounded-lg border-2 text-center transition-all duration-200 cursor-pointer ${
-                          formData.preferredContact === "whatsapp"
-                            ? "border-primary bg-primary/5 text-primary"
-                            : "border-border/80 hover:border-primary/25 hover:bg-muted/40 text-muted-foreground"
-                        }`}
-                      >
-                        <span className="text-base select-none">💬</span>
-                        <span className="text-xs font-bold">WhatsApp</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => updateField("preferredContact", "call")}
-                        className={`flex items-center justify-center gap-1.5 py-2 px-1 rounded-lg border-2 text-center transition-all duration-200 cursor-pointer ${
-                          formData.preferredContact === "call"
-                            ? "border-primary bg-primary/5 text-primary"
-                            : "border-border/80 hover:border-primary/25 hover:bg-muted/40 text-muted-foreground"
-                        }`}
-                      >
-                        <span className="text-base select-none">📞</span>
-                        <span className="text-xs font-bold">Call</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => updateField("preferredContact", "email")}
-                        className={`flex items-center justify-center gap-1.5 py-2 px-1 rounded-lg border-2 text-center transition-all duration-200 cursor-pointer ${
-                          formData.preferredContact === "email"
-                            ? "border-primary bg-primary/5 text-primary"
-                            : "border-border/80 hover:border-primary/25 hover:bg-muted/40 text-muted-foreground"
-                        }`}
-                      >
-                        <span className="text-base select-none">✉️</span>
-                        <span className="text-xs font-bold">Email</span>
-                      </button>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="projectLocation" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                        <MapPin className="h-3.5 w-3.5 text-primary" /> Project Location
+                      </Label>
+                      <Input
+                        id="projectLocation"
+                        value={formData.projectLocation}
+                        onChange={(e) => updateField("projectLocation", e.target.value)}
+                        placeholder="e.g. Nairobi, Kilimani"
+                        disabled={isLoading}
+                        required
+                      />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
+                      <Label htmlFor="budgetRange" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                        <DollarSign className="h-3.5 w-3.5 text-primary" /> Budget (KES)
+                      </Label>
+                      <Input
+                        id="budgetRange"
+                        value={formData.budgetRange}
+                        onChange={(e) => updateField("budgetRange", e.target.value)}
+                        placeholder="e.g. 10,000 - 20,000"
+                        disabled={isLoading}
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="urgency" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                        <Calendar className="h-3.5 w-3.5 text-primary" /> Urgency
+                      </Label>
+                      <Input
+                        id="urgency"
+                        value={formData.urgency}
+                        onChange={(e) => updateField("urgency", e.target.value)}
+                        placeholder="e.g. Today, Within a week"
+                        disabled={isLoading}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {currentStep === 3 && userType === "fundi" && (
+                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="trade" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                        <Wrench className="h-3.5 w-3.5 text-primary" /> Primary Skill / Trade
+                      </Label>
+                      <Input
+                        id="trade"
+                        value={formData.trade}
+                        onChange={(e) => updateField("trade", e.target.value)}
+                        placeholder="e.g. Plumber, Electrician"
+                        disabled={isLoading}
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="yearsExperience" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                        <Award className="h-3.5 w-3.5 text-primary" /> Experience (Years)
+                      </Label>
+                      <Input
+                        id="yearsExperience"
+                        value={formData.yearsExperience}
+                        onChange={(e) => updateField("yearsExperience", e.target.value)}
+                        placeholder="e.g. 5"
+                        disabled={isLoading}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="serviceArea" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                        <MapPin className="h-3.5 w-3.5 text-primary" /> Service Area Coverage
+                      </Label>
+                      <Input
+                        id="serviceArea"
+                        value={formData.serviceArea}
+                        onChange={(e) => updateField("serviceArea", e.target.value)}
+                        placeholder="e.g. Nairobi, Langata"
+                        disabled={isLoading}
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="nationalId" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                        <CreditCard className="h-3.5 w-3.5 text-primary" /> National ID Number
+                      </Label>
+                      <Input
+                        id="nationalId"
+                        value={formData.nationalId}
+                        onChange={(e) => updateField("nationalId", e.target.value)}
+                        placeholder="For background safety"
+                        disabled={isLoading}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 4: Preferred Contact (Select Option Cards matching theme colors) */}
+              {currentStep === 4 && (
+                <div className="space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div
+                    onClick={() => updateField("preferredContact", "whatsapp")}
+                    className={`group flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
+                      formData.preferredContact === "whatsapp"
+                        ? "border-primary bg-primary/5"
+                        : "border-border bg-card hover:border-primary/50 hover:bg-muted/50"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3.5">
+                      <span className="text-lg">💬</span>
+                      <div className="text-left">
+                        <h4 className="font-semibold text-xs text-card-foreground group-hover:text-primary transition-colors">WhatsApp Chat</h4>
+                        <p className="text-[9px] text-muted-foreground mt-0.5">Receive job and detail prompts instantly on WhatsApp.</p>
+                      </div>
+                    </div>
+                    <div className={`w-4 h-4 rounded-full border-2 transition-all flex items-center justify-center ${
+                      formData.preferredContact === "whatsapp" ? "border-primary bg-primary" : "border-muted-foreground/30"
+                    }`}>
+                      {formData.preferredContact === "whatsapp" && <Check className="h-2.5 w-2.5 text-primary-foreground stroke-[4]" />}
+                    </div>
+                  </div>
+
+                  <div
+                    onClick={() => updateField("preferredContact", "call")}
+                    className={`group flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
+                      formData.preferredContact === "call"
+                        ? "border-primary bg-primary/5"
+                        : "border-border bg-card hover:border-primary/50 hover:bg-muted/50"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3.5">
+                      <span className="text-lg">📞</span>
+                      <div className="text-left">
+                        <h4 className="font-semibold text-xs text-card-foreground group-hover:text-primary transition-colors">Direct Call</h4>
+                        <p className="text-[9px] text-muted-foreground mt-0.5">Allow direct voice calls for quick communication.</p>
+                      </div>
+                    </div>
+                    <div className={`w-4 h-4 rounded-full border-2 transition-all flex items-center justify-center ${
+                      formData.preferredContact === "call" ? "border-primary bg-primary" : "border-muted-foreground/30"
+                    }`}>
+                      {formData.preferredContact === "call" && <Check className="h-2.5 w-2.5 text-primary-foreground stroke-[4]" />}
+                    </div>
+                  </div>
+
+                  <div
+                    onClick={() => updateField("preferredContact", "email")}
+                    className={`group flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
+                      formData.preferredContact === "email"
+                        ? "border-primary bg-primary/5"
+                        : "border-border bg-card hover:border-primary/50 hover:bg-muted/50"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3.5">
+                      <span className="text-lg">✉️</span>
+                      <div className="text-left">
+                        <h4 className="font-semibold text-xs text-card-foreground group-hover:text-primary transition-colors">Email Dispatch</h4>
+                        <p className="text-[9px] text-muted-foreground mt-0.5">Prefer formal mail updates and communications.</p>
+                      </div>
+                    </div>
+                    <div className={`w-4 h-4 rounded-full border-2 transition-all flex items-center justify-center ${
+                      formData.preferredContact === "email" ? "border-primary bg-primary" : "border-muted-foreground/30"
+                    }`}>
+                      {formData.preferredContact === "email" && <Check className="h-2.5 w-2.5 text-primary-foreground stroke-[4]" />}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 5: Security Credentials */}
+              {currentStep === 5 && (
+                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
                       <Label htmlFor="password" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <Lock className="h-3.5 w-3.5 text-muted-foreground/80" /> Password
+                        <Lock className="h-3.5 w-3.5 text-primary" /> Password
                       </Label>
                       <div className="relative">
                         <Input
@@ -651,28 +645,23 @@ export default function SignupPage() {
                           value={formData.password}
                           onChange={(e) => updateField("password", e.target.value)}
                           placeholder="Min 6 characters"
-                          className="h-10 pl-3 pr-9 border-border/80 focus-visible:ring-primary rounded-lg text-xs w-full"
+                          className="pl-3.5 pr-10 w-full"
                           disabled={isLoading}
                           required
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 transition-colors"
-                          disabled={isLoading}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                         >
-                          {showPassword ? (
-                            <EyeOff className="h-3.5 w-3.5" />
-                          ) : (
-                            <Eye className="h-3.5 w-3.5" />
-                          )}
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
                       </div>
                     </div>
 
                     <div className="space-y-1.5">
                       <Label htmlFor="confirmPassword" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <Lock className="h-3.5 w-3.5 text-muted-foreground/80" /> Confirm Password
+                        <Lock className="h-3.5 w-3.5 text-primary" /> Confirm Password
                       </Label>
                       <div className="relative">
                         <Input
@@ -681,47 +670,43 @@ export default function SignupPage() {
                           value={formData.confirmPassword}
                           onChange={(e) => updateField("confirmPassword", e.target.value)}
                           placeholder="Repeat password"
-                          className="h-10 pl-3 pr-9 border-border/80 focus-visible:ring-primary rounded-lg text-xs w-full"
+                          className="pl-3.5 pr-10 w-full"
                           disabled={isLoading}
                           required
                         />
                         <button
                           type="button"
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 transition-colors"
-                          disabled={isLoading}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                         >
-                          {showConfirmPassword ? (
-                            <EyeOff className="h-3.5 w-3.5" />
-                          ) : (
-                            <Eye className="h-3.5 w-3.5" />
-                          )}
+                          {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-2.5 p-2 px-3 rounded-lg bg-muted/20 border border-border/30 transition-all duration-300">
+                  {/* Terms & Conditions Box */}
+                  <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-muted/40 border border-border transition-all duration-300">
                     <Checkbox
                       id="terms"
                       checked={agreedToTerms}
                       onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
                       disabled={isLoading}
-                      className="mt-0.5 border-muted-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary rounded"
+                      className="mt-0.5 border-input data-[state=checked]:bg-primary data-[state=checked]:border-primary rounded"
                     />
                     <Label
                       htmlFor="terms"
-                      className="text-[10px] leading-relaxed text-muted-foreground select-none cursor-pointer"
+                      className="text-[9.5px] leading-relaxed text-muted-foreground select-none cursor-pointer"
                     >
                       I agree to the{" "}
                       <Link href="/terms" className="text-primary hover:underline font-bold">
-                        Terms
+                        Terms of Service
                       </Link>{" "}
                       and{" "}
                       <Link href="/privacy" className="text-primary hover:underline font-bold">
                         Privacy Policy
                       </Link>
-                      . I understand my data is verified for onboarding and job matches.
+                      . I understand my trade identity will be verified before matching jobs.
                     </Label>
                   </div>
                 </div>
@@ -729,38 +714,45 @@ export default function SignupPage() {
 
               {/* Step Validation Error */}
               {stepError && (
-                <div className="rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs text-destructive flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
-                  <ShieldCheck className="h-3.5 w-3.5 flex-shrink-0 rotate-180" />
+                <div className="rounded-xl border border-destructive/20 bg-destructive/10 px-3.5 py-2 text-[11px] text-destructive flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                  <ShieldCheck className="h-4 w-4 flex-shrink-0 rotate-180" />
                   <span>{stepError}</span>
                 </div>
               )}
 
-              {/* Navigation Action Buttons */}
-              <div className="flex items-center justify-between gap-3 pt-3 border-t border-border/30">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={goBack}
-                  disabled={currentStep === 1 || isLoading}
-                  className="h-10 px-4 border-border hover:bg-muted/40 rounded-lg font-bold flex items-center gap-1 transition-all text-xs cursor-pointer"
-                >
-                  <ChevronLeft className="h-3.5 w-3.5 stroke-[2.5]" /> Back
-                </Button>
+              {/* Navigation Action Buttons (styled matching reference with standard buttons) */}
+              <div className="flex items-center justify-between gap-4 pt-4 border-t border-border">
+                {currentStep > 1 ? (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={goBack}
+                    disabled={isLoading}
+                    className="text-muted-foreground hover:text-foreground font-medium text-xs transition-colors cursor-pointer"
+                  >
+                    Back
+                  </Button>
+                ) : (
+                  <div className="w-1" />
+                )}
 
                 {currentStep < totalSteps ? (
                   <Button
                     type="button"
+                    size="sm"
                     onClick={goNext}
                     disabled={isLoading}
-                    className="h-10 px-5 bg-primary text-primary-foreground hover:bg-primary/95 shadow-sm shadow-primary/10 rounded-lg font-bold flex items-center gap-1 transition-all text-xs cursor-pointer"
+                    className="font-bold flex items-center gap-1.5 cursor-pointer"
                   >
-                    Next Step <ChevronRight className="h-3.5 w-3.5 stroke-[2.5]" />
+                    Continue <ChevronRight className="h-3.5 w-3.5 stroke-[2.5]" />
                   </Button>
                 ) : (
                   <Button
                     type="submit"
+                    size="sm"
                     disabled={isLoading || !userType}
-                    className="h-10 px-5 bg-primary text-primary-foreground hover:bg-primary/95 shadow-md shadow-primary/15 rounded-lg font-extrabold flex items-center gap-1 transition-all text-xs cursor-pointer"
+                    className="font-extrabold flex items-center gap-1.5 cursor-pointer"
                   >
                     {isLoading ? (
                       <>
@@ -775,29 +767,21 @@ export default function SignupPage() {
                 )}
               </div>
             </form>
-
-            <div className="text-center text-xs pt-1 text-muted-foreground">
-              Already have an account?{" "}
-              <Link href="/auth/login" className="font-bold text-primary hover:underline">
-                Sign in
-              </Link>
-            </div>
           </CardContent>
         </Card>
 
-        {/* Footer legal links */}
-        <div className="mt-4 flex justify-center gap-4 text-[10px] text-muted-foreground/80">
-          <Link href="/privacy" className="hover:text-primary transition-colors font-semibold">
-            Privacy Policy
-          </Link>
-          <span>•</span>
-          <Link href="/terms" className="hover:text-primary transition-colors font-semibold">
-            Terms of Service
-          </Link>
-          <span>•</span>
-          <Link href="/" className="hover:text-primary transition-colors font-semibold">
-            Back to Home
-          </Link>
+        {/* Step X of 5 Sub-footer */}
+        <div className="text-center space-y-3.5">
+          <p className="text-[10px] text-muted-foreground font-semibold tracking-wider uppercase">
+            Step {currentStep} of {totalSteps} · Secure & Encrypted
+          </p>
+
+          <div className="text-xs text-muted-foreground">
+            Already have an account?{" "}
+            <Link href="/auth/login" className="font-bold text-primary hover:underline">
+              Sign in
+            </Link>
+          </div>
         </div>
       </div>
     </div>
