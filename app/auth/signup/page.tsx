@@ -37,6 +37,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog"
 
 type UserType = "client" | "fundi"
 
@@ -114,6 +122,9 @@ export default function SignupPage() {
   const [currentStep, setCurrentStep] = useState(1)
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [stepError, setStepError] = useState("")
+  const [isOtherModalOpen, setIsOtherModalOpen] = useState(false)
+  const [otherFieldType, setOtherFieldType] = useState<"trade" | "projectCategory" | null>(null)
+  const [otherInputValue, setOtherInputValue] = useState("")
   const [formData, setFormData] = useState<SignupFormData>({
     name: "",
     email: "",
@@ -130,6 +141,21 @@ export default function SignupPage() {
     nationalId: "",
     preferredContact: "whatsapp",
   })
+
+  // Memoized trade options containing custom inputs if they are set
+  const clientTrades = useMemo(() => {
+    if (formData.projectCategory && !TRADES_LIST.includes(formData.projectCategory)) {
+      return [...TRADES_LIST, formData.projectCategory]
+    }
+    return TRADES_LIST
+  }, [formData.projectCategory])
+
+  const fundiTrades = useMemo(() => {
+    if (formData.trade && !TRADES_LIST.includes(formData.trade)) {
+      return [...TRADES_LIST, formData.trade]
+    }
+    return TRADES_LIST
+  }, [formData.trade])
 
   // Dynamic header icon based on current step
   const StepIcon = useMemo(() => {
@@ -171,6 +197,26 @@ export default function SignupPage() {
     value: SignupFormData[K]
   ) => {
     setFormData((prev) => ({ ...prev, [key]: value }))
+  }
+
+  const handleSelectProjectCategory = (val: string) => {
+    if (val === "Other") {
+      setOtherFieldType("projectCategory")
+      setOtherInputValue("")
+      setIsOtherModalOpen(true)
+    } else {
+      updateField("projectCategory", val)
+    }
+  }
+
+  const handleSelectTrade = (val: string) => {
+    if (val === "Other") {
+      setOtherFieldType("trade")
+      setOtherInputValue("")
+      setIsOtherModalOpen(true)
+    } else {
+      updateField("trade", val)
+    }
   }
 
   const validateStep = () => {
