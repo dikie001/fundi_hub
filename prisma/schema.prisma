@@ -1,0 +1,99 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserType {
+  client
+  fundi
+  admin
+}
+
+enum PremiumLevel {
+  none
+  verified
+  top
+}
+
+enum ReferralStatus {
+  pending
+  registered
+  paid
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String
+  email         String         @unique
+  phone         String
+  password      String
+  role          UserType       @default(client)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  
+  fundiProfile  FundiProfile?
+  clientProfile ClientProfile?
+  referrals     Referral[]
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  icon      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FundiProfile {
+  id               String       @id @default(cuid())
+  userId           String       @unique
+  user             User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title            String
+  category         String
+  rating           Float        @default(5.0)
+  reviews          Int          @default(0)
+  image            String?
+  trade            String
+  yearsExperience  String
+  serviceArea      String
+  nationalId       String?
+  preferredContact String       @default("whatsapp")
+  premiumLevel     PremiumLevel @default(none)
+  isEmergency      Boolean      @default(false)
+  isNearby         Boolean      @default(false)
+  description      String?      @db.Text
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+model ClientProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  projectCategory String?
+  projectLocation String?
+  budgetRange     String?
+  urgency         String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Referral {
+  id           String         @id @default(cuid())
+  referrerId   String
+  referrer     User           @relation(fields: [referrerId], references: [id], onDelete: Cascade)
+  
+  refereeName  String
+  refereePhone String
+  refereeTrade String
+  status       ReferralStatus @default(pending)
+  commission   Float          @default(100.0)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
