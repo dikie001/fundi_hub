@@ -52,6 +52,45 @@ type SignupFormData = {
 
 const totalSteps = 5
 
+const TRADES_LIST = [
+  "Electrician",
+  "Plumber",
+  "Carpenter",
+  "Painter",
+  "Mason",
+  "Tiler",
+  "Welder",
+  "Landscaper",
+  "Cleaner",
+  "Mechanic",
+  "Locksmith",
+  "HVAC Tech"
+]
+
+const EXPERIENCE_LEVELS = [
+  { value: "1", label: "1 Year" },
+  { value: "2", label: "2 Years" },
+  { value: "3", label: "3 Years" },
+  { value: "4", label: "4 Years" },
+  { value: "5", label: "5 - 9 Years" },
+  { value: "10", label: "10+ Years" }
+]
+
+const BUDGET_RANGES = [
+  "Below KES 5,000",
+  "KES 5,000 - 10,000",
+  "KES 10,000 - 20,000",
+  "KES 20,000 - 50,000",
+  "Over KES 50,000"
+]
+
+const URGENCY_LEVELS = [
+  "Today / Immediate",
+  "Within 3 Days",
+  "Within a Week",
+  "Flexible / Planning"
+]
+
 const steps = [
   { id: 1, label: "Account Type" },
   { id: 2, label: "Basics" },
@@ -399,129 +438,146 @@ export default function SignupPage() {
 
               {/* STEP 3: Dynamic Category / Trade Details */}
               {currentStep === 3 && userType === "client" && (
-                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="projectCategory" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <Briefcase className="h-3.5 w-3.5 text-primary" /> Service Needed
-                      </Label>
-                      <Input
-                        id="projectCategory"
-                        value={formData.projectCategory}
-                        onChange={(e) => updateField("projectCategory", e.target.value)}
-                        placeholder="e.g. Plumbing, Wiring"
-                        disabled={isLoading}
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <Label htmlFor="projectLocation" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <MapPin className="h-3.5 w-3.5 text-primary" /> Project Location
-                      </Label>
-                      <Input
-                        id="projectLocation"
-                        value={formData.projectLocation}
-                        onChange={(e) => updateField("projectLocation", e.target.value)}
-                        placeholder="e.g. Nairobi, Kilimani"
-                        disabled={isLoading}
-                        required
-                      />
-                    </div>
+                <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="projectCategory" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <Briefcase className="h-3.5 w-3.5 text-primary" /> Service Needed
+                    </Label>
+                    <select
+                      id="projectCategory"
+                      value={formData.projectCategory}
+                      onChange={(e) => updateField("projectCategory", e.target.value)}
+                      className="flex h-9.5 w-full rounded-xl border border-input bg-card px-3.5 py-1.5 text-xs text-foreground shadow-sm transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer appearance-none"
+                      disabled={isLoading}
+                      required
+                    >
+                      <option value="" disabled className="bg-card text-muted-foreground">Select the service you need...</option>
+                      {TRADES_LIST.map((t) => (
+                        <option key={t} value={t} className="bg-card text-foreground">{t}</option>
+                      ))}
+                    </select>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="budgetRange" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <DollarSign className="h-3.5 w-3.5 text-primary" /> Budget (KES)
-                      </Label>
-                      <Input
-                        id="budgetRange"
-                        value={formData.budgetRange}
-                        onChange={(e) => updateField("budgetRange", e.target.value)}
-                        placeholder="e.g. 10,000 - 20,000"
-                        disabled={isLoading}
-                        required
-                      />
-                    </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="projectLocation" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <MapPin className="h-3.5 w-3.5 text-primary" /> Project Location
+                    </Label>
+                    <Input
+                      id="projectLocation"
+                      value={formData.projectLocation}
+                      onChange={(e) => updateField("projectLocation", e.target.value)}
+                      placeholder="e.g. Nairobi, Kilimani"
+                      disabled={isLoading}
+                      required
+                    />
+                  </div>
 
-                    <div className="space-y-1.5">
-                      <Label htmlFor="urgency" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <Calendar className="h-3.5 w-3.5 text-primary" /> Urgency
-                      </Label>
-                      <Input
-                        id="urgency"
-                        value={formData.urgency}
-                        onChange={(e) => updateField("urgency", e.target.value)}
-                        placeholder="e.g. Today, Within a week"
-                        disabled={isLoading}
-                        required
-                      />
-                    </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="budgetRange" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <DollarSign className="h-3.5 w-3.5 text-primary" /> Budget Range (KES)
+                    </Label>
+                    <select
+                      id="budgetRange"
+                      value={formData.budgetRange}
+                      onChange={(e) => updateField("budgetRange", e.target.value)}
+                      className="flex h-9.5 w-full rounded-xl border border-input bg-card px-3.5 py-1.5 text-xs text-foreground shadow-sm transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer appearance-none"
+                      disabled={isLoading}
+                      required
+                    >
+                      <option value="" disabled className="bg-card text-muted-foreground">Select a budget range...</option>
+                      {BUDGET_RANGES.map((b) => (
+                        <option key={b} value={b} className="bg-card text-foreground">{b}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="urgency" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <Calendar className="h-3.5 w-3.5 text-primary" /> Urgency / Timeline
+                    </Label>
+                    <select
+                      id="urgency"
+                      value={formData.urgency}
+                      onChange={(e) => updateField("urgency", e.target.value)}
+                      className="flex h-9.5 w-full rounded-xl border border-input bg-card px-3.5 py-1.5 text-xs text-foreground shadow-sm transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer appearance-none"
+                      disabled={isLoading}
+                      required
+                    >
+                      <option value="" disabled className="bg-card text-muted-foreground">Select urgency timeline...</option>
+                      {URGENCY_LEVELS.map((u) => (
+                        <option key={u} value={u} className="bg-card text-foreground">{u}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               )}
 
               {currentStep === 3 && userType === "fundi" && (
-                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="trade" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <Wrench className="h-3.5 w-3.5 text-primary" /> Primary Skill / Trade
-                      </Label>
-                      <Input
-                        id="trade"
-                        value={formData.trade}
-                        onChange={(e) => updateField("trade", e.target.value)}
-                        placeholder="e.g. Plumber, Electrician"
-                        disabled={isLoading}
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <Label htmlFor="yearsExperience" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <Award className="h-3.5 w-3.5 text-primary" /> Experience (Years)
-                      </Label>
-                      <Input
-                        id="yearsExperience"
-                        value={formData.yearsExperience}
-                        onChange={(e) => updateField("yearsExperience", e.target.value)}
-                        placeholder="e.g. 5"
-                        disabled={isLoading}
-                        required
-                      />
-                    </div>
+                <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="trade" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <Wrench className="h-3.5 w-3.5 text-primary" /> Primary Skill / Trade
+                    </Label>
+                    <select
+                      id="trade"
+                      value={formData.trade}
+                      onChange={(e) => updateField("trade", e.target.value)}
+                      className="flex h-9.5 w-full rounded-xl border border-input bg-card px-3.5 py-1.5 text-xs text-foreground shadow-sm transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer appearance-none"
+                      disabled={isLoading}
+                      required
+                    >
+                      <option value="" disabled className="bg-card text-muted-foreground">Select your primary trade...</option>
+                      {TRADES_LIST.map((t) => (
+                        <option key={t} value={t} className="bg-card text-foreground">{t}</option>
+                      ))}
+                    </select>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="serviceArea" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <MapPin className="h-3.5 w-3.5 text-primary" /> Service Area Coverage
-                      </Label>
-                      <Input
-                        id="serviceArea"
-                        value={formData.serviceArea}
-                        onChange={(e) => updateField("serviceArea", e.target.value)}
-                        placeholder="e.g. Nairobi, Langata"
-                        disabled={isLoading}
-                        required
-                      />
-                    </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="yearsExperience" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <Award className="h-3.5 w-3.5 text-primary" /> Experience (Years)
+                    </Label>
+                    <select
+                      id="yearsExperience"
+                      value={formData.yearsExperience}
+                      onChange={(e) => updateField("yearsExperience", e.target.value)}
+                      className="flex h-9.5 w-full rounded-xl border border-input bg-card px-3.5 py-1.5 text-xs text-foreground shadow-sm transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer appearance-none"
+                      disabled={isLoading}
+                      required
+                    >
+                      <option value="" disabled className="bg-card text-muted-foreground">Select years of experience...</option>
+                      {EXPERIENCE_LEVELS.map((exp) => (
+                        <option key={exp.value} value={exp.value} className="bg-card text-foreground">{exp.label}</option>
+                      ))}
+                    </select>
+                  </div>
 
-                    <div className="space-y-1.5">
-                      <Label htmlFor="nationalId" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <CreditCard className="h-3.5 w-3.5 text-primary" /> National ID Number
-                      </Label>
-                      <Input
-                        id="nationalId"
-                        value={formData.nationalId}
-                        onChange={(e) => updateField("nationalId", e.target.value)}
-                        placeholder="For background safety"
-                        disabled={isLoading}
-                        required
-                      />
-                    </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="serviceArea" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <MapPin className="h-3.5 w-3.5 text-primary" /> Service Area Coverage
+                    </Label>
+                    <Input
+                      id="serviceArea"
+                      value={formData.serviceArea}
+                      onChange={(e) => updateField("serviceArea", e.target.value)}
+                      placeholder="e.g. Nairobi, Langata"
+                      disabled={isLoading}
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="nationalId" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <CreditCard className="h-3.5 w-3.5 text-primary" /> National ID Number
+                    </Label>
+                    <Input
+                      id="nationalId"
+                      value={formData.nationalId}
+                      onChange={(e) => updateField("nationalId", e.target.value)}
+                      placeholder="For background safety"
+                      disabled={isLoading}
+                      required
+                    />
                   </div>
                 </div>
               )}
@@ -578,7 +634,7 @@ export default function SignupPage() {
               {/* STEP 5: Security Credentials */}
               {currentStep === 5 && (
                 <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-4">
                     <div className="space-y-1.5">
                       <Label htmlFor="password" className="text-xs font-bold text-foreground flex items-center gap-1.5">
                         <Lock className="h-3.5 w-3.5 text-primary" /> Password
@@ -639,9 +695,9 @@ export default function SignupPage() {
                       disabled={isLoading}
                       className="mt-0.5 border-input data-[state=checked]:bg-primary data-[state=checked]:border-primary rounded flex-shrink-0"
                     />
-                    <Label
+                    <label
                       htmlFor="terms"
-                      className="flex-1 text-xs leading-normal text-muted-foreground cursor-pointer font-normal"
+                      className="flex-1 text-xs leading-relaxed text-muted-foreground cursor-pointer font-normal block"
                     >
                       I agree to the{" "}
                       <Link href="/terms" className="text-primary hover:underline font-bold">
@@ -655,7 +711,7 @@ export default function SignupPage() {
                       {userType === "fundi"
                         ? "I understand my trade identity will be verified before matching jobs."
                         : "I understand my project and contact details will be shared with matched fundis."}
-                    </Label>
+                    </label>
                   </div>
                 </div>
               )}
