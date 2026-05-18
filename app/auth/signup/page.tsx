@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { useMemo, useState } from "react"
 import {
   Eye,
@@ -248,14 +249,13 @@ export default function SignupPage() {
         {/* Brand Logo / Home link */}
         <div className="flex flex-col items-center mb-6">
           <Link href="/" className="flex items-center gap-2 group transition-all duration-300">
-            <img
+            <Image
               src="/logo.png"
               alt="Fundi Hub Logo"
+              width={40}
+              height={40}
               className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-              onError={(e) => {
-                // Fallback in case logo.png doesn't exist yet
-                e.currentTarget.style.display = "none"
-              }}
+              priority
             />
             <span className="text-2xl font-bold tracking-tight bg-linear-to-r from-primary to-primary/80 bg-clip-text text-transparent">
               FundiHub
