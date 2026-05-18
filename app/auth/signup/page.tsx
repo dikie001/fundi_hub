@@ -631,7 +631,7 @@ export default function SignupPage() {
                   </div>
 
                   {/* Terms & Conditions Box */}
-                  <div className="flex items-start gap-3 p-3.5 rounded-xl bg-muted/40 border border-border transition-all duration-300 w-full">
+                  <div className="flex items-start gap-2.5 pt-2 select-none w-full">
                     <Checkbox
                       id="terms"
                       checked={agreedToTerms}
@@ -641,7 +641,7 @@ export default function SignupPage() {
                     />
                     <Label
                       htmlFor="terms"
-                      className="flex-1 text-xs leading-normal text-muted-foreground select-none cursor-pointer font-normal"
+                      className="flex-1 text-xs leading-normal text-muted-foreground cursor-pointer font-normal"
                     >
                       I agree to the{" "}
                       <Link href="/terms" className="text-primary hover:underline font-bold">
