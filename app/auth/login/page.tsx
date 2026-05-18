@@ -36,7 +36,7 @@ export default function LoginPage() {
 
       const data = await response.json()
       if (!response.ok) {
-        setLoginError(data.error || "Invalid email or password.")
+        setLoginError(data.error || "Invalid phone number or password.")
       } else {
         window.location.href = "/"
       }
@@ -115,12 +115,12 @@ export default function LoginPage() {
               )}
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium">
-                  Email address
+                  Phone number
                 </Label>
                 <Input
                   id="email"
-                  type="email"
-                  placeholder="you@example.com"
+                  type="text"
+                  placeholder="e.g. +254 700 000 000"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}

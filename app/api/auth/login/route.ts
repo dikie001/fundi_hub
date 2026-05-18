@@ -9,18 +9,24 @@ export async function POST(request: Request) {
 
     if (!email || !password) {
       return NextResponse.json(
-        { error: "Email and password are required" },
+        { error: "Phone number and password are required" },
         { status: 400 }
       )
     }
 
+    let searchEmail = email.toLowerCase().trim()
+    if (!searchEmail.includes("@")) {
+      const cleanPhone = searchEmail.replace(/[^0-9]/g, "")
+      searchEmail = `${cleanPhone}@fundihub.com`
+    }
+
     const user = await db.user.findUnique({
-      where: { email: email.toLowerCase() },
+      where: { email: searchEmail },
     })
 
     if (!user) {
       return NextResponse.json(
-        { error: "Invalid email or password" },
+        { error: "Invalid phone number or password" },
         { status: 401 }
       )
     }
@@ -32,7 +38,7 @@ export async function POST(request: Request) {
         // Plaintext seeded user is valid
       } else {
         return NextResponse.json(
-          { error: "Invalid email or password" },
+          { error: "Invalid phone number or password" },
           { status: 401 }
         )
       }

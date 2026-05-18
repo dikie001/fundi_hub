@@ -143,10 +143,6 @@ export default function SignupPage() {
         setStepError("Please enter your full name.")
         return false
       }
-      if (!formData.email.trim() || !formData.email.includes("@")) {
-        setStepError("Please enter a valid email address.")
-        return false
-      }
       if (!formData.phone.trim()) {
         setStepError("Please enter your phone number.")
         return false
@@ -254,6 +250,7 @@ export default function SignupPage() {
         body: JSON.stringify({
           userType,
           ...formData,
+          email: `${formData.phone.replace(/[^0-9]/g, "")}@fundihub.com`,
         }),
       })
 
@@ -393,21 +390,6 @@ export default function SignupPage() {
                       value={formData.phone}
                       onChange={(e) => updateField("phone", e.target.value)}
                       placeholder="e.g. +254 700 000 000"
-                      disabled={isLoading}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label htmlFor="email" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                      <Mail className="h-3.5 w-3.5 text-primary" /> Email Address
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => updateField("email", e.target.value)}
-                      placeholder="e.g. johndoe@example.com"
                       disabled={isLoading}
                       required
                     />
@@ -588,28 +570,6 @@ export default function SignupPage() {
                       formData.preferredContact === "call" ? "border-primary bg-primary" : "border-muted-foreground/30"
                     }`}>
                       {formData.preferredContact === "call" && <Check className="h-2.5 w-2.5 text-primary-foreground stroke-[4]" />}
-                    </div>
-                  </div>
-
-                  <div
-                    onClick={() => updateField("preferredContact", "email")}
-                    className={`group flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
-                      formData.preferredContact === "email"
-                        ? "border-primary bg-primary/5"
-                        : "border-border bg-card hover:border-primary/50 hover:bg-muted/50"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3.5">
-                      <span className="text-lg">✉️</span>
-                      <div className="text-left">
-                        <h4 className="font-semibold text-xs text-card-foreground group-hover:text-primary transition-colors">Email Dispatch</h4>
-                        <p className="text-[9px] text-muted-foreground mt-0.5">Prefer formal mail updates and communications.</p>
-                      </div>
-                    </div>
-                    <div className={`w-4 h-4 rounded-full border-2 transition-all flex items-center justify-center ${
-                      formData.preferredContact === "email" ? "border-primary bg-primary" : "border-muted-foreground/30"
-                    }`}>
-                      {formData.preferredContact === "email" && <Check className="h-2.5 w-2.5 text-primary-foreground stroke-[4]" />}
                     </div>
                   </div>
                 </div>
