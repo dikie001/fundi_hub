@@ -450,19 +450,22 @@ export default function SignupPage() {
                     <Label htmlFor="projectCategory" className="text-xs font-bold text-foreground flex items-center gap-1.5">
                       <Briefcase className="h-3.5 w-3.5 text-primary" /> Service Needed
                     </Label>
-                    <select
-                      id="projectCategory"
+                    <Select
                       value={formData.projectCategory}
-                      onChange={(e) => updateField("projectCategory", e.target.value)}
-                      className="flex h-9.5 w-full rounded-xl border border-input bg-card px-3.5 py-1.5 text-xs text-foreground shadow-sm transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer appearance-none"
+                      onValueChange={(val) => updateField("projectCategory", val)}
                       disabled={isLoading}
-                      required
                     >
-                      <option value="" disabled className="bg-card text-muted-foreground">Select the service you need...</option>
-                      {TRADES_LIST.map((t) => (
-                        <option key={t} value={t} className="bg-card text-foreground">{t}</option>
-                      ))}
-                    </select>
+                      <SelectTrigger id="projectCategory" className="w-full">
+                        <SelectValue placeholder="Select the service you need..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {TRADES_LIST.map((t) => (
+                          <SelectItem key={t} value={t}>
+                            {t}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="space-y-1.5">
@@ -483,38 +486,44 @@ export default function SignupPage() {
                     <Label htmlFor="budgetRange" className="text-xs font-bold text-foreground flex items-center gap-1.5">
                       <DollarSign className="h-3.5 w-3.5 text-primary" /> Budget Range (KES)
                     </Label>
-                    <select
-                      id="budgetRange"
+                    <Select
                       value={formData.budgetRange}
-                      onChange={(e) => updateField("budgetRange", e.target.value)}
-                      className="flex h-9.5 w-full rounded-xl border border-input bg-card px-3.5 py-1.5 text-xs text-foreground shadow-sm transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer appearance-none"
+                      onValueChange={(val) => updateField("budgetRange", val)}
                       disabled={isLoading}
-                      required
                     >
-                      <option value="" disabled className="bg-card text-muted-foreground">Select a budget range...</option>
-                      {BUDGET_RANGES.map((b) => (
-                        <option key={b} value={b} className="bg-card text-foreground">{b}</option>
-                      ))}
-                    </select>
+                      <SelectTrigger id="budgetRange" className="w-full">
+                        <SelectValue placeholder="Select a budget range..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {BUDGET_RANGES.map((b) => (
+                          <SelectItem key={b} value={b}>
+                            {b}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="space-y-1.5">
                     <Label htmlFor="urgency" className="text-xs font-bold text-foreground flex items-center gap-1.5">
                       <Calendar className="h-3.5 w-3.5 text-primary" /> Urgency / Timeline
                     </Label>
-                    <select
-                      id="urgency"
+                    <Select
                       value={formData.urgency}
-                      onChange={(e) => updateField("urgency", e.target.value)}
-                      className="flex h-9.5 w-full rounded-xl border border-input bg-card px-3.5 py-1.5 text-xs text-foreground shadow-sm transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer appearance-none"
+                      onValueChange={(val) => updateField("urgency", val)}
                       disabled={isLoading}
-                      required
                     >
-                      <option value="" disabled className="bg-card text-muted-foreground">Select urgency timeline...</option>
-                      {URGENCY_LEVELS.map((u) => (
-                        <option key={u} value={u} className="bg-card text-foreground">{u}</option>
-                      ))}
-                    </select>
+                      <SelectTrigger id="urgency" className="w-full">
+                        <SelectValue placeholder="Select urgency timeline..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {URGENCY_LEVELS.map((u) => (
+                          <SelectItem key={u} value={u}>
+                            {u}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               )}
@@ -525,38 +534,44 @@ export default function SignupPage() {
                     <Label htmlFor="trade" className="text-xs font-bold text-foreground flex items-center gap-1.5">
                       <Wrench className="h-3.5 w-3.5 text-primary" /> Primary Skill / Trade
                     </Label>
-                    <select
-                      id="trade"
+                    <Select
                       value={formData.trade}
-                      onChange={(e) => updateField("trade", e.target.value)}
-                      className="flex h-9.5 w-full rounded-xl border border-input bg-card px-3.5 py-1.5 text-xs text-foreground shadow-sm transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer appearance-none"
+                      onValueChange={(val) => updateField("trade", val)}
                       disabled={isLoading}
-                      required
                     >
-                      <option value="" disabled className="bg-card text-muted-foreground">Select your primary trade...</option>
-                      {TRADES_LIST.map((t) => (
-                        <option key={t} value={t} className="bg-card text-foreground">{t}</option>
-                      ))}
-                    </select>
+                      <SelectTrigger id="trade" className="w-full">
+                        <SelectValue placeholder="Select your primary trade..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {TRADES_LIST.map((t) => (
+                          <SelectItem key={t} value={t}>
+                            {t}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="space-y-1.5">
                     <Label htmlFor="yearsExperience" className="text-xs font-bold text-foreground flex items-center gap-1.5">
                       <Award className="h-3.5 w-3.5 text-primary" /> Experience (Years)
                     </Label>
-                    <select
-                      id="yearsExperience"
+                    <Select
                       value={formData.yearsExperience}
-                      onChange={(e) => updateField("yearsExperience", e.target.value)}
-                      className="flex h-9.5 w-full rounded-xl border border-input bg-card px-3.5 py-1.5 text-xs text-foreground shadow-sm transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer appearance-none"
+                      onValueChange={(val) => updateField("yearsExperience", val)}
                       disabled={isLoading}
-                      required
                     >
-                      <option value="" disabled className="bg-card text-muted-foreground">Select years of experience...</option>
-                      {EXPERIENCE_LEVELS.map((exp) => (
-                        <option key={exp.value} value={exp.value} className="bg-card text-foreground">{exp.label}</option>
-                      ))}
-                    </select>
+                      <SelectTrigger id="yearsExperience" className="w-full">
+                        <SelectValue placeholder="Select years of experience..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {EXPERIENCE_LEVELS.map((exp) => (
+                          <SelectItem key={exp.value} value={exp.value}>
+                            {exp.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="space-y-1.5">
