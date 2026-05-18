@@ -498,18 +498,21 @@ export default function SignupPage() {
                     </Label>
                     <Select
                       value={formData.projectCategory}
-                      onValueChange={(val) => updateField("projectCategory", val)}
+                      onValueChange={handleSelectProjectCategory}
                       disabled={isLoading}
                     >
                       <SelectTrigger id="projectCategory" className="w-full">
                         <SelectValue placeholder="Select the service you need..." />
                       </SelectTrigger>
                       <SelectContent>
-                        {TRADES_LIST.map((t) => (
+                        {clientTrades.map((t) => (
                           <SelectItem key={t} value={t}>
                             {t}
                           </SelectItem>
                         ))}
+                        <SelectItem value="Other" className="text-primary font-bold">
+                          Other...
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -582,18 +585,21 @@ export default function SignupPage() {
                     </Label>
                     <Select
                       value={formData.trade}
-                      onValueChange={(val) => updateField("trade", val)}
+                      onValueChange={handleSelectTrade}
                       disabled={isLoading}
                     >
                       <SelectTrigger id="trade" className="w-full">
                         <SelectValue placeholder="Select your primary trade..." />
                       </SelectTrigger>
                       <SelectContent>
-                        {TRADES_LIST.map((t) => (
+                        {fundiTrades.map((t) => (
                           <SelectItem key={t} value={t}>
                             {t}
                           </SelectItem>
                         ))}
+                        <SelectItem value="Other" className="text-primary font-bold">
+                          Other...
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -786,7 +792,7 @@ export default function SignupPage() {
 
               {/* Step Validation Error */}
               {stepError && (
-                <div className="rounded-xl border border-destructive/20 bg-destructive/10 px-3.5 py-2 text-[11px] text-destructive flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                <div className="rounded-lg border border-destructive/20 bg-destructive/10 px-3.5 py-2 text-[11px] text-destructive flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
                   <ShieldCheck className="h-4 w-4 flex-shrink-0 rotate-180" />
                   <span>{stepError}</span>
                 </div>
@@ -798,10 +804,9 @@ export default function SignupPage() {
                   <Button
                     type="button"
                     variant="ghost"
-                    size="sm"
                     onClick={goBack}
                     disabled={isLoading}
-                    className="text-muted-foreground hover:text-foreground font-medium text-xs transition-colors cursor-pointer"
+                    className="text-muted-foreground hover:text-foreground font-medium text-xs transition-colors cursor-pointer h-9.5 px-4 rounded-lg"
                   >
                     Back
                   </Button>
@@ -812,19 +817,17 @@ export default function SignupPage() {
                 {currentStep < totalSteps ? (
                   <Button
                     type="button"
-                    size="sm"
                     onClick={goNext}
                     disabled={isLoading}
-                    className="font-bold flex items-center gap-1.5 cursor-pointer"
+                    className="font-bold flex items-center gap-1.5 cursor-pointer h-9.5 px-5 rounded-lg text-xs"
                   >
                     Continue <ChevronRight className="h-3.5 w-3.5 stroke-[2.5]" />
                   </Button>
                 ) : (
                   <Button
                     type="submit"
-                    size="sm"
                     disabled={isLoading || !userType}
-                    className="font-extrabold flex items-center gap-1.5 cursor-pointer"
+                    className="font-extrabold flex items-center gap-1.5 cursor-pointer h-9.5 px-6 rounded-lg text-xs"
                   >
                     {isLoading ? (
                       <>
@@ -856,6 +859,72 @@ export default function SignupPage() {
           </div>
         </div>
       </div>
+
+      {/* Dynamic Modal Dialog for "Other..." custom trade/service entry */}
+      <Dialog open={isOtherModalOpen} onOpenChange={setIsOtherModalOpen}>
+        <DialogContent className="border border-border bg-card p-5 rounded-lg shadow-lg w-full max-w-sm animate-in fade-in zoom-in-95 duration-150">
+          <DialogHeader>
+            <DialogTitle className="text-sm font-bold text-foreground">
+              {otherFieldType === "trade" ? "Custom Skill / Trade" : "Custom Service Needed"}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              {otherFieldType === "trade"
+                ? "Enter your specific trade or skill name below."
+                : "Enter the custom service type you are looking for."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            <Input
+              value={otherInputValue}
+              onChange={(e) => setOtherInputValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && otherInputValue.trim()) {
+                  e.preventDefault()
+                  if (otherFieldType) {
+                    updateField(otherFieldType, otherInputValue.trim())
+                  }
+                  setIsOtherModalOpen(false)
+                }
+              }}
+              placeholder="e.g. Glass Cleaner, Solar Tech"
+              className="w-full text-xs rounded-lg"
+              autoFocus
+            />
+          </div>
+
+          <DialogFooter className="flex items-center justify-end gap-2 pt-2 border-t border-border mt-2">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                setIsOtherModalOpen(false)
+                if (otherFieldType) {
+                  updateField(otherFieldType, "")
+                }
+              }}
+              className="text-xs h-9.5 px-4 rounded-lg cursor-pointer text-muted-foreground"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                if (otherInputValue.trim()) {
+                  if (otherFieldType) {
+                    updateField(otherFieldType, otherInputValue.trim())
+                  }
+                  setIsOtherModalOpen(false)
+                }
+              }}
+              disabled={!otherInputValue.trim()}
+              className="text-xs h-9.5 px-4 rounded-lg font-bold cursor-pointer"
+            >
+              Confirm
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
