@@ -264,47 +264,48 @@ export default function SignupPage() {
           <CardHeader className="space-y-3 pb-4 pt-5 px-6 border-b border-border/40">
             {/* Visual Stepper */}
             <div className="select-none max-w-md mx-auto w-full">
-              <div className="flex items-center justify-between">
+              <div className="flex items-start justify-between relative">
                 {steps.map((s, idx) => (
-                  <div key={s.id} className="flex items-center flex-1 last:flex-none">
-                    <div
-                      className="flex flex-col items-center cursor-pointer group"
-                      onClick={() => handleStepClick(s.id)}
-                    >
-                      <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center border-2 text-xs font-bold transition-all duration-300 ${
-                          currentStep > s.id
-                            ? "bg-primary border-primary text-primary-foreground shadow-[0_0_8px_rgba(var(--primary),0.3)]"
-                            : currentStep === s.id
-                            ? "bg-primary/10 border-primary text-primary"
-                            : "bg-muted border-muted-foreground/15 text-muted-foreground"
-                        }`}
-                      >
-                        {currentStep > s.id ? (
-                          <Check className="h-3.5 w-3.5 stroke-[3.5]" />
-                        ) : (
-                          s.id
-                        )}
-                      </div>
-                      <span
-                        className={`mt-1.5 text-[10px] font-bold uppercase tracking-wider hidden sm:block transition-colors duration-250 ${
-                          currentStep === s.id
-                            ? "text-primary font-extrabold"
-                            : currentStep > s.id
-                            ? "text-foreground/80 group-hover:text-primary"
-                            : "text-muted-foreground/80"
-                        }`}
-                      >
-                        {s.label}
-                      </span>
-                    </div>
+                  <div key={s.id} className="flex-1 last:flex-initial relative flex flex-col items-center">
+                    {/* Connecting Line */}
                     {idx < steps.length - 1 && (
                       <div
-                        className={`flex-1 h-0.5 mx-2 -mt-3.5 sm:-mt-5 transition-all duration-500 rounded-full ${
+                        className={`absolute top-4 left-1/2 right-[-50%] h-0.5 z-0 transition-all duration-500 rounded-full ${
                           currentStep > s.id ? "bg-primary" : "bg-muted-foreground/15"
                         }`}
                       />
                     )}
+                    
+                    {/* Circle */}
+                    <div
+                      onClick={() => handleStepClick(s.id)}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center border-2 text-xs font-bold transition-all duration-300 cursor-pointer relative z-10 ${
+                        currentStep > s.id
+                          ? "bg-primary border-primary text-primary-foreground shadow-[0_0_8px_rgba(var(--primary),0.3)]"
+                          : currentStep === s.id
+                          ? "bg-primary/10 border-primary text-primary bg-card"
+                          : "bg-muted border-muted-foreground/15 text-muted-foreground bg-card"
+                      }`}
+                    >
+                      {currentStep > s.id ? (
+                        <Check className="h-3.5 w-3.5 stroke-[3.5]" />
+                      ) : (
+                        s.id
+                      )}
+                    </div>
+
+                    {/* Label */}
+                    <span
+                      className={`mt-1.5 text-[10px] font-bold uppercase tracking-wider hidden sm:block transition-colors duration-250 relative z-10 ${
+                        currentStep === s.id
+                          ? "text-primary font-extrabold"
+                          : currentStep > s.id
+                          ? "text-foreground/80"
+                          : "text-muted-foreground/80"
+                      }`}
+                    >
+                      {s.label}
+                    </span>
                   </div>
                 ))}
               </div>
