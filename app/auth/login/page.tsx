@@ -19,15 +19,32 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [loginError, setLoginError] = useState("")
 
-  const handleEmailLogin = (e: React.FormEvent) => {
+  const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    // Simulate login
-    setTimeout(() => {
+    setLoginError("")
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      })
+
+      const data = await response.json()
+      if (!response.ok) {
+        setLoginError(data.error || "Invalid email or password.")
+      } else {
+        window.location.href = "/"
+      }
+    } catch (error) {
+      setLoginError("Network error. Please try again.")
+    } finally {
       setIsLoading(false)
-      // Handle login logic here
-    }, 2000)
+    }
   }
 
   const handleGoogleLogin = () => {
@@ -91,6 +108,11 @@ export default function LoginPage() {
             </div>
 
             <form onSubmit={handleEmailLogin} className="space-y-4">
+              {loginError && (
+                <div className="rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs text-destructive flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                  <span>{loginError}</span>
+                </div>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium">
                   Email address

@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Navigation } from "@/components/navigation"
 import { FundiCard } from "@/components/fundi-card"
 import { CategoryCard } from "@/components/category-card"
@@ -11,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { fundis, categories } from "@/lib/data"
+import { fundis as fallbackFundis, categories as fallbackCategories, Fundi } from "@/lib/data"
 import {
   ArrowRight,
   TrendingUp,
@@ -24,10 +25,37 @@ import {
 import Link from "next/link"
 
 export default function Home() {
+  const [fundis, setFundis] = useState<Fundi[]>(fallbackFundis)
+  const [categories, setCategories] = useState<{ name: string; icon: string }[]>(fallbackCategories)
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [fundisRes, categoriesRes] = await Promise.all([
+          fetch("/api/fundis"),
+          fetch("/api/categories"),
+        ])
+        if (fundisRes.ok) {
+          const fundisData = await fundisRes.json()
+          setFundis(fundisData)
+        }
+        if (categoriesRes.ok) {
+          const categoriesData = await categoriesRes.json()
+          setCategories(categoriesData)
+        }
+      } catch (error) {
+        console.error("Failed to load DB data, using static mock fallback:", error)
+      }
+    }
+    loadData()
+  }, [])
+
   const featuredFundis = fundis
     .filter((f) => f.premiumLevel === "top")
     .slice(0, 3)
-  const topRatedFundis = fundis.sort((a, b) => b.rating - a.rating).slice(0, 3)
+  const topRatedFundis = [...fundis]
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, 3)
   const nearbyFundis = fundis.filter((f) => f.isNearby).slice(0, 3)
   const emergencyFundis = fundis.filter((f) => f.isEmergency).slice(0, 3)
 

@@ -220,7 +220,7 @@ export default function SignupPage() {
     setCurrentStep(stepId)
   }
 
-  const handleEmailSignup = (e: React.FormEvent) => {
+  const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     if (currentStep < totalSteps) {
       goNext()
@@ -230,10 +230,30 @@ export default function SignupPage() {
     if (!validateStep()) return
 
     setIsLoading(true)
-    setTimeout(() => {
+    setStepError("")
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userType,
+          ...formData,
+        }),
+      })
+
+      const data = await response.json()
+      if (!response.ok) {
+        setStepError(data.error || "An error occurred during sign up.")
+      } else {
+        window.location.href = "/auth/login"
+      }
+    } catch (error) {
+      setStepError("Network error. Please try again.")
+    } finally {
       setIsLoading(false)
-      // Submit signup payload to backend here.
-    }, 2000)
+    }
   }
 
   return (

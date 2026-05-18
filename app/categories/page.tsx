@@ -1,14 +1,39 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Navigation } from "@/components/navigation"
 import { FundiCard } from "@/components/fundi-card"
 import { CategoryCard } from "@/components/category-card"
 import { Button } from "@/components/ui/button"
-import { fundis, categories } from "@/lib/data"
+import { fundis as fallbackFundis, categories as fallbackCategories, Fundi } from "@/lib/data"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 export default function CategoriesPage() {
+  const [fundis, setFundis] = useState<Fundi[]>(fallbackFundis)
+  const [categories, setCategories] = useState<{ name: string; icon: string }[]>(fallbackCategories)
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [fundisRes, categoriesRes] = await Promise.all([
+          fetch("/api/fundis"),
+          fetch("/api/categories"),
+        ])
+        if (fundisRes.ok) {
+          const fundisData = await fundisRes.json()
+          setFundis(fundisData)
+        }
+        if (categoriesRes.ok) {
+          const categoriesData = await categoriesRes.json()
+          setCategories(categoriesData)
+        }
+      } catch (error) {
+        console.error("Failed to load DB data, using static mock fallback:", error)
+      }
+    }
+    loadData()
+  }, [])
   return (
     <div className="flex min-h-screen flex-col">
       <Navigation />
