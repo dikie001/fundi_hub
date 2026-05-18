@@ -112,7 +112,11 @@ export default function SignupPage() {
         ? "Describe your expert trade and experience level."
         : "Describe the specific service details you are looking for."
     }
-    if (currentStep === 4) return "How should clients or fundis reach you?"
+    if (currentStep === 4) {
+      return userType === "fundi"
+        ? "How should clients reach you?"
+        : "How should fundis reach you?"
+    }
     return "Choose a strong password to protect your account."
   }, [currentStep, userType])
 
@@ -269,27 +273,8 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen bg-background text-foreground px-4 py-8 sm:px-6 sm:py-12 flex flex-col justify-center items-center font-sans select-none">
       <div className="w-full max-w-md space-y-6">
-        {/* Header containing brand, step progress, and descriptions */}
+        {/* Header containing step progress, and descriptions */}
         <div className="flex flex-col items-center text-center space-y-4">
-          <Link href="/" className="flex items-center gap-2 group mb-2 transition-transform duration-300 hover:scale-102">
-            <Image
-              src="/logo.png"
-              alt="Fundi Hub Logo"
-              width={32}
-              height={32}
-              className="h-8 w-auto object-contain"
-              priority
-            />
-            <span className="text-lg font-bold tracking-tight text-foreground">
-              FundiHub
-            </span>
-          </Link>
-
-          {/* Standard Icon Container utilizing standard primary color variables */}
-          <div className="p-3 bg-primary/10 border border-primary/20 rounded-xl text-primary flex items-center justify-center">
-            <StepIcon className="h-6 w-6 stroke-[1.8]" />
-          </div>
-
           <div className="space-y-1.5">
             <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               {stepTitle}
@@ -686,17 +671,17 @@ export default function SignupPage() {
                   </div>
 
                   {/* Terms & Conditions Box */}
-                  <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-muted/40 border border-border transition-all duration-300">
+                  <div className="flex items-start gap-3 p-3.5 rounded-xl bg-muted/40 border border-border transition-all duration-300 w-full">
                     <Checkbox
                       id="terms"
                       checked={agreedToTerms}
                       onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
                       disabled={isLoading}
-                      className="mt-0.5 border-input data-[state=checked]:bg-primary data-[state=checked]:border-primary rounded"
+                      className="mt-0.5 border-input data-[state=checked]:bg-primary data-[state=checked]:border-primary rounded flex-shrink-0"
                     />
                     <Label
                       htmlFor="terms"
-                      className="text-[9.5px] leading-relaxed text-muted-foreground select-none cursor-pointer"
+                      className="flex-1 text-xs leading-normal text-muted-foreground select-none cursor-pointer font-normal"
                     >
                       I agree to the{" "}
                       <Link href="/terms" className="text-primary hover:underline font-bold">
@@ -706,7 +691,10 @@ export default function SignupPage() {
                       <Link href="/privacy" className="text-primary hover:underline font-bold">
                         Privacy Policy
                       </Link>
-                      . I understand my trade identity will be verified before matching jobs.
+                      .{" "}
+                      {userType === "fundi"
+                        ? "I understand my trade identity will be verified before matching jobs."
+                        : "I understand my project and contact details will be shared with matched fundis."}
                     </Label>
                   </div>
                 </div>
