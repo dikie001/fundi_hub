@@ -121,7 +121,7 @@ export default function Home() {
     <div className="flex min-h-screen flex-col">
       <Navigation />
 
-      {/* Hero Section */}
+      {/* Hero Section with Integrated Search */}
       <section id="home" className="relative overflow-hidden bg-linear-to-b from-primary/10 to-transparent px-4 py-20 sm:px-6 lg:px-8 scroll-mt-24">
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
@@ -132,54 +132,45 @@ export default function Home() {
               Find trusted fundis - plumbers, electricians, carpenters, and
               more. Direct WhatsApp and call buttons for instant communication.
             </p>
-            <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
-              <Button size="lg" asChild>
-                <Link href="#categories">Find a Fundi</Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link href="/auth/signup">Get Started</Link>
-              </Button>
+
+            {/* Integrated Search Bar */}
+            <div id="categories" className="relative mt-10 max-w-xl mx-auto scroll-mt-28">
+              <input
+                type="text"
+                placeholder="Search by category, task, name, or area (e.g. Plumber, Nairobi)..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="h-14 w-full rounded-2xl border border-border bg-card/90 px-6 pr-12 text-sm font-semibold text-foreground shadow-lg focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden transition-all"
+              />
+              {hasSearch ? (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground text-xs font-bold bg-muted hover:bg-muted/80 px-2.5 py-1.5 rounded-md transition-colors"
+                >
+                  Clear
+                </button>
+              ) : (
+                <span className="absolute right-5 top-1/2 -translate-y-1/2 text-muted-foreground">
+                  🔍
+                </span>
+              )}
             </div>
+
+            {!hasSearch && (
+              <div className="mt-6 flex justify-center gap-4">
+                <Button variant="outline" asChild>
+                  <Link href="/auth/signup">Get Started as Fundi</Link>
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Search & Find Section */}
-      <section id="categories" className="border-b border-border px-4 py-16 sm:px-6 lg:px-8 scroll-mt-24 bg-linear-to-b from-card/35 to-transparent">
-        <div className="mx-auto max-w-5xl text-center">
-          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-            Find Your Skilled Expert
-          </h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground">
-            Search for categories, tasks, names, or locations (e.g., Plumber, CCTV, Nairobi, wiring)
-          </p>
-
-          <div className="relative mt-8 max-w-xl mx-auto">
-            <input
-              type="text"
-              placeholder="Search by category, task, name, or area..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-14 w-full rounded-2xl border border-border bg-card/85 px-6 pr-12 text-sm font-semibold text-foreground shadow-xs focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden"
-            />
-            {hasSearch ? (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground text-xs font-bold bg-muted/65 hover:bg-muted px-2.5 py-1.5 rounded-md"
-              >
-                Clear
-              </button>
-            ) : (
-              <span className="absolute right-5 top-1/2 -translate-y-1/2 text-muted-foreground">
-                🔍
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Search Results Grid */}
-        {hasSearch && (
-          <div className="mx-auto max-w-7xl mt-12 space-y-6 animate-in fade-in slide-in-from-top-4 duration-300">
+      {/* Dynamic Search Results Section */}
+      {hasSearch && (
+        <section className="border-b border-border px-4 py-16 sm:px-6 lg:px-8 bg-muted/10 animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="mx-auto max-w-7xl space-y-6">
             <div className="flex items-center justify-between border-b border-border/40 pb-4">
               <h3 className="text-lg font-bold text-foreground">
                 Search Results for &quot;{searchQuery}&quot;
@@ -196,14 +187,14 @@ export default function Home() {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-border/60 rounded-2xl bg-muted/5">
+              <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-border/60 rounded-2xl bg-card">
                 <p className="font-extrabold text-lg text-muted-foreground">No matching fundis found</p>
                 <p className="text-xs text-muted-foreground/60 mt-1.5">Try searching for other trades, skills, or locations (e.g. Plumbers, Mombasa)</p>
               </div>
             )}
           </div>
-        )}
-      </section>
+        </section>
+      )}
 
       {/* Featured Fundis - Hidden when searching */}
       {!hasSearch && (
