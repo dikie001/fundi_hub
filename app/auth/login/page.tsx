@@ -41,6 +41,8 @@ export default function LoginPage() {
         const userRole = data.user?.role
         if (userRole === "fundi") {
           window.location.href = "/fundi/dashboard"
+        } else if (userRole === "client") {
+          window.location.href = "/client/dashboard"
         } else {
           window.location.href = "/"
         }

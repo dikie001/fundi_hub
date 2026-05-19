@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
 import {
   Eye,
   EyeOff,
@@ -110,6 +110,17 @@ const steps = [
 export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [referrerId, setReferrerId] = useState("")
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search)
+      const ref = params.get("ref")
+      if (ref) {
+        setReferrerId(ref)
+      }
+    }
+  }, [])
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [userType, setUserType] = useState<UserType | null>(null)
   const [currentStep, setCurrentStep] = useState(1)
@@ -341,6 +352,7 @@ export default function SignupPage() {
         body: JSON.stringify({
           userType,
           ...formData,
+          referrerId,
           email: `${formData.phone.replace(/[^0-9]/g, "")}@fundihub.com`,
         }),
       })
@@ -715,6 +727,15 @@ export default function SignupPage() {
               {/* STEP 5: Security Credentials */}
               {currentStep === 5 && (
                 <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <input
+                    type="text"
+                    name="username"
+                    value={formData.phone}
+                    autoComplete="username"
+                    className="sr-only"
+                    tabIndex={-1}
+                    readOnly
+                  />
                   <div className="flex flex-col gap-4">
                     <div className="space-y-1.5">
                       <Label htmlFor="password" className="text-xs font-bold text-foreground flex items-center gap-1.5">
