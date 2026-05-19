@@ -122,11 +122,12 @@ export function ReviewsList({ fundiUserId, initialReviews, clientReview }: Revie
                 )}
 
                 {/* Rating Stars Select */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-muted-foreground uppercase">
+                {/* Rating Stars Select */}
+                <div className="space-y-2 flex flex-col items-center justify-center py-3 bg-muted/20 border border-border/30 rounded-lg">
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                     Rating
                   </label>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
                         key={star}
