@@ -497,7 +497,11 @@ function DashboardInner() {
                     resolve()
                   } else {
                     const err = await res.json()
-                    reject(new Error(err?.error || "Failed to save avatar URL to profile"))
+                    reject(
+                      new Error(
+                        err?.error || "Failed to save avatar URL to profile"
+                      )
+                    )
                   }
                 } catch (err) {
                   reject(err)
