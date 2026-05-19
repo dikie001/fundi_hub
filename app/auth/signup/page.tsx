@@ -496,7 +496,7 @@ export default function SignupPage() {
                       <Briefcase className="h-3.5 w-3.5 text-primary" /> Service Needed
                     </Label>
                     <Select
-                      value={formData.projectCategory}
+                      value={formData.projectCategory && !TRADES_LIST.includes(formData.projectCategory) ? "Other" : formData.projectCategory}
                       onValueChange={handleSelectProjectCategory}
                       disabled={isLoading}
                     >
@@ -587,7 +587,7 @@ export default function SignupPage() {
                       <Wrench className="h-3.5 w-3.5 text-primary" /> Primary Skill / Trade
                     </Label>
                     <Select
-                      value={formData.trade}
+                      value={formData.trade && !TRADES_LIST.includes(formData.trade) ? "Other" : formData.trade}
                       onValueChange={handleSelectTrade}
                       disabled={isLoading}
                     >
