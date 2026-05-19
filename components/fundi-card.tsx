@@ -3,9 +3,10 @@
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { MessageCircle, Phone, Star } from "lucide-react"
-import type { Fundi } from "@/lib/data"
+import { MessageCircle, Phone, Star, MapPin } from "lucide-react"
+import type { Fundi } from "@/lib/types"
 import Image from "next/image"
+import Link from "next/link"
 import { cn } from "@/lib/utils"
 
 interface FundiCardProps {
@@ -14,14 +15,21 @@ interface FundiCardProps {
 
 export function FundiCard({ fundi }: FundiCardProps) {
   const initials = fundi.name
+    .trim()
     .split(" ")
     .map((n) => n[0])
     .join("")
     .toUpperCase()
 
+  const cardId = fundi.name.trim().replace(/\s+/g, "-")
+  const profileLink = `/fundis/${encodeURIComponent(cardId)}`
+
   return (
-    <Card className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/50 bg-card p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
-      <div>
+    <Card 
+      id={cardId}
+      className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/50 bg-card p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 active:scale-[0.99] active:bg-muted/20 scroll-mt-24"
+    >
+      <Link href={profileLink} className="block cursor-pointer focus:outline-hidden">
         {/* Top Badges Row */}
         <div className="flex items-center justify-between gap-2 pb-3">
           <div className="flex flex-wrap items-center gap-1.5">
@@ -42,8 +50,8 @@ export function FundiCard({ fundi }: FundiCardProps) {
               </Badge>
             )}
           </div>
-          <span className="text-[11px] font-bold text-muted-foreground whitespace-nowrap">
-            {fundi.reviews}+ jobs
+          <span className="text-[11px] font-black text-primary hover:underline md:hidden whitespace-nowrap">
+            View Profile →
           </span>
         </div>
 
@@ -70,6 +78,12 @@ export function FundiCard({ fundi }: FundiCardProps) {
             <p className="truncate text-xs font-semibold text-muted-foreground mt-0.5">
               {fundi.title}
             </p>
+            {fundi.serviceArea && (
+              <p className="flex items-center gap-1 text-[11px] font-bold text-muted-foreground/80 mt-1">
+                <MapPin className="h-3 w-3 text-primary shrink-0" />
+                <span className="truncate">{fundi.serviceArea}</span>
+              </p>
+            )}
           </div>
         </div>
 
@@ -99,7 +113,7 @@ export function FundiCard({ fundi }: FundiCardProps) {
             {fundi.description}
           </p>
         )}
-      </div>
+      </Link>
 
       {/* Call to actions */}
       <div className="mt-4 grid grid-cols-2 gap-2 pt-1">
@@ -125,7 +139,7 @@ export function FundiCard({ fundi }: FundiCardProps) {
           className="h-9 cursor-pointer rounded-lg border-border/80 hover:bg-muted text-xs font-bold"
           asChild
         >
-          <a href={`tel:${fundi.phone}`} className="flex items-center justify-center gap-1.5">
+          <a href={`tel:${fundi.phone}`}>
             <Phone className="h-4 w-4" />
             Call
           </a>

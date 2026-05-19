@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { Fundi, categories as mockCategories } from "@/lib/data"
+import { Fundi } from "@/lib/types"
 
 export async function getCategories() {
   try {
@@ -7,20 +7,13 @@ export async function getCategories() {
       orderBy: { name: "asc" },
     })
 
-    if (dbCategories.length === 0) {
-      return mockCategories
-    }
-
     return dbCategories.map((cat) => ({
       name: cat.name,
       icon: cat.icon,
     }))
   } catch (error) {
-    console.error(
-      "Error fetching categories from database, falling back to mock:",
-      error
-    )
-    return mockCategories
+    console.error("Error fetching categories from database:", error)
+    return []
   }
 }
 
@@ -47,12 +40,14 @@ export async function getFundis(): Promise<Fundi[]> {
         reviews: profile.reviews,
         image: profile.image || "",
         phone: user.phone,
-        whatsapp: user.phone, // using user.phone for communication contact
+        whatsapp: user.phone,
         verified: profile.premiumLevel !== "none",
         premiumLevel: profile.premiumLevel as "none" | "verified" | "top",
         isEmergency: profile.isEmergency,
         isNearby: profile.isNearby,
         description: profile.description || "",
+        serviceArea: profile.serviceArea,
+        skills: profile.skills,
       }
     })
   } catch (error) {
