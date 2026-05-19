@@ -55,8 +55,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground px-4 py-8 sm:px-6 sm:py-12 flex flex-col justify-center items-center font-sans select-none">
-      <div className="w-full max-w-sm space-y-6">
+    <div className="min-h-screen bg-background text-foreground px-4 py-16 sm:py-24 flex flex-col justify-center items-center font-sans select-none">
+      <div className="w-full max-w-md space-y-6">
         
         {/* Header containing title and subtitle matching signup */}
         <div className="flex flex-col items-center text-center space-y-4">
@@ -71,11 +71,11 @@ export default function LoginPage() {
         </div>
 
         {/* Dynamic Card */}
-        <Card className="border-border bg-card text-card-foreground shadow-lg rounded-xl overflow-hidden p-6 sm:p-8">
+        <Card className="border-border bg-card text-card-foreground shadow-lg rounded-xl overflow-hidden p-8 sm:p-10">
           <CardContent className="p-0 space-y-5">
 
             {/* Login Credentials Form */}
-            <form onSubmit={handleEmailLogin} className="space-y-4">
+            <form onSubmit={handleEmailLogin} className="space-y-5">
               {loginError && (
                 <div className="rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs text-destructive flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
                   <span>{loginError}</span>
@@ -94,6 +94,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
                   required
+                  className="h-11 rounded-xl bg-muted/10 border-border/60 focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary/50 transition-all duration-200"
                 />
               </div>
 
@@ -116,7 +117,7 @@ export default function LoginPage() {
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pr-10 bg-transparent dark:bg-input/30 focus-visible:ring-1 focus-visible:ring-primary"
+                    className="pr-10 h-11 rounded-xl bg-muted/10 border-border/60 focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary/50 transition-all duration-200"
                     disabled={isLoading}
                     required
                   />
@@ -138,7 +139,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="w-full font-bold h-10 text-xs rounded-lg cursor-pointer mt-2 bg-primary text-primary-foreground hover:bg-primary/95 transition-all duration-200 shadow-sm flex items-center justify-center"
+                className="w-full font-bold h-11 text-xs rounded-xl cursor-pointer mt-2 bg-primary text-primary-foreground hover:bg-primary/95 transition-all duration-200 shadow-sm flex items-center justify-center"
                 disabled={isLoading}
               >
                 {isLoading && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
