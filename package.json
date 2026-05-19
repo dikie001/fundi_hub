@@ -10,13 +10,15 @@
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit",
-    "reset":"npx prisma migrate reset && npx prisma generate && npx prisma db push",
-    "sync":"npx prisma generate && npx prisma db push"
+    "reset": "npx prisma migrate reset && npx prisma generate && npx prisma db push",
+    "sync": "npx prisma generate && npx prisma db push"
   },
   "dependencies": {
+    "@imagekit/nodejs": "^7.6.1",
     "@prisma/client": "^6.4.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "imagekit": "^6.0.0",
     "lucide-react": "^1.16.0",
     "next": "16.1.7",
     "next-themes": "^0.4.6",
