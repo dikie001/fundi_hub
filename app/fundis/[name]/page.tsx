@@ -139,11 +139,11 @@ export default async function FundiProfilePage({ params }: PageProps) {
         {/* Back Link */}
         <div className="mb-6">
           <Link 
-            href="/categories" 
+            href={`/#${fundiData.name.trim().replace(/\s+/g, "-")}`}
             className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground transition-colors hover:text-primary"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to categories
+            Back to home
           </Link>
         </div>
 
