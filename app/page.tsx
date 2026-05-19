@@ -35,7 +35,7 @@ export default function Home() {
     async function loadData() {
       try {
         const [fundisRes, categoriesRes] = await Promise.all([
-          fetch("/api/fundis"),
+          fetch("/api/fundis", { cache: "no-store" }),
           fetch("/api/categories"),
         ])
         if (fundisRes.ok) {
