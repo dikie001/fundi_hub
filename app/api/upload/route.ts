@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     }
 
     const defaultFileName = fileName || `upload_${Date.now()}.png`
-    let uploadFolder = folder || "general"
+    let uploadFolder = folder || "fundi_hub/profile_pics"
     // Normalize folder: ImageKit expects folder paths without a leading slash
     if (uploadFolder.startsWith("/")) {
       uploadFolder = uploadFolder.slice(1)

@@ -467,7 +467,7 @@ function DashboardInner() {
             body: JSON.stringify({
               image: base64String,
               fileName: file.name,
-              folder: "fundi_hub/profile_images",
+              folder: "fundi_hub/profile_pics"
             }),
           })
 
