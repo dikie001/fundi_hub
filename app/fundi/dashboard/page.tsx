@@ -204,12 +204,56 @@ function DashboardInner() {
   const [uploadFileSize, setUploadFileSize] = useState("")
   const [preferredContact, setPreferredContact] = useState("whatsapp")
 
+  // Leads tab interactive state
+  const [leads, setLeads] = useState<any[]>([])
+  const [leadsSubTab, setLeadsSubTab] = useState<"matching" | "applied" | "archived">("matching")
+  const [appliedLeadIds, setAppliedLeadIds] = useState<string[]>([])
+  const [archivedLeadIds, setArchivedLeadIds] = useState<string[]>([])
+  const [portfolioFile, setPortfolioFile] = useState<File | null>(null)
+
+  // Compute profile completeness variables at top level
+  const basicInfoDone = !!(editName && editTitle && editTrade)
+  const serviceAreaDone = !!(editYearsExp && editArea)
+  const bioDone = !!(editDesc && editDesc.length > 10)
+  const preferredContactDone = !!preferredContact
+  const avatarDone = !!(avatarUrl || profile?.image)
+  const portfolioDone = portfolioItems.length > 0
+
+  const calculateCompletionScore = () => {
+    let score = 0
+    if (basicInfoDone) score += 20
+    if (serviceAreaDone) score += 20
+    if (bioDone) score += 20
+    if (preferredContactDone) score += 15
+    if (avatarDone) score += 15
+    if (portfolioDone) score += 10
+    return score
+  }
+  const completionScore = calculateCompletionScore()
+
   // Theme helper
   const { setTheme, resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
+  }, [])
+
+  // Load portfolio and leads interactions from localStorage on client mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("fundi_portfolio_items")
+      if (stored) {
+        setPortfolioItems(JSON.parse(stored))
+      } else {
+        setPortfolioItems(INITIAL_PORTFOLIO_ITEMS)
+      }
+
+      const appIds = localStorage.getItem("applied_leads")
+      const arcIds = localStorage.getItem("archived_leads")
+      if (appIds) setAppliedLeadIds(JSON.parse(appIds))
+      if (arcIds) setArchivedLeadIds(JSON.parse(arcIds))
+    }
   }, [])
 
   // Fetch logged in profile details
@@ -234,6 +278,10 @@ function DashboardInner() {
         if (data.user.fundiProfile?.image) {
           setAvatarUrl(data.user.fundiProfile.image)
         }
+        if (data.user.fundiProfile?.skills) {
+          setSkills(data.user.fundiProfile.skills.split(",").map((s: string) => s.trim()).filter(Boolean))
+        }
+        fetchLeads()
       } else {
         window.location.href = "/"
       }
@@ -242,6 +290,66 @@ function DashboardInner() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const fetchLeads = async () => {
+    try {
+      const res = await fetch("/api/fundi/leads")
+      if (res.ok) {
+        const data = await res.json()
+        // Filter out permanently deleted leads
+        if (typeof window !== "undefined") {
+          const storedDeleted = localStorage.getItem("deleted_leads")
+          const deletedList = storedDeleted ? JSON.parse(storedDeleted) : []
+          setLeads(data.filter((l: any) => !deletedList.includes(l.id)))
+        } else {
+          setLeads(data)
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch matching leads:", error)
+    }
+  }
+
+  const handleApplyLead = (leadId: string) => {
+    const newApplied = [...appliedLeadIds, leadId]
+    setAppliedLeadIds(newApplied)
+    localStorage.setItem("applied_leads", JSON.stringify(newApplied))
+    
+    // Ensure it's removed from archived if it was there
+    const newArchived = archivedLeadIds.filter(id => id !== leadId)
+    setArchivedLeadIds(newArchived)
+    localStorage.setItem("archived_leads", JSON.stringify(newArchived))
+  }
+
+  const handleArchiveLead = (leadId: string) => {
+    const newArchived = [...archivedLeadIds, leadId]
+    setArchivedLeadIds(newArchived)
+    localStorage.setItem("archived_leads", JSON.stringify(newArchived))
+    
+    // Ensure it's removed from applied if it was there
+    const newApplied = appliedLeadIds.filter(id => id !== leadId)
+    setAppliedLeadIds(newApplied)
+    localStorage.setItem("applied_leads", JSON.stringify(newApplied))
+  }
+
+  const handleRestoreLead = (leadId: string) => {
+    const newArchived = archivedLeadIds.filter(id => id !== leadId)
+    setArchivedLeadIds(newArchived)
+    localStorage.setItem("archived_leads", JSON.stringify(newArchived))
+    
+    const newApplied = appliedLeadIds.filter(id => id !== leadId)
+    setAppliedLeadIds(newApplied)
+    localStorage.setItem("applied_leads", JSON.stringify(newApplied))
+  }
+
+  const handleDeleteLeadPermanently = (leadId: string) => {
+    const storedDeleted = localStorage.getItem("deleted_leads")
+    const deletedList = storedDeleted ? JSON.parse(storedDeleted) : []
+    const newDeleted = [...deletedList, leadId]
+    localStorage.setItem("deleted_leads", JSON.stringify(newDeleted))
+    
+    setLeads(prev => prev.filter(l => l.id !== leadId))
   }
 
   useEffect(() => {
@@ -449,9 +557,17 @@ function DashboardInner() {
     )
   }
 
-  // Filter mock incoming leads that match the active fundi's trade
-  const matchingLeads = MOCK_CLIENT_LEADS.filter(
-    (lead) => lead.trade.toLowerCase() === (profile?.trade || "").toLowerCase()
+  // Filter incoming leads based on state
+  const matchingLeads = leads.filter(
+    (lead) => !appliedLeadIds.includes(lead.id) && !archivedLeadIds.includes(lead.id)
+  )
+
+  const appliedLeads = leads.filter(
+    (lead) => appliedLeadIds.includes(lead.id)
+  )
+
+  const archivedLeads = leads.filter(
+    (lead) => archivedLeadIds.includes(lead.id)
   )
 
   const referralCount = user?.referrals?.length || 0
@@ -899,10 +1015,10 @@ function DashboardInner() {
                           <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="5.5" className="text-muted/65" fill="transparent" />
                           <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="5.5" className="text-primary" fill="transparent"
                             strokeDasharray={213.62}
-                            strokeDashoffset={213.62 * (1 - 0.85)}
+                            strokeDashoffset={213.62 * (1 - completionScore / 100)}
                           />
                         </svg>
-                        <span className="absolute text-base font-black text-foreground">85%</span>
+                        <span className="absolute text-base font-black text-foreground">{completionScore}%</span>
                       </div>
                       
                       <p className="text-xs text-muted-foreground leading-normal">
@@ -992,128 +1108,201 @@ function DashboardInner() {
           )}
 
           {/* CLIENT LEADS TAB CONTENT */}
-          {activeTab === "leads" && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-border/40 pb-4">
-                <div>
-                  <h1 className="text-xl font-extrabold text-foreground">Client Lead Matches</h1>
-                  <p className="text-xs text-muted-foreground mt-0.5">Review, apply, and contact clients looking for {profile?.trade || "General"} services.</p>
-                </div>
-                <div className="flex gap-1.5 bg-muted/40 p-1 rounded-xl border border-border/20 self-start sm:self-center">
-                  <button className="px-3.5 py-1.5 rounded-lg bg-card border border-border text-xs font-black uppercase text-primary">
-                    Matching ({matchingLeads.length})
-                  </button>
-                  <button className="px-3.5 py-1.5 rounded-lg text-muted-foreground hover:text-foreground text-xs font-bold uppercase cursor-pointer">
-                    Applied (0)
-                  </button>
-                  <button className="px-3.5 py-1.5 rounded-lg text-muted-foreground hover:text-foreground text-xs font-bold uppercase cursor-pointer">
-                    Archived (0)
-                  </button>
-                </div>
-              </div>
+          {activeTab === "leads" && (() => {
+            const displayedLeads = 
+              leadsSubTab === "matching" ? matchingLeads : 
+              leadsSubTab === "applied" ? appliedLeads : 
+              archivedLeads
 
-              {matchingLeads.length > 0 ? (
-                <div className="grid gap-5 md:grid-cols-2">
-                  {matchingLeads.map((lead) => (
-                    <Card key={lead.id} className="border-border bg-card hover:border-primary/45 transition-colors shadow-2xs flex flex-col justify-between overflow-hidden">
-                      <div>
-                        <CardHeader className="pb-3 bg-muted/15 border-b border-border/30 px-5 py-4">
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="space-y-1">
-                              <div className="flex items-center gap-2">
-                                <span className="rounded bg-primary/10 px-2 py-0.5 text-xs font-black text-primary uppercase">
-                                  {lead.trade}
-                                </span>
-                                <span className="text-xs text-muted-foreground flex items-center gap-1 font-semibold">
-                                  <Clock className="h-3.5 w-3.5" /> {lead.createdAt}
-                                </span>
+            return (
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-border/40 pb-4">
+                  <div>
+                    <h1 className="text-xl font-extrabold text-foreground">Client Lead Matches</h1>
+                    <p className="text-xs text-muted-foreground mt-0.5">Review, apply, and contact clients looking for {profile?.trade || "General"} services.</p>
+                  </div>
+                  <div className="flex gap-1.5 bg-muted/40 p-1 rounded-xl border border-border/20 self-start sm:self-center">
+                    <button
+                      onClick={() => setLeadsSubTab("matching")}
+                      className={cn(
+                        "px-3.5 py-1.5 rounded-lg text-xs font-black uppercase cursor-pointer transition-all",
+                        leadsSubTab === "matching" ? "bg-card border border-border text-primary shadow-xs" : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      Matching ({matchingLeads.length})
+                    </button>
+                    <button
+                      onClick={() => setLeadsSubTab("applied")}
+                      className={cn(
+                        "px-3.5 py-1.5 rounded-lg text-xs font-black uppercase cursor-pointer transition-all",
+                        leadsSubTab === "applied" ? "bg-card border border-border text-primary shadow-xs" : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      Applied ({appliedLeads.length})
+                    </button>
+                    <button
+                      onClick={() => setLeadsSubTab("archived")}
+                      className={cn(
+                        "px-3.5 py-1.5 rounded-lg text-xs font-black uppercase cursor-pointer transition-all",
+                        leadsSubTab === "archived" ? "bg-card border border-border text-primary shadow-xs" : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      Archived ({archivedLeads.length})
+                    </button>
+                  </div>
+                </div>
+
+                {displayedLeads.length > 0 ? (
+                  <div className="grid gap-5 md:grid-cols-2">
+                    {displayedLeads.map((lead) => (
+                      <Card key={lead.id} className="border-border bg-card hover:border-primary/45 transition-colors shadow-2xs flex flex-col justify-between overflow-hidden">
+                        <div>
+                          <CardHeader className="pb-3 bg-muted/15 border-b border-border/30 px-5 py-4">
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="rounded bg-primary/10 px-2 py-0.5 text-xs font-black text-primary uppercase">
+                                    {lead.trade}
+                                  </span>
+                                  <span className="text-xs text-muted-foreground flex items-center gap-1 font-semibold">
+                                    <Clock className="h-3.5 w-3.5" /> {lead.createdAt}
+                                  </span>
+                                </div>
+                                <CardTitle className="text-sm font-black text-foreground mt-2 tracking-tight group-hover:text-primary transition-colors">
+                                  {lead.title}
+                                </CardTitle>
                               </div>
-                              <CardTitle className="text-sm font-black text-foreground mt-2 tracking-tight group-hover:text-primary transition-colors">
-                                {lead.title}
-                              </CardTitle>
+                              <span className="text-xs font-black text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 rounded-md px-2.5 py-1 flex-shrink-0">
+                                {lead.budget}
+                              </span>
                             </div>
-                            <span className="text-xs font-black text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 rounded-md px-2.5 py-1 flex-shrink-0">
-                              {lead.budget}
-                            </span>
-                          </div>
-                        </CardHeader>
-                        
-                        <CardContent className="p-5 space-y-4">
-                          <p className="text-xs text-muted-foreground leading-normal">
-                            {lead.description}
-                          </p>
+                          </CardHeader>
+                          
+                          <CardContent className="p-5 space-y-4">
+                            <p className="text-xs text-muted-foreground leading-normal">
+                              {lead.description}
+                            </p>
 
-                          <div className="grid grid-cols-2 gap-3 pt-3 text-xs border-t border-border/20">
-                            <div className="flex items-center gap-1.5 text-muted-foreground">
-                              <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
-                              <span className="truncate">{lead.location}</span>
+                            <div className="grid grid-cols-2 gap-3 pt-3 text-xs border-t border-border/20">
+                              <div className="flex items-center gap-1.5 text-muted-foreground">
+                                <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
+                                <span className="truncate">{lead.location}</span>
+                              </div>
+                              <div className="flex items-center gap-1.5 text-muted-foreground">
+                                <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
+                                <span className="truncate">{lead.urgency}</span>
+                              </div>
                             </div>
-                            <div className="flex items-center gap-1.5 text-muted-foreground">
-                              <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
-                              <span className="truncate">{lead.urgency}</span>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </div>
+                          </CardContent>
+                        </div>
 
-                      <div className="p-5 bg-muted/10 border-t border-border/25 flex items-center justify-between gap-4">
-                        <div className="text-xs text-muted-foreground">
-                          Client: <span className="font-bold text-foreground">{lead.clientName}</span>
+                        <div className="p-5 bg-muted/10 border-t border-border/25 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div className="text-xs text-muted-foreground">
+                            Client: <span className="font-bold text-foreground">{lead.clientName}</span>
+                          </div>
+                          
+                          <div className="flex flex-wrap gap-2 justify-end">
+                            {leadsSubTab === "matching" && (
+                              <>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleArchiveLead(lead.id)}
+                                  className="h-8 text-[11px] font-bold rounded-lg cursor-pointer px-3"
+                                >
+                                  Archive
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleApplyLead(lead.id)}
+                                  className="h-8 text-[11px] font-bold rounded-lg cursor-pointer px-3"
+                                >
+                                  Apply Now
+                                </Button>
+                              </>
+                            )}
+
+                            {leadsSubTab === "applied" && (
+                              <>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleArchiveLead(lead.id)}
+                                  className="h-8 text-[11px] font-bold rounded-lg cursor-pointer px-3"
+                                >
+                                  Archive
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  asChild
+                                  className="h-8 text-[11px] font-bold rounded-lg cursor-pointer px-3"
+                                >
+                                  <a href={`tel:${lead.phone}`}>
+                                    <Phone className="h-3 w-3 mr-1" /> Call
+                                  </a>
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  asChild
+                                  className="h-8 text-[11px] font-bold rounded-lg cursor-pointer px-3"
+                                >
+                                  <a
+                                    href={`https://wa.me/${lead.phone.replace(/[^0-9]/g, "")}?text=Hello%20${lead.clientName},%20I%20saw%20your%20lead%20on%20FundiHub%20for%20'${encodeURIComponent(lead.title)}'%20and%20I%20am%20available.`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    <MessageSquare className="h-3 w-3 mr-1" /> WhatsApp
+                                  </a>
+                                </Button>
+                              </>
+                            )}
+
+                            {leadsSubTab === "archived" && (
+                              <>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleDeleteLeadPermanently(lead.id)}
+                                  className="h-8 text-[11px] font-bold rounded-lg text-destructive hover:bg-destructive/10 border-destructive/20 cursor-pointer px-3"
+                                >
+                                  Delete
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleRestoreLead(lead.id)}
+                                  className="h-8 text-[11px] font-bold rounded-lg cursor-pointer px-3"
+                                >
+                                  Restore
+                                </Button>
+                              </>
+                            )}
+                          </div>
                         </div>
-                        <div className="flex gap-2">
-                          <Button variant="outline" size="sm" asChild className="h-8.5 text-xs font-bold rounded-lg cursor-pointer px-3.5">
-                            <a href={`tel:${lead.phone}`} className="flex items-center gap-1.5">
-                              <Phone className="h-3.5 w-3.5" /> Call Client
-                            </a>
-                          </Button>
-                          <Button size="sm" asChild className="h-8.5 text-xs font-bold rounded-lg cursor-pointer px-3.5">
-                            <a
-                              href={`https://wa.me/${lead.phone.replace(/[^0-9]/g, "")}?text=Hello%20${lead.clientName},%2520I%2520saw%2520your%2520lead%2520on%2520FundiHub%252520for%252520'${encodeURIComponent(lead.title)}'%20and%252520I%252520am%252520available.`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-1.5"
-                            >
-                              <MessageSquare className="h-3.5 w-3.5" /> WhatsApp
-                            </a>
-                          </Button>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <Card className="border-border bg-card/30 p-12 text-center shadow-2xs">
-                  <AlertCircle className="mx-auto h-9 w-9 text-muted-foreground mb-3" />
-                  <h3 className="text-sm font-bold text-foreground">No matches at the moment</h3>
-                  <p className="mt-2 text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
-                    We match incoming projects based on your skill category ({profile?.trade || "General"}). Once a client submits a request, it will appear here.
-                  </p>
-                </Card>
-              )}
-            </div>
-          )}
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <Card className="border-border bg-card/30 p-12 text-center shadow-2xs">
+                    <AlertCircle className="mx-auto h-9 w-9 text-muted-foreground mb-3" />
+                    <h3 className="text-sm font-bold text-foreground">
+                      No leads in {leadsSubTab === "matching" ? "matching" : leadsSubTab === "applied" ? "applied" : "archived"}
+                    </h3>
+                    <p className="mt-2 text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
+                      {leadsSubTab === "matching" 
+                        ? `We match incoming projects based on your skill category (${profile?.trade || "General"}). Once a client submits a request, it will appear here.`
+                        : leadsSubTab === "applied" 
+                        ? "You haven't applied to any leads yet. Go back to Matching and apply for jobs to start conversations."
+                        : "No archived leads at this time."}
+                    </p>
+                  </Card>
+                )}
+              </div>
+            )
+          })()}
 
           {/* PROFILE & PORTFOLIO TAB CONTENT */}
           {activeTab === "profile" && (() => {
-            const basicInfoDone = !!(editName && editTitle && editTrade)
-            const serviceAreaDone = !!(editYearsExp && editArea)
-            const bioDone = !!(editDesc && editDesc.length > 10)
-            const preferredContactDone = !!preferredContact
-            const avatarDone = !!(avatarUrl || profile?.image)
-            const portfolioDone = portfolioItems.length > 0
-
-            const calculateCompletionScore = () => {
-              let score = 0
-              if (basicInfoDone) score += 20
-              if (serviceAreaDone) score += 20
-              if (bioDone) score += 20
-              if (preferredContactDone) score += 15
-              if (avatarDone) score += 15
-              if (portfolioDone) score += 10
-              return score
-            }
-            const completionScore = calculateCompletionScore()
-
             if (!isEditingProfile) {
               return (
                 <div className="space-y-6 animate-in fade-in duration-300">
