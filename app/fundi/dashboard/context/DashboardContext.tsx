@@ -1,0 +1,508 @@
+"use client"
+
+import React, { createContext, useContext, useState, useEffect } from "react"
+
+export type PortfolioItem = {
+  id: string
+  title: string
+  category: string
+  image: string
+}
+
+export type Lead = {
+  id: string
+  clientName: string
+  trade: string
+  title: string
+  location: string
+  budget: string
+  urgency: string
+  description: string
+  phone: string
+  createdAt: string
+}
+
+type DashboardContextType = {
+  user: any
+  profile: any
+  isLoading: boolean
+  isUpdating: boolean
+  updateSuccess: string
+  copiedReferral: boolean
+  mounted: boolean
+  portfolioItems: PortfolioItem[]
+  leads: Lead[]
+  appliedLeadIds: string[]
+  archivedLeadIds: string[]
+  isPremiumModalOpen: boolean
+  setIsPremiumModalOpen: (open: boolean) => void
+  premiumModalType: "verified" | "top"
+  setPremiumModalType: (type: "verified" | "top") => void
+  isProcessingPayment: boolean
+  editName: string
+  setEditName: (name: string) => void
+  editTitle: string
+  setEditTitle: (title: string) => void
+  editTrade: string
+  setEditTrade: (trade: string) => void
+  editYearsExp: string
+  setEditYearsExp: (exp: string) => void
+  editArea: string
+  setEditArea: (area: string) => void
+  editDesc: string
+  setEditDesc: (desc: string) => void
+  preferredContact: string
+  setPreferredContact: (pref: string) => void
+  avatarUrl: string
+  skills: string[]
+  setSkills: React.Dispatch<React.SetStateAction<string[]>>
+  isAddPortfolioOpen: boolean
+  setIsAddPortfolioOpen: (open: boolean) => void
+  newPortfolioTitle: string
+  setNewPortfolioTitle: (title: string) => void
+  newPortfolioCategory: string
+  setNewPortfolioCategory: (cat: string) => void
+  portfolioFile: File | null
+  setPortfolioFile: (file: File | null) => void
+  isPortfolioUploading: boolean
+  portfolioProgress: number
+  matchingLeads: Lead[]
+  appliedLeads: Lead[]
+  archivedLeads: Lead[]
+  referralCount: number
+  referralEarnings: number
+  jobEarnings: number
+  totalEarnings: number
+  completionScore: number
+  fetchProfile: () => Promise<void>
+  fetchLeads: () => Promise<void>
+  handleToggleEmergency: (currentVal: boolean) => Promise<void>
+  handleUpdateProfile: (e: React.FormEvent) => Promise<void>
+  handleAvatarChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  handlePortfolioUpload: (e: React.FormEvent) => void
+  handleApplyLead: (leadId: string) => void
+  handleArchiveLead: (leadId: string) => void
+  handleRestoreLead: (leadId: string) => void
+  handleDeleteLeadPermanently: (leadId: string) => void
+  handleActivateBadge: () => Promise<void>
+  copyReferralLink: () => void
+  handleLogout: () => Promise<void>
+}
+
+const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
+
+function parsePortfolioItems(portfolio: unknown): PortfolioItem[] {
+  if (typeof portfolio !== "string" || !portfolio.trim()) return []
+  try {
+    const parsed = JSON.parse(portfolio)
+    if (!Array.isArray(parsed)) return []
+    return parsed
+      .map((item) => ({
+        id: String(item?.id || `port-${Date.now()}`),
+        title: String(item?.title || "Untitled work"),
+        category: String(item?.category || "General"),
+        image: String(item?.image || ""),
+      }))
+      .filter((item) => item.title.trim())
+  } catch {
+    return []
+  }
+}
+
+export function DashboardProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<any>(null)
+  const [profile, setProfile] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isUpdating, setIsUpdating] = useState(false)
+  const [updateSuccess, setUpdateSuccess] = useState("")
+  const [copiedReferral, setCopiedReferral] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([])
+  const [leads, setLeads] = useState<Lead[]>([])
+  const [appliedLeadIds, setAppliedLeadIds] = useState<string[]>([])
+  const [archivedLeadIds, setArchivedLeadIds] = useState<string[]>([])
+
+  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false)
+  const [premiumModalType, setPremiumModalType] = useState<"verified" | "top">("verified")
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false)
+
+  const [editName, setEditName] = useState("")
+  const [editTitle, setEditTitle] = useState("")
+  const [editTrade, setEditTrade] = useState("")
+  const [editYearsExp, setEditYearsExp] = useState("")
+  const [editArea, setEditArea] = useState("")
+  const [editDesc, setEditDesc] = useState("")
+  const [preferredContact, setPreferredContact] = useState("whatsapp")
+  const [avatarUrl, setAvatarUrl] = useState("")
+  const [skills, setSkills] = useState<string[]>([])
+
+  const [isAddPortfolioOpen, setIsAddPortfolioOpen] = useState(false)
+  const [newPortfolioTitle, setNewPortfolioTitle] = useState("")
+  const [newPortfolioCategory, setNewPortfolioCategory] = useState("General")
+  const [portfolioFile, setPortfolioFile] = useState<File | null>(null)
+  const [isPortfolioUploading, setIsPortfolioUploading] = useState(false)
+  const [portfolioProgress, setPortfolioProgress] = useState(0)
+
+  useEffect(() => {
+    setMounted(true)
+    const appIds = localStorage.getItem("applied_leads")
+    const arcIds = localStorage.getItem("archived_leads")
+    if (appIds) setAppliedLeadIds(JSON.parse(appIds))
+    if (arcIds) setArchivedLeadIds(JSON.parse(arcIds))
+  }, [])
+
+  const fetchProfile = async () => {
+    try {
+      const response = await fetch("/api/auth/me")
+      if (!response.ok) {
+        window.location.href = "/auth/login"
+        return
+      }
+
+      const data = await response.json()
+      if (!data.user || data.user.role !== "fundi") {
+        window.location.href = "/"
+        return
+      }
+
+      setUser(data.user)
+      setProfile(data.user.fundiProfile)
+      setEditName(data.user.name || "")
+      setEditTitle(data.user.fundiProfile?.title || "")
+      setEditTrade(data.user.fundiProfile?.trade || "")
+      setEditYearsExp(data.user.fundiProfile?.yearsExperience || "")
+      setEditArea(data.user.fundiProfile?.serviceArea || "")
+      setEditDesc(data.user.fundiProfile?.description || "")
+      setPreferredContact(data.user.fundiProfile?.preferredContact || "whatsapp")
+      setAvatarUrl(data.user.fundiProfile?.image || "")
+      setSkills(
+        typeof data.user.fundiProfile?.skills === "string"
+          ? data.user.fundiProfile.skills.split(",").map((item: string) => item.trim()).filter(Boolean)
+          : []
+      )
+      setPortfolioItems(parsePortfolioItems(data.user.fundiProfile?.portfolio))
+    } catch (error) {
+      console.error("Error fetching fundi profile:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const fetchLeads = async () => {
+    try {
+      const response = await fetch("/api/fundi/leads", { cache: "no-store" })
+      if (!response.ok) return
+      const data = await response.json()
+      const deletedList = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("deleted_leads") || "[]") : []
+      setLeads((Array.isArray(data) ? data : []).filter((lead: Lead) => !deletedList.includes(lead.id)))
+    } catch (error) {
+      console.error("Failed to fetch matching leads:", error)
+    }
+  }
+
+  useEffect(() => {
+    fetchProfile()
+    fetchLeads()
+  }, [])
+
+  const handleToggleEmergency = async (currentVal: boolean) => {
+    if (!profile) return
+    try {
+      setProfile((prev: any) => ({ ...prev, isEmergency: !currentVal }))
+      await fetch("/api/fundi/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isEmergency: !currentVal }),
+      })
+    } catch (error) {
+      console.error("Failed to toggle emergency status:", error)
+    }
+  }
+
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsUpdating(true)
+    setUpdateSuccess("")
+
+    try {
+      const response = await fetch("/api/fundi/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: editName,
+          title: editTitle,
+          trade: editTrade,
+          yearsExperience: editYearsExp,
+          serviceArea: editArea,
+          description: editDesc,
+          preferredContact,
+          skills: skills.join(", "),
+        }),
+      })
+
+      if (response.ok) {
+        setUpdateSuccess("Profile details saved successfully!")
+        await fetchProfile()
+        setTimeout(() => setUpdateSuccess(""), 4000)
+      } else {
+        const data = await response.json()
+        alert(data.error || "Failed to update profile details.")
+      }
+    } catch (error) {
+      console.error("Error updating profile details:", error)
+    } finally {
+      setIsUpdating(false)
+    }
+  }
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = async (event) => {
+      try {
+        const base64String = event.target?.result as string
+        const uploadResponse = await fetch("/api/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: base64String, fileName: file.name, folder: "fundi_hub/profile_pics" }),
+        })
+        if (!uploadResponse.ok) throw new Error("Upload failed")
+        const uploadData = await uploadResponse.json()
+        const imageUrl = uploadData.url || uploadData.data?.url || ""
+        if (!imageUrl) throw new Error("No image URL returned")
+        await fetch("/api/fundi/profile", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: imageUrl }),
+        })
+        setAvatarUrl(imageUrl)
+        await fetchProfile()
+      } catch (error) {
+        console.error("Avatar upload failed:", error)
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handlePortfolioUpload = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newPortfolioTitle.trim()) return
+
+    setIsPortfolioUploading(true)
+    setPortfolioProgress(0)
+
+    const finalizeUpload = async (imgUrl: string) => {
+      const newItem = {
+        id: `port-${Date.now()}`,
+        title: newPortfolioTitle,
+        category: newPortfolioCategory,
+        image: imgUrl,
+      }
+
+      const updatedItems = [newItem, ...portfolioItems]
+      setPortfolioItems(updatedItems)
+      await fetch("/api/fundi/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ portfolio: JSON.stringify(updatedItems) }),
+      })
+
+      setNewPortfolioTitle("")
+      setPortfolioFile(null)
+      setIsPortfolioUploading(false)
+      setIsAddPortfolioOpen(false)
+    }
+
+    let progress = 0
+    const interval = setInterval(() => {
+      progress += 20
+      setPortfolioProgress(progress)
+      if (progress >= 100) {
+        clearInterval(interval)
+        if (portfolioFile) {
+          const reader = new FileReader()
+          reader.onload = async (event) => {
+            try {
+              const base64String = event.target?.result as string
+              const uploadResponse = await fetch("/api/upload", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ image: base64String, fileName: portfolioFile.name, folder: "fundi_hub/portfolio" }),
+              })
+              if (!uploadResponse.ok) throw new Error("Portfolio image upload failed")
+              const uploadData = await uploadResponse.json()
+              await finalizeUpload(uploadData.url || "")
+            } catch (error) {
+              console.error("Portfolio upload failed:", error)
+              await finalizeUpload("")
+            }
+          }
+          reader.readAsDataURL(portfolioFile)
+        } else {
+          void finalizeUpload("")
+        }
+      }
+    }, 60)
+  }
+
+  const handleApplyLead = (leadId: string) => {
+    const newApplied = [...appliedLeadIds, leadId]
+    setAppliedLeadIds(newApplied)
+    localStorage.setItem("applied_leads", JSON.stringify(newApplied))
+    const newArchived = archivedLeadIds.filter((id) => id !== leadId)
+    setArchivedLeadIds(newArchived)
+    localStorage.setItem("archived_leads", JSON.stringify(newArchived))
+  }
+
+  const handleArchiveLead = (leadId: string) => {
+    const newArchived = [...archivedLeadIds, leadId]
+    setArchivedLeadIds(newArchived)
+    localStorage.setItem("archived_leads", JSON.stringify(newArchived))
+    const newApplied = appliedLeadIds.filter((id) => id !== leadId)
+    setAppliedLeadIds(newApplied)
+    localStorage.setItem("applied_leads", JSON.stringify(newApplied))
+  }
+
+  const handleRestoreLead = (leadId: string) => {
+    const newArchived = archivedLeadIds.filter((id) => id !== leadId)
+    setArchivedLeadIds(newArchived)
+    localStorage.setItem("archived_leads", JSON.stringify(newArchived))
+    const newApplied = appliedLeadIds.filter((id) => id !== leadId)
+    setAppliedLeadIds(newApplied)
+    localStorage.setItem("applied_leads", JSON.stringify(newApplied))
+  }
+
+  const handleDeleteLeadPermanently = (leadId: string) => {
+    const deletedList = JSON.parse(localStorage.getItem("deleted_leads") || "[]")
+    localStorage.setItem("deleted_leads", JSON.stringify([...deletedList, leadId]))
+    setLeads((prev) => prev.filter((lead) => lead.id !== leadId))
+  }
+
+  const handleActivateBadge = async () => {
+    setIsProcessingPayment(true)
+    try {
+      const response = await fetch("/api/fundi/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ premiumLevel: premiumModalType }),
+      })
+      if (response.ok) {
+        setIsPremiumModalOpen(false)
+        await fetchProfile()
+      }
+    } catch (error) {
+      console.error("Error upgrading premium tier:", error)
+    } finally {
+      setIsProcessingPayment(false)
+    }
+  }
+
+  const copyReferralLink = () => {
+    if (!user) return
+    const link = `${window.location.origin}/auth/signup?ref=${user.id}`
+    navigator.clipboard.writeText(link)
+    setCopiedReferral(true)
+    setTimeout(() => setCopiedReferral(false), 3000)
+  }
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" })
+    window.location.href = "/auth/login"
+  }
+
+  const matchingLeads = leads.filter((lead) => !appliedLeadIds.includes(lead.id) && !archivedLeadIds.includes(lead.id))
+  const appliedLeads = leads.filter((lead) => appliedLeadIds.includes(lead.id))
+  const archivedLeads = leads.filter((lead) => archivedLeadIds.includes(lead.id))
+
+  const referralCount = user?.referrals?.length || 0
+  const referralEarnings = referralCount * 100
+  const jobEarnings = 0
+  const totalEarnings = referralEarnings + jobEarnings
+
+  const completionScore = [editName, editTitle, editTrade, editYearsExp, editArea, editDesc, preferredContact, avatarUrl, portfolioItems.length > 0]
+    .filter(Boolean).length * 10
+
+  return (
+    <DashboardContext.Provider
+      value={{
+        user,
+        profile,
+        isLoading,
+        isUpdating,
+        updateSuccess,
+        copiedReferral,
+        mounted,
+        portfolioItems,
+        leads,
+        appliedLeadIds,
+        archivedLeadIds,
+        isPremiumModalOpen,
+        setIsPremiumModalOpen,
+        premiumModalType,
+        setPremiumModalType,
+        isProcessingPayment,
+        editName,
+        setEditName,
+        editTitle,
+        setEditTitle,
+        editTrade,
+        setEditTrade,
+        editYearsExp,
+        setEditYearsExp,
+        editArea,
+        setEditArea,
+        editDesc,
+        setEditDesc,
+        preferredContact,
+        setPreferredContact,
+        avatarUrl,
+        skills,
+        setSkills,
+        isAddPortfolioOpen,
+        setIsAddPortfolioOpen,
+        newPortfolioTitle,
+        setNewPortfolioTitle,
+        newPortfolioCategory,
+        setNewPortfolioCategory,
+        portfolioFile,
+        setPortfolioFile,
+        isPortfolioUploading,
+        portfolioProgress,
+        matchingLeads,
+        appliedLeads,
+        archivedLeads,
+        referralCount,
+        referralEarnings,
+        jobEarnings,
+        totalEarnings,
+        completionScore,
+        fetchProfile,
+        fetchLeads,
+        handleToggleEmergency,
+        handleUpdateProfile,
+        handleAvatarChange,
+        handlePortfolioUpload,
+        handleApplyLead,
+        handleArchiveLead,
+        handleRestoreLead,
+        handleDeleteLeadPermanently,
+        handleActivateBadge,
+        copyReferralLink,
+        handleLogout,
+      }}
+    >
+      {children}
+    </DashboardContext.Provider>
+  )
+}
+
+export function useDashboard() {
+  const context = useContext(DashboardContext)
+  if (context === undefined) {
+    throw new Error("useDashboard must be used within a DashboardProvider")
+  }
+  return context
+}

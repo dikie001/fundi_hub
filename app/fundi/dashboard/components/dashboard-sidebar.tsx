@@ -21,13 +21,13 @@ import {
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 import { LogOut, Moon, Sun } from "lucide-react"
+import Link from "next/link"
 
 export function DashboardSidebar(props: any) {
   const {
     isCollapsed,
     menuItems,
-    activeTab,
-    setActiveTab,
+    pathname,
     profile,
     mounted,
     resolvedTheme,
@@ -66,22 +66,24 @@ export function DashboardSidebar(props: any) {
           <SidebarMenu className="mt-2 space-y-2">
             {menuItems.slice(0, 3).map((item: any) => {
               const Icon = item.icon
-              const isActive = activeTab === item.id
+              const isActive = pathname === item.href
               return (
                 <SidebarMenuItem key={item.id}>
                   <SidebarMenuButton
                     isActive={isActive}
-                    onClick={() => setActiveTab(item.id as any)}
+                    asChild
                     tooltip={item.label}
                     className="h-10.5 w-full cursor-pointer rounded-lg px-3.5 text-sm font-medium hover:bg-sidebar-accent"
                   >
-                    <Icon className="h-4.5 w-4.5" />
-                    <span>{item.label}</span>
-                    {item.badge !== undefined && item.badge > 0 && (
-                      <span className="ml-auto rounded-full bg-primary/20 px-2 py-0.5 text-xs font-medium text-primary">
-                        {item.badge}
-                      </span>
-                    )}
+                    <Link href={item.href}>
+                      <Icon className="h-4.5 w-4.5" />
+                      <span>{item.label}</span>
+                      {item.badge !== undefined && item.badge > 0 && (
+                        <span className="ml-auto rounded-full bg-primary/20 px-2 py-0.5 text-xs font-medium text-primary">
+                          {item.badge}
+                        </span>
+                      )}
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               )
@@ -96,22 +98,24 @@ export function DashboardSidebar(props: any) {
           <SidebarMenu className="mt-2 space-y-2">
             {menuItems.slice(3).map((item: any) => {
               const Icon = item.icon
-              const isActive = activeTab === item.id
+              const isActive = pathname === item.href
               return (
                 <SidebarMenuItem key={item.id}>
                   <SidebarMenuButton
                     isActive={isActive}
-                    onClick={() => setActiveTab(item.id as any)}
+                    asChild
                     tooltip={item.label}
                     className="h-10.5 w-full cursor-pointer rounded-lg px-3.5 text-sm font-medium hover:bg-sidebar-accent"
                   >
-                    <Icon className="h-4.5 w-4.5" />
-                    <span>{item.label}</span>
-                    {item.badge !== undefined && item.badge > 0 && (
-                      <span className="ml-auto rounded-full bg-primary/20 px-2 py-0.5 text-xs font-medium text-primary">
-                        {item.badge}
-                      </span>
-                    )}
+                    <Link href={item.href}>
+                      <Icon className="h-4.5 w-4.5" />
+                      <span>{item.label}</span>
+                      {item.badge !== undefined && item.badge > 0 && (
+                        <span className="ml-auto rounded-full bg-primary/20 px-2 py-0.5 text-xs font-medium text-primary">
+                          {item.badge}
+                        </span>
+                      )}
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               )
