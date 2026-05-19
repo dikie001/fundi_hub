@@ -261,15 +261,15 @@ export default async function FundiProfilePage({ params }: PageProps) {
                 <div className="flex flex-wrap justify-between sm:justify-start gap-4 sm:gap-16 pt-2">
                   <div className="space-y-1">
                     <span className="text-xs text-muted-foreground">Experience</span>
-                    <p className="text-sm font-bold text-foreground">{fundiData.yearsExperience}</p>
+                    <p className="text-sm font-bold text-foreground">
+                      {fundiData.yearsExperience} {fundiData.yearsExperience === "1" || fundiData.yearsExperience === 1 ? "year" : "years"}
+                    </p>
                   </div>
                   <div className="space-y-1">
-                    <span className="text-xs text-muted-foreground">Jobs Completed</span>
-                    <p className="text-sm font-bold text-foreground">{fundiData.jobsCompleted || 0} jobs</p>
-                  </div>
-                  <div className="space-y-1">
-                    <span className="text-xs text-muted-foreground">Success Rate</span>
-                    <p className="text-sm font-bold text-foreground">{fundiData.successRate || 100}% rating</p>
+                    <span className="text-xs text-muted-foreground">Success Rating</span>
+                    <p className="text-sm font-bold text-foreground">
+                      {Math.round((fundiData.rating / 5) * 100)}%
+                    </p>
                   </div>
                 </div>
               </CardContent>
