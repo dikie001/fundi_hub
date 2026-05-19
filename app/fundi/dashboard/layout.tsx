@@ -85,23 +85,22 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       </SidebarInset>
 
       <Dialog open={isPremiumModalOpen} onOpenChange={setIsPremiumModalOpen}>
-        <DialogContent className="w-full max-w-sm rounded-xl border border-amber-500/20 bg-card p-5 shadow-lg relative overflow-hidden">
-          <div className="absolute top-0 right-0 -mr-8 -mt-8 h-24 w-24 rounded-full bg-amber-500/10 blur-xl pointer-events-none" />
+        <DialogContent className="w-full max-w-sm rounded-xl border border-border bg-card p-5 shadow-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-1.5 text-sm font-bold text-foreground">
-              <Zap className="h-4 w-4 animate-pulse text-amber-500" /> Activate Premium Partner
+              <ShieldCheck className="h-4 w-4 text-primary" /> Activate Premium Badge
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
               Boost your profile discovery rating and gain customer trust.
             </DialogDescription>
           </DialogHeader>
           <div className="my-2 space-y-4 border-t border-b border-border/30 py-4">
-            <div className="space-y-1.5 rounded-xl border border-amber-500/20 bg-amber-500/5 p-3.5 text-center">
-              <span className="text-[9px] font-black tracking-wider text-amber-500 uppercase">
-                Premium Partner Badge
+            <div className="space-y-1.5 rounded-xl border border-border bg-muted/40 p-3.5 text-center">
+              <span className="text-[9px] font-black tracking-wider text-muted-foreground uppercase">
+                Premium Badge
               </span>
-              <div className="text-2xl font-black text-amber-500 font-bold">
-                Ksh 500 / mo
+              <div className="text-2xl font-black text-primary">
+                Ksh 500 once
               </div>
               <p className="text-xs leading-normal text-muted-foreground">
                 Verified trust tick, top search rankings, and 5x priority queue dispatch for customer leads.
@@ -114,7 +113,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
               </div>
               <div className="flex gap-1.5 font-medium">
                 <Check className="h-3.5 w-3.5 shrink-0 text-primary" />
-                <span>Cancel or pause your subscription badge any time</span>
+                <span>One-time activation fee</span>
               </div>
             </div>
           </div>
@@ -131,7 +130,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
               type="button"
               onClick={handleActivateBadge}
               disabled={isProcessingPayment}
-              className="h-9.5 cursor-pointer rounded-lg px-4 text-xs font-bold bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-none shadow-xs"
+              className="h-9.5 cursor-pointer rounded-lg px-4 text-xs font-bold bg-primary text-primary-foreground"
             >
               {isProcessingPayment ? (
                 <>

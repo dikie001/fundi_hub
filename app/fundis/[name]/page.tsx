@@ -160,10 +160,8 @@ export default async function FundiProfilePage({ params }: PageProps) {
             <div className="flex flex-row gap-4 sm:gap-6 items-center">
               {/* Profile Avatar */}
               <div className={`relative flex h-20 w-20 sm:h-28 sm:w-28 shrink-0 items-center justify-center rounded-full border bg-muted/40 shadow-inner ring-4 ${
-                fundiData.premiumLevel === "top" 
-                  ? "ring-amber-500/20 border-amber-500/50" 
-                  : fundiData.premiumLevel === "verified"
-                  ? "ring-sky-500/20 border-sky-500/50"
+                fundiData.premiumLevel === "top" || fundiData.premiumLevel === "verified"
+                  ? "ring-indigo-500/20 border-indigo-500/40" 
                   : "ring-border/20 border-border"
               }`}>
                 {fundiData.image ? (
@@ -187,8 +185,8 @@ export default async function FundiProfilePage({ params }: PageProps) {
                   </h1>
                   <div className="flex flex-wrap gap-1.5">
                     {(fundiData.premiumLevel === "top" || fundiData.premiumLevel === "verified") && (
-                      <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-none shadow-md text-[10px] py-0.5 px-2.5 font-bold flex items-center gap-1 hover:from-amber-600 hover:to-orange-600">
-                        <Star size={10} className="fill-white" />
+                      <Badge variant="outline" className="border-indigo-500/25 bg-indigo-500/5 text-indigo-600 dark:text-indigo-400 shadow-xs text-[10px] py-0.5 px-2 font-bold flex items-center gap-1">
+                        <Star size={10} className="fill-current" />
                         Premium Partner
                       </Badge>
                     )}
