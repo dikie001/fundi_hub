@@ -38,7 +38,12 @@ export default function LoginPage() {
       if (!response.ok) {
         setLoginError(data.error || "Invalid phone number or password.")
       } else {
-        window.location.href = "/"
+        const userRole = data.user?.role
+        if (userRole === "fundi") {
+          window.location.href = "/fundi/dashboard"
+        } else {
+          window.location.href = "/"
+        }
       }
     } catch (error) {
       setLoginError("Network error. Please try again.")
