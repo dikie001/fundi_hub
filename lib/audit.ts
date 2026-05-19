@@ -14,7 +14,10 @@ export async function logAudit({
   try {
     let ip: string | undefined
     if (req) {
-      ip = req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip") ?? undefined
+      ip =
+        req.headers.get("x-forwarded-for") ??
+        req.headers.get("x-real-ip") ??
+        undefined
       if (ip && ip.includes(",")) ip = ip.split(",")[0].trim()
     }
 

@@ -2,7 +2,11 @@ import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const cookieStore = cookies()
   const userId = cookieStore.get("user_session")?.value
 

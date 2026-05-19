@@ -103,7 +103,12 @@ export async function POST(request: Request) {
     }
 
     // Audit the registration
-    await logAudit({ action: "USER_REGISTRATION", details: `User ${name} registered as ${userType}`, req: request, userId: user.id })
+    await logAudit({
+      action: "USER_REGISTRATION",
+      details: `User ${name} registered as ${userType}`,
+      req: request,
+      userId: user.id,
+    })
 
     return NextResponse.json(
       { message: "Registration successful", userId: user.id },

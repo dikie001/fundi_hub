@@ -57,39 +57,40 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground px-4 py-16 sm:py-24 flex flex-col justify-center items-center font-sans select-none">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-16 font-sans text-foreground select-none sm:py-24">
       <div className="w-full max-w-md space-y-6">
-        
         {/* Header containing title and subtitle matching signup */}
-        <div className="flex flex-col items-center text-center space-y-4">
+        <div className="flex flex-col items-center space-y-4 text-center">
           <div className="space-y-1.5">
             <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               Welcome back
             </h1>
-            <p className="text-xs text-muted-foreground max-w-xs mx-auto">
+            <p className="mx-auto max-w-xs text-xs text-muted-foreground">
               Sign in to find trusted experts near you.
             </p>
           </div>
         </div>
 
         {/* Dynamic Card */}
-        <Card className="border-border bg-card text-card-foreground shadow-lg rounded-xl overflow-hidden p-8 sm:p-10">
-          <CardContent className="p-0 space-y-5">
-
+        <Card className="overflow-hidden rounded-xl border-border bg-card p-8 text-card-foreground shadow-lg sm:p-10">
+          <CardContent className="space-y-5 p-0">
             {/* Login Credentials Form */}
             <form onSubmit={handleEmailLogin} className="space-y-5">
               {loginError && (
-                <div className="rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs text-destructive flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                <div className="flex animate-in items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs text-destructive duration-200 fade-in slide-in-from-top-1">
                   <span>{loginError}</span>
                 </div>
               )}
-              
+
               <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-xs font-bold text-foreground">
+                <Label
+                  htmlFor="email"
+                  className="text-xs font-bold text-foreground"
+                >
                   Phone number
                 </Label>
                 <div className="relative">
-                  <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/45 pointer-events-none" />
+                  <Phone className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground/45" />
                   <Input
                     id="email"
                     type="text"
@@ -105,25 +106,28 @@ export default function LoginPage() {
 
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-xs font-bold text-foreground">
+                  <Label
+                    htmlFor="password"
+                    className="text-xs font-bold text-foreground"
+                  >
                     Password
                   </Label>
                   <Link
                     href="/auth/forgot-password"
-                    className="text-[11px] text-muted-foreground hover:text-primary transition-colors"
+                    className="text-[11px] text-muted-foreground transition-colors hover:text-primary"
                   >
                     Forgot password?
                   </Link>
                 </div>
                 <div className="relative">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/45 pointer-events-none" />
+                  <Lock className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground/45" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10"
+                    className="pr-10 pl-10"
                     disabled={isLoading}
                     required
                   />
@@ -132,32 +136,38 @@ export default function LoginPage() {
                     onClick={() => setShowPassword(!showPassword)}
                     variant="ghost"
                     size="icon-sm"
-                    className="absolute top-1/2 right-1 -translate-y-1/2 text-muted-foreground hover:text-foreground hover:bg-transparent cursor-pointer"
+                    className="absolute top-1/2 right-1 -translate-y-1/2 cursor-pointer text-muted-foreground hover:bg-transparent hover:text-foreground"
                     disabled={isLoading}
                     aria-label={
                       showPassword ? "Hide password" : "Show password"
                     }
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
                   </Button>
                 </div>
               </div>
 
               <Button
                 type="submit"
-                className="w-full font-bold h-11 text-xs rounded-xl cursor-pointer mt-2 bg-primary text-primary-foreground hover:bg-primary/95 transition-all duration-200 shadow-sm flex items-center justify-center"
+                className="mt-2 flex h-11 w-full cursor-pointer items-center justify-center rounded-xl bg-primary text-xs font-bold text-primary-foreground shadow-sm transition-all duration-200 hover:bg-primary/95"
                 disabled={isLoading}
               >
-                {isLoading && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
+                {isLoading && (
+                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                )}
                 {isLoading ? "Signing in..." : "Sign in"}
               </Button>
             </form>
 
-            <div className="text-center text-xs text-muted-foreground font-medium pt-2">
+            <div className="pt-2 text-center text-xs font-medium text-muted-foreground">
               New to FundiHub?{" "}
               <Link
                 href="/auth/signup"
-                className="font-bold text-primary hover:underline ml-0.5"
+                className="ml-0.5 font-bold text-primary hover:underline"
               >
                 Create an account
               </Link>
@@ -166,16 +176,25 @@ export default function LoginPage() {
         </Card>
 
         {/* Footer legal links matching layout */}
-        <div className="flex justify-center gap-4 text-[10px] text-muted-foreground/80 font-medium tracking-wide">
-          <Link href="/privacy" className="hover:text-primary transition-colors cursor-pointer">
+        <div className="flex justify-center gap-4 text-[10px] font-medium tracking-wide text-muted-foreground/80">
+          <Link
+            href="/privacy"
+            className="cursor-pointer transition-colors hover:text-primary"
+          >
             Privacy Policy
           </Link>
           <span>•</span>
-          <Link href="/terms" className="hover:text-primary transition-colors cursor-pointer">
+          <Link
+            href="/terms"
+            className="cursor-pointer transition-colors hover:text-primary"
+          >
             Terms of Service
           </Link>
           <span>•</span>
-          <Link href="/" className="hover:text-primary transition-colors cursor-pointer">
+          <Link
+            href="/"
+            className="cursor-pointer transition-colors hover:text-primary"
+          >
             Back to Home
           </Link>
         </div>

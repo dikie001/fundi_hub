@@ -33,7 +33,8 @@ export async function POST(request: Request) {
     const isAdminLogin =
       adminPasswordEnv &&
       (searchEmail === adminEmailEnv ||
-        (adminNormalizedEmailFromPhone && searchEmail === adminNormalizedEmailFromPhone))
+        (adminNormalizedEmailFromPhone &&
+          searchEmail === adminNormalizedEmailFromPhone))
 
     let user = await db.user.findUnique({ where: { email: searchEmail } })
 
@@ -41,7 +42,8 @@ export async function POST(request: Request) {
       // Upsert admin user to keep DB in sync with env
       const adminName = process.env.ADMIN_NAME ?? "Admin"
       const phone = process.env.ADMIN_PHONE ?? "0000000000"
-      const emailToUse = adminEmailEnv ?? adminNormalizedEmailFromPhone ?? searchEmail
+      const emailToUse =
+        adminEmailEnv ?? adminNormalizedEmailFromPhone ?? searchEmail
 
       user = await db.user.upsert({
         where: { email: emailToUse },
@@ -60,11 +62,20 @@ export async function POST(request: Request) {
         },
       })
 
-      await logAudit({ action: "ADMIN_LOGIN", details: `Admin ${adminName} logged in`, req: request, userId: user.id })
+      await logAudit({
+        action: "ADMIN_LOGIN",
+        details: `Admin ${adminName} logged in`,
+        req: request,
+        userId: user.id,
+      })
     }
 
     if (!user) {
-      await logAudit({ action: "USER_LOGIN_FAILED", details: `Login failed for ${searchEmail}`, req: request })
+      await logAudit({
+        action: "USER_LOGIN_FAILED",
+        details: `Login failed for ${searchEmail}`,
+        req: request,
+      })
       return NextResponse.json(
         { error: "Invalid phone number or password" },
         { status: 401 }
@@ -77,7 +88,12 @@ export async function POST(request: Request) {
       if (password === user.password) {
         // Plaintext seeded user is valid
       } else {
-        await logAudit({ action: "USER_LOGIN_FAILED", details: `Invalid password for ${user.email ?? user.phone}`, req: request, userId: user.id })
+        await logAudit({
+          action: "USER_LOGIN_FAILED",
+          details: `Invalid password for ${user.email ?? user.phone}`,
+          req: request,
+          userId: user.id,
+        })
         return NextResponse.json(
           { error: "Invalid phone number or password" },
           { status: 401 }
@@ -87,7 +103,12 @@ export async function POST(request: Request) {
 
     // Log successful login
     const loginAction = user.role === "admin" ? "ADMIN_LOGIN" : "USER_LOGIN"
-    await logAudit({ action: loginAction, details: `User ${user.email ?? user.phone} logged in`, req: request, userId: user.id })
+    await logAudit({
+      action: loginAction,
+      details: `User ${user.email ?? user.phone} logged in`,
+      req: request,
+      userId: user.id,
+    })
 
     // Set simple mock cookie or session
     const response = NextResponse.json(
