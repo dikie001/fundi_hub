@@ -83,92 +83,32 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-// Static mock incoming client leads to show matching recommendations dynamically based on trade
-const MOCK_CLIENT_LEADS = [
-  {
-    id: "lead-1",
-    clientName: "David K.",
-    trade: "Plumber",
-    title: "Urgent Kitchen Pipe Leak",
-    location: "Nairobi, Kilimani",
-    budget: "KES 3,500",
-    urgency: "Today / Immediate",
-    description:
-      "Our kitchen sink pipe has burst and water is flooding the floor. Need a plumber right away.",
-    phone: "+254 712 345 678",
-    createdAt: "10 mins ago",
-  },
-  {
-    id: "lead-2",
-    clientName: "Grace M.",
-    trade: "Electrician",
-    title: "Short Circuit in Living Room",
-    location: "Nairobi, Langata",
-    budget: "KES 5,000",
-    urgency: "Within 3 Days",
-    description:
-      "Several sockets have stopped working after a spark. Need an electrician to trace the fault.",
-    phone: "+254 722 890 123",
-    createdAt: "45 mins ago",
-  },
-  {
-    id: "lead-3",
-    clientName: "John O.",
-    trade: "Painter",
-    title: "Apartment Interior Painting",
-    location: "Mombasa, Nyali",
-    budget: "KES 25,000",
-    urgency: "Flexible / Planning",
-    description:
-      "Looking to repaint the interior of a 2-bedroom apartment next week. Budget is flexible.",
-    phone: "+254 733 456 789",
-    createdAt: "2 hours ago",
-  },
-  {
-    id: "lead-4",
-    clientName: "Carpenter",
-    trade: "Carpenter",
-    title: "Fix Wardrobe Hinges",
-    location: "Nairobi, Westlands",
-    budget: "KES 2,000",
-    urgency: "Within a Week",
-    description:
-      "Two sliding wardrobe doors have come off their hinges and need realignment.",
-    phone: "+254 701 234 567",
-    createdAt: "4 hours ago",
-  },
-  {
-    id: "lead-5",
-    clientName: "Peter K.",
-    trade: "Plumber",
-    title: "Install Instant Shower Heater",
-    location: "Nairobi, Kasarani",
-    budget: "KES 1,500",
-    urgency: "Within 3 Days",
-    description:
-      "Looking for an experienced plumber to mount and connect a brand new instant heater in bathroom.",
-    phone: "+254 711 999 888",
-    createdAt: "1 day ago",
-  },
-]
+type PortfolioItem = {
+  id: string
+  title: string
+  category: string
+  image: string
+}
 
-// Mock portfolio items
-const INITIAL_PORTFOLIO_ITEMS = [
-  {
-    id: "port-1",
-    title: "House Wiring Project",
-    category: "Wiring",
-    image:
-      "https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=600&auto=format&fit=crop&q=60",
-  },
-  {
-    id: "port-2",
-    title: "Distribution Box Setup",
-    category: "Installation",
-    image:
-      "https://images.unsplash.com/photo-1621905252507-b354bc25edac?w=600&auto=format&fit=crop&q=60",
-  },
-]
+function parsePortfolioItems(portfolio: unknown): PortfolioItem[] {
+  if (typeof portfolio !== "string" || !portfolio.trim()) return []
+
+  try {
+    const parsed = JSON.parse(portfolio)
+    if (!Array.isArray(parsed)) return []
+
+    return parsed
+      .map((item) => ({
+        id: String(item?.id || `port-${Date.now()}`),
+        title: String(item?.title || "Untitled work"),
+        category: String(item?.category || "General"),
+        image: String(item?.image || ""),
+      }))
+      .filter((item) => item.title.trim())
+  } catch {
+    return []
+  }
+}
 
 function DashboardInner() {
   const { state } = useSidebar()
@@ -201,8 +141,8 @@ function DashboardInner() {
     "overview" | "leads" | "profile" | "referrals" | "membership"
   >("overview")
 
-  // Portfolio local state
-  const [portfolioItems, setPortfolioItems] = useState(INITIAL_PORTFOLIO_ITEMS)
+  // Portfolio state now comes from the persisted fundi profile
+  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([])
   const [newPortfolioTitle, setNewPortfolioTitle] = useState("")
   const [newPortfolioCategory, setNewPortfolioCategory] = useState("General")
   const [isAddPortfolioOpen, setIsAddPortfolioOpen] = useState(false)
@@ -262,16 +202,9 @@ function DashboardInner() {
     setMounted(true)
   }, [])
 
-  // Load portfolio and leads interactions from localStorage on client mount
+  // Load lead interactions from localStorage on client mount
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("fundi_portfolio_items")
-      if (stored) {
-        setPortfolioItems(JSON.parse(stored))
-      } else {
-        setPortfolioItems(INITIAL_PORTFOLIO_ITEMS)
-      }
-
       const appIds = localStorage.getItem("applied_leads")
       const arcIds = localStorage.getItem("archived_leads")
       if (appIds) setAppliedLeadIds(JSON.parse(appIds))
@@ -311,6 +244,7 @@ function DashboardInner() {
               .filter(Boolean)
           )
         }
+        setPortfolioItems(parsePortfolioItems(data.user.fundiProfile?.portfolio))
         fetchLeads()
       } else {
         window.location.href = "/"
@@ -537,7 +471,7 @@ function DashboardInner() {
     }
   }
 
-  // Portfolio simulated upload
+  // Portfolio upload persists into the fundi profile record
   const handlePortfolioUpload = (e: React.FormEvent) => {
     e.preventDefault()
     if (!newPortfolioTitle.trim()) return
@@ -552,10 +486,10 @@ function DashboardInner() {
     setUploadFileSize(
       portfolioFile
         ? `${(portfolioFile.size / 1024 / 1024).toFixed(2)} MB`
-        : "1.8 MB"
+        : "No file selected"
     )
 
-    const finalizeUpload = (imgDataUrl: string) => {
+    const finalizeUpload = async (imgUrl: string) => {
       let progress = 0
       const interval = setInterval(() => {
         progress += 10
@@ -567,15 +501,22 @@ function DashboardInner() {
             id: `port-${Date.now()}`,
             title: newPortfolioTitle,
             category: newPortfolioCategory,
-            image: imgDataUrl,
+            image: imgUrl,
           }
 
           const updatedItems = [newItem, ...portfolioItems]
           setPortfolioItems(updatedItems)
-          localStorage.setItem(
-            "fundi_portfolio_items",
-            JSON.stringify(updatedItems)
+          setProfile((prev: any) =>
+            prev ? { ...prev, portfolio: JSON.stringify(updatedItems) } : prev
           )
+
+          void fetch("/api/fundi/profile", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ portfolio: JSON.stringify(updatedItems) }),
+          }).catch((error) => {
+            console.error("Failed to persist portfolio update:", error)
+          })
 
           setNewPortfolioTitle("")
           setPortfolioFile(null)
@@ -589,20 +530,33 @@ function DashboardInner() {
       const reader = new FileReader()
       reader.onload = (event) => {
         const base64String = event.target?.result as string
-        finalizeUpload(base64String)
+        void (async () => {
+          try {
+            const response = await fetch("/api/upload", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                image: base64String,
+                fileName: portfolioFile.name,
+                folder: "fundi_hub/portfolio",
+              }),
+            })
+
+            if (!response.ok) {
+              throw new Error("Portfolio image upload failed")
+            }
+
+            const uploadData = await response.json()
+            await finalizeUpload(uploadData.url || "")
+          } catch (error) {
+            console.error("Portfolio upload failed:", error)
+            await finalizeUpload("")
+          }
+        })()
       }
       reader.readAsDataURL(portfolioFile)
     } else {
-      // Fallback to static unsplash image if no file was selected
-      const galleryImages = [
-        "https://images.unsplash.com/photo-1581092921461-eab62e97a780?w=600&auto=format&fit=crop&q=60",
-        "https://images.unsplash.com/photo-1621905252507-b354bc25edac?w=600&auto=format&fit=crop&q=60",
-        "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&auto=format&fit=crop&q=60",
-        "https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=600&auto=format&fit=crop&q=60",
-      ]
-      const randomImg =
-        galleryImages[portfolioItems.length % galleryImages.length]
-      finalizeUpload(randomImg)
+      void finalizeUpload("")
     }
   }
 
@@ -651,23 +605,6 @@ function DashboardInner() {
     }
   }
 
-  // Add portfolio photo mock
-  const handleAddPortfolioItem = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!newPortfolioTitle.trim()) return
-
-    const newItem = {
-      id: `port-${Date.now()}`,
-      title: newPortfolioTitle,
-      category: newPortfolioCategory,
-      image:
-        "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&auto=format&fit=crop&q=60",
-    }
-    setPortfolioItems((prev) => [newItem, ...prev])
-    setNewPortfolioTitle("")
-    setIsAddPortfolioOpen(false)
-  }
-
   if (isLoading) {
     return (
       <div className="flex min-h-screen animate-pulse flex-col items-center justify-center gap-3.5 bg-radial from-background to-muted text-foreground">
@@ -693,7 +630,7 @@ function DashboardInner() {
 
   const referralCount = user?.referrals?.length || 0
   const referralEarnings = referralCount * 100
-  const jobEarnings = 12500
+  const jobEarnings = 0
   const totalEarnings = referralEarnings + jobEarnings
 
   const menuItems = [
@@ -1778,11 +1715,17 @@ function DashboardInner() {
                                 key={item.id}
                                 className="group relative aspect-video overflow-hidden rounded-xl border border-border/30 bg-muted/20 shadow-xs"
                               >
-                                <img
-                                  src={item.image}
-                                  alt={item.title}
-                                  className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
-                                />
+                                {item.image ? (
+                                  <img
+                                    src={item.image}
+                                    alt={item.title}
+                                    className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+                                  />
+                                ) : (
+                                  <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-muted via-background to-muted/30 text-muted-foreground">
+                                    <ImageIcon className="h-8 w-8" />
+                                  </div>
+                                )}
                                 <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/10 to-transparent p-3.5">
                                   <span className="text-xs font-semibold tracking-wider text-primary uppercase">
                                     {item.category}
@@ -2482,7 +2425,7 @@ function DashboardInner() {
                                         />
                                       </div>
                                       <p className="text-xs text-muted-foreground">
-                                        Uploading project work mockup photo...
+                                        Uploading portfolio photo...
                                       </p>
                                     </div>
                                   </div>
@@ -2495,11 +2438,17 @@ function DashboardInner() {
                                         key={item.id}
                                         className="group relative aspect-video overflow-hidden rounded-lg border border-border/30 bg-muted/20"
                                       >
-                                        <img
-                                          src={item.image}
-                                          alt={item.title}
-                                          className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
-                                        />
+                                        {item.image ? (
+                                          <img
+                                            src={item.image}
+                                            alt={item.title}
+                                            className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+                                          />
+                                        ) : (
+                                          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-muted via-background to-muted/30 text-muted-foreground">
+                                            <ImageIcon className="h-7 w-7" />
+                                          </div>
+                                        )}
                                         <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/10 to-transparent p-3">
                                           <span className="text-xs font-semibold tracking-wider text-primary uppercase">
                                             {item.category}
@@ -2849,7 +2798,7 @@ function DashboardInner() {
                             Select photos of your work
                           </p>
                           <p className="mt-0.5 text-xs text-muted-foreground">
-                            PNG, JPG up to 5MB (Simulated upload)
+                            PNG, JPG up to 5MB
                           </p>
                         </div>
 

@@ -24,6 +24,7 @@ export async function PUT(request: Request) {
       premiumLevel,
       image,
       skills,
+      portfolio,
     } = body
 
     const user = await db.user.findUnique({
@@ -55,6 +56,7 @@ export async function PUT(request: Request) {
         premiumLevel: premiumLevel !== undefined ? premiumLevel : user.fundiProfile?.premiumLevel,
         image: image !== undefined ? image : user.fundiProfile?.image,
         skills: skills !== undefined ? skills : user.fundiProfile?.skills,
+        portfolio: portfolio !== undefined ? portfolio : user.fundiProfile?.portfolio,
       },
     })
 
