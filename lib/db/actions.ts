@@ -1,9 +1,5 @@
 import { db } from "@/lib/db"
-import {
-  Fundi,
-  categories as mockCategories,
-  fundis as mockFundis,
-} from "@/lib/data"
+import { Fundi, categories as mockCategories } from "@/lib/data"
 
 export async function getCategories() {
   try {
@@ -40,10 +36,6 @@ export async function getFundis(): Promise<Fundi[]> {
       },
     })
 
-    if (dbFundis.length === 0) {
-      return mockFundis
-    }
-
     return dbFundis.map((user) => {
       const profile = user.fundiProfile!
       return {
@@ -64,10 +56,7 @@ export async function getFundis(): Promise<Fundi[]> {
       }
     })
   } catch (error) {
-    console.error(
-      "Error fetching fundis from database, falling back to mock:",
-      error
-    )
-    return mockFundis
+    console.error("Error fetching fundis from database:", error)
+    return []
   }
 }

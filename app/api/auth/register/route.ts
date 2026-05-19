@@ -23,21 +23,15 @@ export async function POST(request: Request) {
       referrerId,
     } = body
 
-    if (!email || !password || !name || !phone || !userType) {
+    if (!password || !name || !phone || !userType) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
       )
     }
-
-    // Check if phone or email already exists
+    // Check if phone already exists
     const existingUser = await db.user.findFirst({
-      where: {
-        OR: [
-          { email: email.toLowerCase() },
-          { phone: phone }
-        ]
-      },
+      where: { phone: phone },
     })
 
     if (existingUser) {
@@ -53,7 +47,7 @@ export async function POST(request: Request) {
     const user = await db.user.create({
       data: {
         name,
-        email: email.toLowerCase(),
+        ...(email ? { email: String(email).toLowerCase() } : {}),
         phone,
         password: hashedPassword,
         role: userType === "fundi" ? "fundi" : "client",
@@ -88,7 +82,7 @@ export async function POST(request: Request) {
     if (userType === "fundi" && referrerId) {
       try {
         const referrer = await db.user.findUnique({
-          where: { id: referrerId }
+          where: { id: referrerId },
         })
         if (referrer) {
           await db.referral.create({
@@ -98,8 +92,8 @@ export async function POST(request: Request) {
               refereePhone: phone,
               refereeTrade: trade || "General",
               status: "registered",
-              commission: 100.0
-            }
+              commission: 100.0,
+            },
           })
         }
       } catch (err) {
