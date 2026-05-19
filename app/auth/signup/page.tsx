@@ -68,18 +68,11 @@ type SignupFormData = {
 const totalSteps = 5
 
 const TRADES_LIST = [
-  "Electrician",
   "Plumber",
+  "Electrician",
   "Carpenter",
   "Painter",
-  "Mason",
-  "Tiler",
-  "Welder",
-  "Landscaper",
-  "Cleaner",
-  "Mechanic",
-  "Locksmith",
-  "HVAC Tech"
+  "Mason"
 ]
 
 const EXPERIENCE_LEVELS = [
@@ -144,14 +137,14 @@ export default function SignupPage() {
 
   // Memoized trade options containing custom inputs if they are set
   const clientTrades = useMemo(() => {
-    if (formData.projectCategory && !TRADES_LIST.includes(formData.projectCategory)) {
+    if (formData.projectCategory && formData.projectCategory !== "Other" && !TRADES_LIST.includes(formData.projectCategory)) {
       return [...TRADES_LIST, formData.projectCategory]
     }
     return TRADES_LIST
   }, [formData.projectCategory])
 
   const fundiTrades = useMemo(() => {
-    if (formData.trade && !TRADES_LIST.includes(formData.trade)) {
+    if (formData.trade && formData.trade !== "Other" && !TRADES_LIST.includes(formData.trade)) {
       return [...TRADES_LIST, formData.trade]
     }
     return TRADES_LIST
@@ -201,9 +194,12 @@ export default function SignupPage() {
 
   const handleSelectProjectCategory = (val: string) => {
     if (val === "Other") {
+      updateField("projectCategory", "Other")
       setOtherFieldType("projectCategory")
       setOtherInputValue("")
-      setIsOtherModalOpen(true)
+      setTimeout(() => {
+        setIsOtherModalOpen(true)
+      }, 100)
     } else {
       updateField("projectCategory", val)
     }
@@ -211,9 +207,12 @@ export default function SignupPage() {
 
   const handleSelectTrade = (val: string) => {
     if (val === "Other") {
+      updateField("trade", "Other")
       setOtherFieldType("trade")
       setOtherInputValue("")
-      setIsOtherModalOpen(true)
+      setTimeout(() => {
+        setIsOtherModalOpen(true)
+      }, 100)
     } else {
       updateField("trade", val)
     }
@@ -244,7 +243,7 @@ export default function SignupPage() {
 
     if (currentStep === 3) {
       if (userType === "fundi") {
-        if (!formData.trade.trim()) {
+        if (!formData.trade.trim() || formData.trade === "Other") {
           setStepError("Please enter your primary trade.")
           return false
         }
@@ -261,7 +260,7 @@ export default function SignupPage() {
           return false
         }
       } else {
-        if (!formData.projectCategory.trim()) {
+        if (!formData.projectCategory.trim() || formData.projectCategory === "Other") {
           setStepError("Please specify the service needed.")
           return false
         }
@@ -497,12 +496,16 @@ export default function SignupPage() {
                       <Briefcase className="h-3.5 w-3.5 text-primary" /> Service Needed
                     </Label>
                     <Select
-                      value={formData.projectCategory}
+                      value={formData.projectCategory && !TRADES_LIST.includes(formData.projectCategory) ? "Other" : formData.projectCategory}
                       onValueChange={handleSelectProjectCategory}
                       disabled={isLoading}
                     >
                       <SelectTrigger id="projectCategory" className="w-full">
-                        <SelectValue placeholder="Select the service you need..." />
+                        {formData.projectCategory && formData.projectCategory !== "Other" ? (
+                          <span className="text-sm text-foreground">{formData.projectCategory}</span>
+                        ) : (
+                          <SelectValue placeholder="Select the service you need..." />
+                        )}
                       </SelectTrigger>
                       <SelectContent>
                         {clientTrades.map((t) => (
@@ -584,12 +587,16 @@ export default function SignupPage() {
                       <Wrench className="h-3.5 w-3.5 text-primary" /> Primary Skill / Trade
                     </Label>
                     <Select
-                      value={formData.trade}
+                      value={formData.trade && !TRADES_LIST.includes(formData.trade) ? "Other" : formData.trade}
                       onValueChange={handleSelectTrade}
                       disabled={isLoading}
                     >
                       <SelectTrigger id="trade" className="w-full">
-                        <SelectValue placeholder="Select your primary trade..." />
+                        {formData.trade && formData.trade !== "Other" ? (
+                          <span className="text-sm text-foreground">{formData.trade}</span>
+                        ) : (
+                          <SelectValue placeholder="Select your primary trade..." />
+                        )}
                       </SelectTrigger>
                       <SelectContent>
                         {fundiTrades.map((t) => (

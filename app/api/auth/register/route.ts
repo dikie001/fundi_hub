@@ -29,14 +29,19 @@ export async function POST(request: Request) {
       )
     }
 
-    // Check if email already exists
-    const existingUser = await db.user.findUnique({
-      where: { email: email.toLowerCase() },
+    // Check if phone or email already exists
+    const existingUser = await db.user.findFirst({
+      where: {
+        OR: [
+          { email: email.toLowerCase() },
+          { phone: phone }
+        ]
+      },
     })
 
     if (existingUser) {
       return NextResponse.json(
-        { error: "Email is already registered" },
+        { error: "Phone number is already registered" },
         { status: 400 }
       )
     }
