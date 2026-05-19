@@ -420,30 +420,41 @@ function DashboardInner() {
   // Avatar upload simulation helper
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0]
       setIsAvatarUploading(true)
       setAvatarProgress(0)
-      
-      let progress = 0
-      const interval = setInterval(() => {
-        progress += 10
-        setAvatarProgress(progress)
-        if (progress >= 100) {
-          clearInterval(interval)
-          // Set simulated user avatar URL
-          const newAvatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80"
-          setAvatarUrl(newAvatar)
-          setIsAvatarUploading(false)
-          
-          // Call API to save avatar url
-          fetch("/api/fundi/profile", {
+
+      const reader = new FileReader()
+      reader.onload = async (event) => {
+        const base64String = event.target?.result as string
+        setAvatarProgress(50)
+        
+        try {
+          const res = await fetch("/api/fundi/profile", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ image: newAvatar })
-          }).then(() => {
-            fetchProfile()
+            body: JSON.stringify({ image: base64String })
           })
+          if (res.ok) {
+            setAvatarUrl(base64String)
+            setAvatarProgress(100)
+            fetchProfile()
+          } else {
+            console.error("Failed to update avatar photo")
+          }
+        } catch (error) {
+          console.error("Avatar upload failed:", error)
+        } finally {
+          setIsAvatarUploading(false)
         }
-      }, 150)
+      }
+      reader.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percent = Math.round((event.loaded / event.total) * 100)
+          setAvatarProgress(percent)
+        }
+      }
+      reader.readAsDataURL(file)
     }
   }
 
@@ -454,37 +465,54 @@ function DashboardInner() {
 
     setIsPortfolioUploading(true)
     setPortfolioProgress(0)
-    setUploadFileName(`${newPortfolioTitle.toLowerCase().replace(/\s+/g, "_")}.jpg`)
-    setUploadFileSize("1.8 MB")
+    setUploadFileName(portfolioFile ? portfolioFile.name : `${newPortfolioTitle.toLowerCase().replace(/\s+/g, "_")}.jpg`)
+    setUploadFileSize(portfolioFile ? `${(portfolioFile.size / 1024 / 1024).toFixed(2)} MB` : "1.8 MB")
 
-    let progress = 0
-    const interval = setInterval(() => {
-      progress += 5
-      setPortfolioProgress(progress)
-      if (progress >= 100) {
-        clearInterval(interval)
-        
-        const galleryImages = [
-          "https://images.unsplash.com/photo-1581092921461-eab62e97a780?w=600&auto=format&fit=crop&q=60",
-          "https://images.unsplash.com/photo-1621905252507-b354bc25edac?w=600&auto=format&fit=crop&q=60",
-          "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&auto=format&fit=crop&q=60",
-          "https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=600&auto=format&fit=crop&q=60"
-        ]
-        const randomImg = galleryImages[portfolioItems.length % galleryImages.length]
+    const finalizeUpload = (imgDataUrl: string) => {
+      let progress = 0
+      const interval = setInterval(() => {
+        progress += 10
+        setPortfolioProgress(progress)
+        if (progress >= 100) {
+          clearInterval(interval)
+          
+          const newItem = {
+            id: `port-${Date.now()}`,
+            title: newPortfolioTitle,
+            category: newPortfolioCategory,
+            image: imgDataUrl
+          }
 
-        const newItem = {
-          id: `port-${Date.now()}`,
-          title: newPortfolioTitle,
-          category: newPortfolioCategory,
-          image: randomImg
+          const updatedItems = [newItem, ...portfolioItems]
+          setPortfolioItems(updatedItems)
+          localStorage.setItem("fundi_portfolio_items", JSON.stringify(updatedItems))
+          
+          setNewPortfolioTitle("")
+          setPortfolioFile(null)
+          setIsPortfolioUploading(false)
+          setIsAddPortfolioOpen(false)
         }
+      }, 50)
+    }
 
-        setPortfolioItems((prev) => [newItem, ...prev])
-        setNewPortfolioTitle("")
-        setIsPortfolioUploading(false)
-        setIsAddPortfolioOpen(false)
+    if (portfolioFile) {
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        const base64String = event.target?.result as string
+        finalizeUpload(base64String)
       }
-    }, 80)
+      reader.readAsDataURL(portfolioFile)
+    } else {
+      // Fallback to static unsplash image if no file was selected
+      const galleryImages = [
+        "https://images.unsplash.com/photo-1581092921461-eab62e97a780?w=600&auto=format&fit=crop&q=60",
+        "https://images.unsplash.com/photo-1621905252507-b354bc25edac?w=600&auto=format&fit=crop&q=60",
+        "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&auto=format&fit=crop&q=60",
+        "https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=600&auto=format&fit=crop&q=60"
+      ]
+      const randomImg = galleryImages[portfolioItems.length % galleryImages.length]
+      finalizeUpload(randomImg)
+    }
   }
 
   // Handle Badge Activation Payment Flow
@@ -1540,10 +1568,27 @@ function DashboardInner() {
                           </select>
                         </div>
                         
-                        <div className="rounded-lg border border-dashed border-border/40 p-5 text-center bg-muted/15">
-                          <ImageIcon className="h-6 w-6 text-primary mx-auto mb-1.5" />
-                          <p className="text-[10px] font-bold text-foreground">Select photos of your work</p>
-                          <p className="text-[8px] text-muted-foreground mt-0.5">PNG, JPG up to 5MB (Simulated upload)</p>
+                        <div className="rounded-lg border border-dashed border-border/40 p-5 text-center bg-muted/15 relative">
+                          <input
+                            type="file"
+                            id="portfolio-upload-file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              if (e.target.files && e.target.files[0]) {
+                                setPortfolioFile(e.target.files[0])
+                              }
+                            }}
+                          />
+                          <label htmlFor="portfolio-upload-file" className="cursor-pointer block">
+                            <ImageIcon className="h-6 w-6 text-primary mx-auto mb-1.5" />
+                            <p className="text-[10px] font-bold text-foreground">
+                              {portfolioFile ? portfolioFile.name : "Select photo of your work"}
+                            </p>
+                            <p className="text-[8px] text-muted-foreground mt-0.5">
+                              {portfolioFile ? `${(portfolioFile.size / 1024 / 1024).toFixed(2)} MB` : "PNG, JPG up to 5MB"}
+                            </p>
+                          </label>
                         </div>
 
                         <DialogFooter className="flex items-center justify-end gap-2 pt-2 border-t border-border/30">
@@ -1813,9 +1858,13 @@ function DashboardInner() {
                                     await fetch("/api/fundi/profile", {
                                       method: "PUT",
                                       headers: { "Content-Type": "application/json" },
-                                      body: JSON.stringify({ description: editDesc })
+                                      body: JSON.stringify({
+                                        description: editDesc,
+                                        skills: skills.join(", ")
+                                      })
                                     })
                                     setWizardStep(3)
+                                    fetchProfile()
                                   } catch(e) {
                                     console.error(e)
                                   } finally {
