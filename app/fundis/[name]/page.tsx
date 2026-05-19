@@ -2,6 +2,7 @@ import { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { headers } from "next/headers"
 import { db } from "@/lib/db"
 import { Navigation } from "@/components/navigation"
 import { ReviewsList } from "@/components/reviews-list"
@@ -42,7 +43,20 @@ export default async function FundiProfilePage({ params }: PageProps) {
   const resolvedParams = await params
   const decodedName = decodeURIComponent(resolvedParams.name).replace(/-/g, " ")
 
-  // 1. Fetch from Database
+  // 1. Fetch Client IP
+  const headersList = await headers()
+  const forwardedFor = headersList.get("x-forwarded-for")
+  let clientIp = "127.0.0.1"
+  if (forwardedFor) {
+    clientIp = forwardedFor.split(",")[0].trim()
+  } else {
+    const realIp = headersList.get("x-real-ip")
+    if (realIp) {
+      clientIp = realIp.trim()
+    }
+  }
+
+  // 2. Fetch from Database
   const dbUsers = await db.user.findMany({
     where: {
       role: "fundi",
@@ -67,9 +81,20 @@ export default async function FundiProfilePage({ params }: PageProps) {
   })
 
   let fundiData: any = null
+  let clientReview: any = null
 
   if (dbUser && dbUser.fundiProfile) {
     const profile = dbUser.fundiProfile
+    
+    // Find if current client IP already left a review
+    const existingReview = (profile.reviewsList || []).find((r: any) => r.ip === clientIp)
+    if (existingReview) {
+      clientReview = {
+        reviewerName: existingReview.reviewerName,
+        rating: existingReview.rating,
+        comment: existingReview.comment,
+      }
+    }
     let parsedPortfolio = []
     if (typeof profile.portfolio === "string" && profile.portfolio.trim()) {
       try {
@@ -406,7 +431,11 @@ export default async function FundiProfilePage({ params }: PageProps) {
 
         {/* Reviews Section */}
         <div className="mt-8">
-          <ReviewsList fundiUserId={fundiData.id} initialReviews={fundiData.reviewsList || []} />
+          <ReviewsList 
+            fundiUserId={fundiData.id} 
+            initialReviews={fundiData.reviewsList || []} 
+            clientReview={clientReview}
+          />
         </div>
 
       </main>
