@@ -46,7 +46,7 @@ export async function getFundis(): Promise<Fundi[]> {
         category: profile.category,
         rating: profile.rating,
         reviews: profile.reviews,
-        image: profile.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user.name)}`,
+        image: profile.image || "",
         phone: user.phone,
         whatsapp: user.phone, // using user.phone for communication contact
         verified: profile.premiumLevel !== "none",
