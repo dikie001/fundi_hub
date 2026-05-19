@@ -74,6 +74,7 @@ model FundiProfile {
   portfolio        String       @default("[]")
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
+  reviewsList      Review[]
 }
 
 model ClientProfile {
@@ -102,4 +103,15 @@ model Referral {
   commission   Float          @default(100.0)
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
+}
+
+model Review {
+  id             String       @id @default(cuid())
+  fundiProfileId String
+  fundiProfile   FundiProfile @relation(fields: [fundiProfileId], references: [id], onDelete: Cascade)
+  
+  reviewerName   String
+  rating         Int          @default(5)
+  comment        String       @db.Text
+  createdAt      DateTime     @default(now())
 }
