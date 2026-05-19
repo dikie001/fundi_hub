@@ -1543,7 +1543,19 @@ function DashboardInner() {
                       <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
                         <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-start sm:text-left">
                           {/* Avatar */}
-                          <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-border bg-gradient-to-br from-primary to-orange-500 text-2xl font-extrabold text-white shadow-sm">
+                          <div className="group relative h-20 w-20 flex-shrink-0">
+                            <input
+                              type="file"
+                              id="avatar-upload-profile"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={handleAvatarChange}
+                              disabled={isAvatarUploading}
+                            />
+                            <label
+                              htmlFor="avatar-upload-profile"
+                              className="absolute inset-0 flex cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-border bg-gradient-to-br from-primary to-orange-500 text-2xl font-extrabold text-white shadow-sm transition-all hover:border-primary hover:shadow-md"
+                            >
                             {avatarUrl ? (
                               <img
                                 src={avatarUrl}
@@ -1552,6 +1564,15 @@ function DashboardInner() {
                               />
                             ) : (
                               user?.name?.[0]?.toUpperCase()
+                            )}
+                              <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/0 transition-all group-hover:bg-black/40">
+                                <Camera className="h-5 w-5 text-white opacity-0 transition-opacity group-hover:opacity-100" />
+                              </div>
+                            </label>
+                            {isAvatarUploading && (
+                              <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/60">
+                                <span className="text-xs font-bold text-white">{avatarProgress}%</span>
+                              </div>
                             )}
                           </div>
 
