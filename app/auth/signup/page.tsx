@@ -501,9 +501,11 @@ export default function SignupPage() {
                       disabled={isLoading}
                     >
                       <SelectTrigger id="projectCategory" className="w-full">
-                        <SelectValue placeholder="Select the service you need...">
-                          {formData.projectCategory && formData.projectCategory !== "Other" ? formData.projectCategory : undefined}
-                        </SelectValue>
+                        {formData.projectCategory && formData.projectCategory !== "Other" ? (
+                          <span className="text-sm text-foreground">{formData.projectCategory}</span>
+                        ) : (
+                          <SelectValue placeholder="Select the service you need..." />
+                        )}
                       </SelectTrigger>
                       <SelectContent>
                         {clientTrades.map((t) => (
@@ -590,9 +592,11 @@ export default function SignupPage() {
                       disabled={isLoading}
                     >
                       <SelectTrigger id="trade" className="w-full">
-                        <SelectValue placeholder="Select your primary trade...">
-                          {formData.trade && formData.trade !== "Other" ? formData.trade : undefined}
-                        </SelectValue>
+                        {formData.trade && formData.trade !== "Other" ? (
+                          <span className="text-sm text-foreground">{formData.trade}</span>
+                        ) : (
+                          <SelectValue placeholder="Select your primary trade..." />
+                        )}
                       </SelectTrigger>
                       <SelectContent>
                         {fundiTrades.map((t) => (
