@@ -419,7 +419,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
 
   const referralCount = user?.referrals?.length || 0
   const referralEarnings = referralCount * 100
-  const jobEarnings = 0
+  const jobEarnings = profile?.jobEarnings || 0
   const totalEarnings = referralEarnings + jobEarnings
 
   const completionScore = [editName, editTitle, editTrade, editYearsExp, editArea, editDesc, preferredContact, avatarUrl, portfolioItems.length > 0]

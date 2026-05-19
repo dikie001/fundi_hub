@@ -57,6 +57,9 @@ model FundiProfile {
   category         String
   rating           Float        @default(5.0)
   reviews          Int          @default(0)
+  jobsCompleted    Int          @default(0)
+  successRate      Float        @default(100.0)
+  jobEarnings      Float        @default(0.0)
   image            String?
   trade            String
   yearsExperience  String

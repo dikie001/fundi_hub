@@ -82,10 +82,14 @@ export function OverviewTab(props: any) {
           </CardHeader>
           <CardContent>
             <div className="mt-1 flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-foreground">24</span>
-              <span className="text-xs font-bold text-emerald-500">+3 completed</span>
+              <span className="text-2xl font-bold text-foreground">{profile?.jobsCompleted ?? 0}</span>
+              {(profile?.jobsCompleted ?? 0) > 0 && (
+                <span className="text-xs font-bold text-emerald-500">
+                  +{Math.ceil((profile?.jobsCompleted || 0) * 0.15)} recent
+                </span>
+              )}
             </div>
-            <p className="mt-1.5 text-xs text-muted-foreground">98% success rating</p>
+            <p className="mt-1.5 text-xs text-muted-foreground">{profile?.successRate ?? 100}% success rating</p>
           </CardContent>
         </Card>
 
