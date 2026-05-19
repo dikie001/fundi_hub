@@ -848,7 +848,7 @@ export default function SignupPage() {
         {/* Step X of 5 Sub-footer */}
         <div className="text-center space-y-3.5">
           <p className="text-[10px] text-muted-foreground font-semibold tracking-wider uppercase">
-            Step {currentStep} of {totalSteps} · Secure & Encrypted
+            Step {currentStep} of {totalSteps}
           </p>
 
           <div className="text-xs text-muted-foreground">
