@@ -1,4 +1,4 @@
-import { cookies } from "next/headers"
+import { cookies, headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 
@@ -8,7 +8,16 @@ export default async function AdminLayout({
   children: React.ReactNode
 }) {
   const cookieStore = cookies()
-  const userId = cookieStore.get("user_session")?.value
+  let userId = typeof cookieStore.get === "function" ? cookieStore.get("user_session")?.value : undefined
+
+  // Fallback: parse cookie header if cookies().get is not available
+  if (!userId) {
+    const cookieHeader = headers().get("cookie") || ""
+    const match = cookieHeader.split(";").map(s => s.trim()).find((c) => c.startsWith("user_session="))
+    if (match) {
+      userId = decodeURIComponent(match.split("=")[1] || "")
+    }
+  }
 
   if (!userId) return redirect("/auth/login")
 
