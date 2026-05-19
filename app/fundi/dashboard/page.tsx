@@ -36,6 +36,7 @@ import {
   Download
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -60,7 +61,15 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarInset,
+  SidebarGroup,
+  SidebarGroupLabel,
+  useSidebar
 } from "@/components/ui/sidebar"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 // Static mock incoming client leads to show matching recommendations dynamically based on trade
 const MOCK_CLIENT_LEADS = [
@@ -142,7 +151,10 @@ const INITIAL_PORTFOLIO_ITEMS = [
   }
 ]
 
-export default function FundiDashboard() {
+function DashboardInner() {
+  const { state } = useSidebar()
+  const isCollapsed = state === "collapsed"
+
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -326,8 +338,8 @@ export default function FundiDashboard() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-radial from-background to-muted text-foreground gap-3.5 animate-pulse">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-xs font-semibold text-muted-foreground tracking-widest uppercase">
-          Loading your FundiHub Profile...
+        <p className="text-xs font-medium text-muted-foreground">
+          Loading your profile...
         </p>
       </div>
     )
@@ -352,92 +364,179 @@ export default function FundiDashboard() {
   ]
 
   return (
-    <SidebarProvider defaultOpen={true}>
-      
+    <>
       {/* SHADCN COLLAPSIBLE SIDEBAR */}
-      <Sidebar className="border-r border-border/40 bg-card/45 backdrop-blur-lg">
+      <Sidebar collapsible="icon" className="border-r border-border/40 bg-card/45 backdrop-blur-lg">
         
-        {/* Sidebar Header */}
+        {/* Sidebar Header - adapts when collapsed */}
         <SidebarHeader className="flex flex-row items-center justify-between px-6 py-4 border-b border-border/25">
-          <div className="flex items-center gap-2">
-            <span className="text-lg font-black bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent tracking-tight">
-              FundiHub
-            </span>
-            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-black text-primary uppercase">
-              Partner
-            </span>
-          </div>
+          {isCollapsed ? (
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-orange-500 text-white font-black text-xs mx-auto shadow-xs select-none">
+              FH
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-black bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent tracking-tight">
+                FundiHub
+              </span>
+              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                Partner
+              </span>
+            </div>
+          )}
         </SidebarHeader>
 
-        {/* Sidebar Navigation Items - simple words/icons */}
-        <SidebarContent className="px-3 py-4">
-          <SidebarMenu className="space-y-1">
-            {menuItems.map((item) => {
-              const Icon = item.icon
-              const isActive = activeTab === item.id
-              return (
-                <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton
-                    isActive={isActive}
-                    onClick={() => setActiveTab(item.id as any)}
-                    className="w-full text-sm font-semibold rounded-lg cursor-pointer"
-                  >
-                    <Icon className="h-4.5 w-4.5" />
-                    <span>{item.label}</span>
-                    {item.badge !== undefined && item.badge > 0 && (
-                      <span className="ml-auto rounded-full bg-primary/20 text-primary px-2 py-0.5 text-xs font-black">
-                        {item.badge}
-                      </span>
-                    )}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )
-            })}
-          </SidebarMenu>
+        {/* Sidebar Navigation Categories - spaced cleanly */}
+        <SidebarContent className="px-3 py-6 space-y-6">
+          
+          {/* Section 1: Main Actions */}
+          <SidebarGroup className="p-0">
+            <SidebarGroupLabel className="px-3 text-[10px] font-medium text-muted-foreground/60">
+              Core Operations
+            </SidebarGroupLabel>
+            <SidebarMenu className="space-y-2 mt-2">
+              {menuItems.slice(0, 3).map((item) => {
+                const Icon = item.icon
+                const isActive = activeTab === item.id
+                return (
+                  <SidebarMenuItem key={item.id}>
+                    <SidebarMenuButton
+                      isActive={isActive}
+                      onClick={() => setActiveTab(item.id as any)}
+                      tooltip={item.label}
+                      className="w-full text-sm font-medium rounded-lg cursor-pointer h-10.5 px-3.5 hover:bg-sidebar-accent"
+                    >
+                      <Icon className="h-4.5 w-4.5" />
+                      <span>{item.label}</span>
+                      {item.badge !== undefined && item.badge > 0 && (
+                        <span className="ml-auto rounded-full bg-primary/20 text-primary px-2 py-0.5 text-xs font-medium">
+                          {item.badge}
+                        </span>
+                      )}
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              })}
+            </SidebarMenu>
+          </SidebarGroup>
+
+          {/* Section 2: Marketing & Growth */}
+          <SidebarGroup className="p-0">
+            <SidebarGroupLabel className="px-3 text-[10px] font-medium text-muted-foreground/60">
+              Grow & Benefits
+            </SidebarGroupLabel>
+            <SidebarMenu className="space-y-2 mt-2">
+              {menuItems.slice(3).map((item) => {
+                const Icon = item.icon
+                const isActive = activeTab === item.id
+                return (
+                  <SidebarMenuItem key={item.id}>
+                    <SidebarMenuButton
+                      isActive={isActive}
+                      onClick={() => setActiveTab(item.id as any)}
+                      tooltip={item.label}
+                      className="w-full text-sm font-medium rounded-lg cursor-pointer h-10.5 px-3.5 hover:bg-sidebar-accent"
+                    >
+                      <Icon className="h-4.5 w-4.5" />
+                      <span>{item.label}</span>
+                      {item.badge !== undefined && item.badge > 0 && (
+                        <span className="ml-auto rounded-full bg-primary/20 text-primary px-2 py-0.5 text-xs font-medium">
+                          {item.badge}
+                        </span>
+                      )}
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              })}
+            </SidebarMenu>
+          </SidebarGroup>
+
         </SidebarContent>
 
-        {/* Sidebar Footer with toggle & logout */}
+        {/* Sidebar Footer - adapts layout when collapsed */}
         <SidebarFooter className="p-4 space-y-4 border-t border-border/25 bg-muted/5">
           
-          {/* On-Call Status toggle using only Shadcn Switch */}
-          <div className="flex items-center justify-between rounded-lg border border-border bg-card p-3.5 shadow-2xs">
-            <div className="space-y-0.5">
-              <Label htmlFor="emergency-toggle" className="text-xs font-bold text-foreground cursor-pointer">
-                On-Call Status
-              </Label>
-              <p className="text-[10px] text-muted-foreground font-semibold">
-                {profile?.isEmergency ? "Online" : "Offline"}
-              </p>
+          {/* On-Call Status: collapses into pure switch icon with tooltip */}
+          {isCollapsed ? (
+            <div className="flex justify-center py-1">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center justify-center">
+                    <Switch
+                      id="emergency-toggle-collapsed"
+                      checked={profile?.isEmergency || false}
+                      onCheckedChange={() => handleToggleEmergency(profile?.isEmergency)}
+                      className="scale-85 cursor-pointer"
+                    />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="font-medium">
+                  On-Call Status: {profile?.isEmergency ? "Online" : "Offline"}
+                </TooltipContent>
+              </Tooltip>
             </div>
-            <Switch
-              id="emergency-toggle"
-              checked={profile?.isEmergency || false}
-              onCheckedChange={() => handleToggleEmergency(profile?.isEmergency)}
-              className="cursor-pointer"
-            />
-          </div>
+          ) : (
+            <div className="flex items-center justify-between rounded-lg border border-border bg-card p-3.5 shadow-2xs">
+              <div className="space-y-0.5">
+                <Label htmlFor="emergency-toggle" className="text-xs font-medium text-foreground cursor-pointer">
+                  On-Call Status
+                </Label>
+                <p className="text-[10px] text-muted-foreground font-normal">
+                  {profile?.isEmergency ? "Online" : "Offline"}
+                </p>
+              </div>
+              <Switch
+                id="emergency-toggle"
+                checked={profile?.isEmergency || false}
+                onCheckedChange={() => handleToggleEmergency(profile?.isEmergency)}
+                className="cursor-pointer"
+              />
+            </div>
+          )}
 
-          <div className="flex items-center justify-between border-t border-border/30 pt-3">
+          <div className={cn(
+            "flex border-t border-border/30 pt-3",
+            isCollapsed ? "flex-col items-center gap-2.5" : "items-center justify-between"
+          )}>
             {mounted && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-lg h-9 w-9 cursor-pointer"
-                onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-                title="Toggle Mode"
-              >
-                {resolvedTheme === "dark" ? <Sun className="h-4.5 w-4.5 text-amber-500" /> : <Moon className="h-4.5 w-4.5 text-zinc-700" />}
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-lg h-9 w-9 cursor-pointer"
+                    onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+                  >
+                    {resolvedTheme === "dark" ? <Sun className="h-4.5 w-4.5 text-amber-500" /> : <Moon className="h-4.5 w-4.5 text-zinc-700" />}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="font-medium">
+                  {resolvedTheme === "dark" ? "Light Mode" : "Dark Mode"}
+                </TooltipContent>
+              </Tooltip>
             )}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleLogout}
-              className="text-xs font-bold text-muted-foreground hover:text-destructive gap-1.5 cursor-pointer rounded-lg h-9 px-3"
-            >
-              <LogOut className="h-4 w-4" />
-              <span>Sign Out</span>
-            </Button>
+            
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size={isCollapsed ? "icon" : "sm"}
+                  onClick={handleLogout}
+                  className={cn(
+                    "text-muted-foreground hover:text-destructive cursor-pointer rounded-lg h-9",
+                    isCollapsed ? "w-9" : "text-xs font-medium gap-1.5 px-3"
+                  )}
+                >
+                  <LogOut className="h-4 w-4" />
+                  {!isCollapsed && <span>Sign Out</span>}
+                </Button>
+              </TooltipTrigger>
+              {isCollapsed && (
+                <TooltipContent side="right" className="font-medium">
+                  Sign Out
+                </TooltipContent>
+              )}
+            </Tooltip>
           </div>
         </SidebarFooter>
 
@@ -451,7 +550,7 @@ export default function FundiDashboard() {
           <div className="flex items-center gap-3">
             <SidebarTrigger />
             <Separator orientation="vertical" className="h-4" />
-            <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider capitalize">
+            <h2 className="text-sm font-medium text-muted-foreground capitalize">
               {activeTab}
             </h2>
           </div>
@@ -1526,7 +1625,15 @@ export default function FundiDashboard() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </>
+  )
+}
 
+// MAIN ENTRY WRAPPER PROVIDER CONTAINER
+export default function FundiDashboard() {
+  return (
+    <SidebarProvider defaultOpen={true}>
+      <DashboardInner />
     </SidebarProvider>
   )
 }
