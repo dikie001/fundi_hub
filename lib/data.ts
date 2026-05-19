@@ -13,6 +13,8 @@ export interface Fundi {
   isEmergency: boolean
   isNearby: boolean
   description: string
+  serviceArea?: string
+  skills?: string
 }
 
 export const categories = [

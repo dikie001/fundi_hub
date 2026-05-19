@@ -107,12 +107,6 @@ export function FundiCard({ fundi }: FundiCardProps) {
             {fundi.description}
           </p>
         )}
-
-        {/* Clickable Profile Indicator */}
-        <div className="mt-3 flex items-center text-[11px] font-bold text-primary/90 transition-all duration-200 group-hover:text-primary">
-          <span>View Profile & Gallery</span>
-          <span className="ml-1 transition-transform duration-200 group-hover:translate-x-1">→</span>
-        </div>
       </Link>
 
       {/* Call to actions */}

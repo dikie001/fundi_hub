@@ -53,6 +53,8 @@ export async function getFundis(): Promise<Fundi[]> {
         isEmergency: profile.isEmergency,
         isNearby: profile.isNearby,
         description: profile.description || "",
+        serviceArea: profile.serviceArea,
+        skills: profile.skills,
       }
     })
   } catch (error) {

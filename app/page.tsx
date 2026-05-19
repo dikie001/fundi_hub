@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { Navigation } from "@/components/navigation"
 import { FundiCard } from "@/components/fundi-card"
-import { CategoryCard } from "@/components/category-card"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
@@ -14,9 +13,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { categories as fallbackCategories, Fundi } from "@/lib/data"
+import { Fundi } from "@/lib/data"
 import {
-  ArrowRight,
   TrendingUp,
   MapPin,
   AlertCircle,
@@ -28,26 +26,16 @@ import Link from "next/link"
 
 export default function Home() {
   const [fundis, setFundis] = useState<Fundi[]>([])
-  const [categories, setCategories] =
-    useState<{ name: string; icon: string }[]>(fallbackCategories)
   const [isLoadingFundis, setIsLoadingFundis] = useState(true)
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
     async function loadData() {
       try {
-        const [fundisRes, categoriesRes] = await Promise.all([
-          fetch("/api/fundis", { cache: "no-store" }),
-          fetch("/api/categories"),
-        ])
+        const fundisRes = await fetch("/api/fundis", { cache: "no-store" })
         if (fundisRes.ok) {
           const fundisData = await fundisRes.json()
           setFundis(Array.isArray(fundisData) ? fundisData : [])
-        }
-        if (categoriesRes.ok) {
-          const categoriesData = await categoriesRes.json()
-          setCategories(categoriesData)
         }
       } catch (error) {
         console.error("Failed to load DB data:", error)
@@ -63,7 +51,7 @@ export default function Home() {
     const params = new URLSearchParams(window.location.search)
     const filter = params.get("filter")
     if (filter) {
-      setSelectedCategory(filter)
+      setSearchQuery(filter)
       setTimeout(() => {
         const sec = document.getElementById("categories")
         if (sec) {
@@ -114,13 +102,20 @@ export default function Home() {
   const emergencyFundis = fundis.filter((f) => f.isEmergency).slice(0, 3)
 
   const filteredFundis = fundis.filter((f) => {
-    const matchesCategory = !selectedCategory || f.category.toLowerCase() === selectedCategory.toLowerCase()
-    const matchesSearch = searchQuery.trim() === "" ||
-      f.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      f.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      f.description.toLowerCase().includes(searchQuery.toLowerCase())
-    return matchesCategory && matchesSearch
+    const query = searchQuery.trim().toLowerCase()
+    if (query === "") return false
+
+    return (
+      f.name.toLowerCase().includes(query) ||
+      f.category.toLowerCase().includes(query) ||
+      f.title.toLowerCase().includes(query) ||
+      f.description.toLowerCase().includes(query) ||
+      (f.serviceArea && f.serviceArea.toLowerCase().includes(query)) ||
+      (f.skills && f.skills.toLowerCase().includes(query))
+    )
   })
+
+  const hasSearch = searchQuery.trim() !== ""
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -149,91 +144,69 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Categories & Filter Section */}
-      <section id="categories" className="border-b border-border px-4 py-16 sm:px-6 lg:px-8 scroll-mt-24">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-            <div>
-              <h2 className="text-3xl font-bold">Popular Categories</h2>
-              <p className="mt-2 text-muted-foreground">
-                Browse fundis by expertise or select one to filter results
-              </p>
-            </div>
-            {selectedCategory && (
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => {
-                  setSelectedCategory(null)
-                  setSearchQuery("")
-                }}
-                className="w-fit"
+      {/* Search & Find Section */}
+      <section id="categories" className="border-b border-border px-4 py-16 sm:px-6 lg:px-8 scroll-mt-24 bg-linear-to-b from-card/35 to-transparent">
+        <div className="mx-auto max-w-5xl text-center">
+          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+            Find Your Skilled Expert
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground">
+            Search for categories, tasks, names, or locations (e.g., Plumber, CCTV, Nairobi, wiring)
+          </p>
+
+          <div className="relative mt-8 max-w-xl mx-auto">
+            <input
+              type="text"
+              placeholder="Search by category, task, name, or area..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="h-14 w-full rounded-2xl border border-border bg-card/85 px-6 pr-12 text-sm font-semibold text-foreground shadow-xs focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden"
+            />
+            {hasSearch ? (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground text-xs font-bold bg-muted/65 hover:bg-muted px-2.5 py-1.5 rounded-md"
               >
-                Show All Sections
-              </Button>
+                Clear
+              </button>
+            ) : (
+              <span className="absolute right-5 top-1/2 -translate-y-1/2 text-muted-foreground">
+                🔍
+              </span>
             )}
           </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {categories.map((category) => (
-              <CategoryCard
-                key={category.name}
-                name={category.name}
-                icon={category.icon}
-                active={selectedCategory === category.name}
-                onClick={() => {
-                  setSelectedCategory(category.name)
-                  setSearchQuery("")
-                }}
-              />
-            ))}
-          </div>
-
-          {/* Interactive Filtering Results */}
-          {selectedCategory && (
-            <div className="mt-12 space-y-6 border-t border-border/10 pt-10 animate-in fade-in slide-in-from-top-4 duration-300">
-              <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-                <div>
-                  <h3 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                    <span>{selectedCategory} Available</span>
-                    <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary">
-                      {filteredFundis.length} verified
-                    </Badge>
-                  </h3>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Direct communication, no booking fees or middleman commissions
-                  </p>
-                </div>
-                
-                {/* Search filter input */}
-                <input
-                  type="text"
-                  placeholder="Search by name, trade or keyword..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="h-10 w-full max-w-xs rounded-lg border border-border bg-card px-4 text-xs font-semibold text-foreground focus:border-primary focus:outline-hidden"
-                />
-              </div>
-
-              {filteredFundis.length > 0 ? (
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {filteredFundis.map((fundi) => (
-                    <FundiCard key={fundi.id} fundi={fundi} />
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed border-border/60 rounded-2xl bg-muted/10">
-                  <p className="font-bold text-muted-foreground">No matches found for &quot;{searchQuery}&quot;</p>
-                  <p className="text-xs text-muted-foreground/60 mt-1">Try resetting the search query or category.</p>
-                </div>
-              )}
-            </div>
-          )}
         </div>
+
+        {/* Search Results Grid */}
+        {hasSearch && (
+          <div className="mx-auto max-w-7xl mt-12 space-y-6 animate-in fade-in slide-in-from-top-4 duration-300">
+            <div className="flex items-center justify-between border-b border-border/40 pb-4">
+              <h3 className="text-lg font-bold text-foreground">
+                Search Results for &quot;{searchQuery}&quot;
+              </h3>
+              <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary px-3 py-1 font-bold">
+                {filteredFundis.length} matching {filteredFundis.length === 1 ? 'expert' : 'experts'}
+              </Badge>
+            </div>
+
+            {filteredFundis.length > 0 ? (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {filteredFundis.map((fundi) => (
+                  <FundiCard key={fundi.id} fundi={fundi} />
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-border/60 rounded-2xl bg-muted/5">
+                <p className="font-extrabold text-lg text-muted-foreground">No matching fundis found</p>
+                <p className="text-xs text-muted-foreground/60 mt-1.5">Try searching for other trades, skills, or locations (e.g. Plumbers, Mombasa)</p>
+              </div>
+            )}
+          </div>
+        )}
       </section>
 
-      {/* Featured Fundis - Hidden when filtering */}
-      {!selectedCategory && (
+      {/* Featured Fundis - Hidden when searching */}
+      {!hasSearch && (
         <section id="featured" className="border-b border-border px-4 py-16 sm:px-6 lg:px-8 scroll-mt-24">
           <div className="mx-auto max-w-7xl">
             <div className="mb-8 flex items-center justify-between">
@@ -255,8 +228,8 @@ export default function Home() {
         </section>
       )}
 
-      {/* Top Rated Experts - Hidden when filtering */}
-      {!selectedCategory && (
+      {/* Top Rated Experts - Hidden when searching */}
+      {!hasSearch && (
         <section className="border-b border-border px-4 py-16 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <div className="mb-8">
@@ -276,8 +249,8 @@ export default function Home() {
         </section>
       )}
 
-      {/* Nearby Fundis - Hidden when filtering */}
-      {!selectedCategory && (
+      {/* Nearby Fundis - Hidden when searching */}
+      {!hasSearch && (
         <section className="border-b border-border px-4 py-16 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <div className="mb-8 flex items-center justify-between">
@@ -300,8 +273,8 @@ export default function Home() {
         </section>
       )}
 
-      {/* Emergency Services - Hidden when filtering */}
-      {!selectedCategory && (
+      {/* Emergency Services - Hidden when searching */}
+      {!hasSearch && (
         <section className="border-b border-border px-4 py-16 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <div className="mb-8 flex items-center justify-between">
@@ -510,7 +483,7 @@ export default function Home() {
               <ul className="mt-4 space-y-2 text-sm">
                 <li>
                   <Link href="#categories" className="hover:text-primary">
-                    Categories
+                    Search Experts
                   </Link>
                 </li>
                 <li>
