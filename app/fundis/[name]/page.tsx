@@ -127,7 +127,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
         
 
         {/* Profile Hero Header Card */}
-        <div className="relative mb-8 overflow-hidden rounded-3xl border border-border/50 bg-card p-6 shadow-xs md:p-8">
+        <div className="relative mb-8 overflow-hidden rounded-xl border border-border/50 bg-card p-6 shadow-xs md:p-8">
           {/* Neon/Premium Backdrop glow */}
           <div className="absolute top-0 right-0 -mr-20 -mt-20 h-80 w-80 rounded-full bg-primary/5 blur-3xl" />
           
@@ -182,7 +182,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
                   <span className="flex items-center gap-1 font-bold text-foreground shrink-0">
                     <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
                     {fundiData.rating}
-                    <span className="font-medium text-muted-foreground">({fundiData.reviews} reviews)</span>
+                    <span className="font-medium text-muted-foreground">({fundiData.reviews} {fundiData.reviews === 1 ? "review" : "reviews"})</span>
                   </span>
                   <span className="flex items-center gap-1 shrink-0">
                     <MapPin className="h-3.5 w-3.5 text-primary" />
