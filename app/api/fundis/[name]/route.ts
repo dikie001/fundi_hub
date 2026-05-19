@@ -9,17 +9,19 @@ export async function GET(
     const resolvedParams = await params
     const decodedName = decodeURIComponent(resolvedParams.name).replace(/-/g, " ")
 
-    const user = await db.user.findFirst({
+    const users = await db.user.findMany({
       where: {
         role: "fundi",
-        name: {
-          equals: decodedName,
-          mode: "insensitive",
-        },
       },
       include: {
         fundiProfile: true,
       },
+    })
+
+    const cleanParamName = decodedName.trim().replace(/\s+/g, " ").toLowerCase()
+    const user = users.find((u) => {
+      const cleanDbName = u.name.trim().replace(/\s+/g, " ").toLowerCase()
+      return cleanDbName === cleanParamName
     })
 
     if (!user) {

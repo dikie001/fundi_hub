@@ -15,15 +15,16 @@ interface FundiCardProps {
 
 export function FundiCard({ fundi }: FundiCardProps) {
   const initials = fundi.name
+    .trim()
     .split(" ")
     .map((n) => n[0])
     .join("")
     .toUpperCase()
 
-  const profileLink = `/fundis/${encodeURIComponent(fundi.name.replace(/\s+/g, "-"))}`
+  const profileLink = `/fundis/${encodeURIComponent(fundi.name.trim().replace(/\s+/g, "-"))}`
 
   return (
-    <Card className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/50 bg-card p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
+    <Card className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/50 bg-card p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 active:scale-[0.99] active:bg-muted/20">
       <Link href={profileLink} className="block cursor-pointer focus:outline-hidden">
         {/* Top Badges Row */}
         <div className="flex items-center justify-between gap-2 pb-3">
@@ -102,6 +103,12 @@ export function FundiCard({ fundi }: FundiCardProps) {
             {fundi.description}
           </p>
         )}
+
+        {/* Clickable Profile Indicator */}
+        <div className="mt-3 flex items-center text-[11px] font-bold text-primary/90 transition-all duration-200 group-hover:text-primary">
+          <span>View Profile & Gallery</span>
+          <span className="ml-1 transition-transform duration-200 group-hover:translate-x-1">→</span>
+        </div>
       </Link>
 
       {/* Call to actions */}
@@ -128,7 +135,7 @@ export function FundiCard({ fundi }: FundiCardProps) {
           className="h-9 cursor-pointer rounded-lg border-border/80 hover:bg-muted text-xs font-bold"
           asChild
         >
-          <a href={`tel:${fundi.phone}`} className="flex items-center justify-center gap-1.5">
+          <a href={`tel:${fundi.phone}`}>
             <Phone className="h-4 w-4" />
             Call
           </a>

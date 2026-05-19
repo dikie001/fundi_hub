@@ -43,17 +43,19 @@ export default async function FundiProfilePage({ params }: PageProps) {
   const decodedName = decodeURIComponent(resolvedParams.name).replace(/-/g, " ")
 
   // 1. Fetch from Database
-  const dbUser = await db.user.findFirst({
+  const dbUsers = await db.user.findMany({
     where: {
       role: "fundi",
-      name: {
-        equals: decodedName,
-        mode: "insensitive",
-      },
     },
     include: {
       fundiProfile: true,
     },
+  })
+
+  const cleanParamName = decodedName.trim().replace(/\s+/g, " ").toLowerCase()
+  const dbUser = dbUsers.find((u) => {
+    const cleanDbName = u.name.trim().replace(/\s+/g, " ").toLowerCase()
+    return cleanDbName === cleanParamName
   })
 
   let fundiData: any = null
