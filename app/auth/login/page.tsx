@@ -43,6 +43,8 @@ export default function LoginPage() {
           window.location.href = "/fundi/dashboard"
         } else if (userRole === "client") {
           window.location.href = "/client/dashboard"
+        } else if (userRole === "admin") {
+          window.location.href = "/admin/dashboard"
         } else {
           window.location.href = "/"
         }

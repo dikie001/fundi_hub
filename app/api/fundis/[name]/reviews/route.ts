@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
+import { logAudit } from "@/lib/audit"
 
 // Helper to look up user by either user ID or name slug
 async function findUserByNameOrId(nameOrId: string) {
@@ -120,6 +121,7 @@ export async function POST(
           createdAt: new Date(),
         },
       })
+      await logAudit({ action: "REVIEW_UPDATED", details: `Review ${existingReview.id} updated for fundi ${profile.id}`, req: request })
     } else {
       review = await db.review.create({
         data: {
@@ -130,6 +132,7 @@ export async function POST(
           ip,
         },
       })
+      await logAudit({ action: "REVIEW_CREATED", details: `Review ${review.id} created for fundi ${profile.id}`, req: request })
     }
 
     // Fetch all reviews to recalculate profile rating
