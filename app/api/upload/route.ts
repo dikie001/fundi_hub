@@ -1,4 +1,4 @@
-import { ImageKit } from 'imagekit';
+import { ImageKit } from "imagekit"
 import { NextResponse } from "next/server"
 
 // Initialize ImageKit
@@ -13,7 +13,10 @@ export async function POST(request: Request) {
     const { image, fileName, folder } = await request.json()
 
     if (!image) {
-      return NextResponse.json({ error: "No image content provided" }, { status: 400 })
+      return NextResponse.json(
+        { error: "No image content provided" },
+        { status: 400 }
+      )
     }
 
     const defaultFileName = fileName || `upload_${Date.now()}.png`
@@ -43,6 +46,9 @@ export async function POST(request: Request) {
     })
   } catch (error: any) {
     console.error("ImageKit upload error:", error)
-    return NextResponse.json({ error: error.message || "Failed to upload image" }, { status: 500 })
+    return NextResponse.json(
+      { error: error.message || "Failed to upload image" },
+      { status: 500 }
+    )
   }
 }
