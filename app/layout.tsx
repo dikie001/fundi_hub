@@ -25,7 +25,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", fontSans.variable, fontMono.variable, "font-serif", merriweather.variable)}
+      className={cn("antialiased", fontSans.variable, fontMono.variable, "font-sans", merriweather.variable)}
     >
       <body>
         <ThemeProvider>{children}</ThemeProvider>
