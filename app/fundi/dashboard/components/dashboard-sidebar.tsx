@@ -1,0 +1,225 @@
+"use client"
+
+import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarGroup,
+  SidebarGroupLabel,
+} from "@/components/ui/sidebar"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { cn } from "@/lib/utils"
+import { LogOut, Moon, Sun } from "lucide-react"
+
+export function DashboardSidebar(props: any) {
+  const {
+    isCollapsed,
+    menuItems,
+    activeTab,
+    setActiveTab,
+    profile,
+    mounted,
+    resolvedTheme,
+    setTheme,
+    handleToggleEmergency,
+    handleLogout,
+  } = props
+
+  return (
+    <Sidebar
+      collapsible="icon"
+      className="border-r border-border/40 bg-card/45 backdrop-blur-lg"
+    >
+      <SidebarHeader className="flex flex-row items-center justify-between border-b border-border/25 px-6 py-4">
+        {isCollapsed ? (
+          <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-primary to-orange-500 text-xs font-black text-white shadow-xs select-none">
+            FH
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <span className="bg-linear-to-r from-orange-500 to-amber-500 bg-clip-text text-lg font-black tracking-tight text-transparent">
+              FundiHub
+            </span>
+            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+              Partner
+            </span>
+          </div>
+        )}
+      </SidebarHeader>
+
+      <SidebarContent className="space-y-6 px-3 py-6">
+        <SidebarGroup className="p-0">
+          <SidebarGroupLabel className="px-3 text-[10px] font-medium text-muted-foreground/60">
+            Core Operations
+          </SidebarGroupLabel>
+          <SidebarMenu className="mt-2 space-y-2">
+            {menuItems.slice(0, 3).map((item: any) => {
+              const Icon = item.icon
+              const isActive = activeTab === item.id
+              return (
+                <SidebarMenuItem key={item.id}>
+                  <SidebarMenuButton
+                    isActive={isActive}
+                    onClick={() => setActiveTab(item.id as any)}
+                    tooltip={item.label}
+                    className="h-10.5 w-full cursor-pointer rounded-lg px-3.5 text-sm font-medium hover:bg-sidebar-accent"
+                  >
+                    <Icon className="h-4.5 w-4.5" />
+                    <span>{item.label}</span>
+                    {item.badge !== undefined && item.badge > 0 && (
+                      <span className="ml-auto rounded-full bg-primary/20 px-2 py-0.5 text-xs font-medium text-primary">
+                        {item.badge}
+                      </span>
+                    )}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )
+            })}
+          </SidebarMenu>
+        </SidebarGroup>
+
+        <SidebarGroup className="p-0">
+          <SidebarGroupLabel className="px-3 text-[10px] font-medium text-muted-foreground/60">
+            Grow & Benefits
+          </SidebarGroupLabel>
+          <SidebarMenu className="mt-2 space-y-2">
+            {menuItems.slice(3).map((item: any) => {
+              const Icon = item.icon
+              const isActive = activeTab === item.id
+              return (
+                <SidebarMenuItem key={item.id}>
+                  <SidebarMenuButton
+                    isActive={isActive}
+                    onClick={() => setActiveTab(item.id as any)}
+                    tooltip={item.label}
+                    className="h-10.5 w-full cursor-pointer rounded-lg px-3.5 text-sm font-medium hover:bg-sidebar-accent"
+                  >
+                    <Icon className="h-4.5 w-4.5" />
+                    <span>{item.label}</span>
+                    {item.badge !== undefined && item.badge > 0 && (
+                      <span className="ml-auto rounded-full bg-primary/20 px-2 py-0.5 text-xs font-medium text-primary">
+                        {item.badge}
+                      </span>
+                    )}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )
+            })}
+          </SidebarMenu>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter className="space-y-4 border-t border-border/25 bg-muted/5 p-4">
+        {isCollapsed ? (
+          <div className="flex justify-center py-1">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center justify-center">
+                  <Switch
+                    id="emergency-toggle-collapsed"
+                    checked={profile?.isEmergency || false}
+                    onCheckedChange={() =>
+                      handleToggleEmergency(profile?.isEmergency)
+                    }
+                    className="scale-85 cursor-pointer"
+                  />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="font-medium">
+                On-Call Status: {profile?.isEmergency ? "Online" : "Offline"}
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between rounded-lg border border-border bg-card p-3.5 shadow-2xs">
+            <div className="space-y-0.5">
+              <Label
+                htmlFor="emergency-toggle"
+                className="cursor-pointer text-xs font-medium text-foreground"
+              >
+                On-Call Status
+              </Label>
+              <p className="text-[10px] font-normal text-muted-foreground">
+                {profile?.isEmergency ? "Online" : "Offline"}
+              </p>
+            </div>
+            <Switch
+              id="emergency-toggle"
+              checked={profile?.isEmergency || false}
+              onCheckedChange={() =>
+                handleToggleEmergency(profile?.isEmergency)
+              }
+              className="cursor-pointer"
+            />
+          </div>
+        )}
+
+        <div
+          className={cn(
+            "flex border-t border-border/30 pt-3",
+            isCollapsed
+              ? "flex-col items-center gap-2.5"
+              : "items-center justify-between"
+          )}
+        >
+          {mounted && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 cursor-pointer rounded-lg"
+                  onClick={() =>
+                    setTheme(resolvedTheme === "dark" ? "light" : "dark")
+                  }
+                >
+                  {resolvedTheme === "dark" ? (
+                    <Sun className="h-4.5 w-4.5 text-amber-500" />
+                  ) : (
+                    <Moon className="h-4.5 w-4.5 text-zinc-700" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="font-medium">
+                {resolvedTheme === "dark" ? "Light Mode" : "Dark Mode"}
+              </TooltipContent>
+            </Tooltip>
+          )}
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size={isCollapsed ? "icon" : "sm"}
+                onClick={handleLogout}
+                className={cn(
+                  "h-9 cursor-pointer rounded-lg text-muted-foreground hover:text-destructive",
+                  isCollapsed ? "w-9" : "gap-1.5 px-3 text-xs font-medium"
+                )}
+              >
+                <LogOut className="h-4 w-4" />
+                {!isCollapsed && <span>Sign Out</span>}
+              </Button>
+            </TooltipTrigger>
+            {isCollapsed && (
+              <TooltipContent side="right" className="font-medium">
+                Sign Out
+              </TooltipContent>
+            )}
+          </Tooltip>
+        </div>
+      </SidebarFooter>
+    </Sidebar>
+  )
+}
