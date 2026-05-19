@@ -1,17 +1,12 @@
 "use client"
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { MessageCircle, Phone, MapPin, Shield, Star } from "lucide-react"
+import { MessageCircle, Phone, Star } from "lucide-react"
 import type { Fundi } from "@/lib/data"
 import Image from "next/image"
+import { cn } from "@/lib/utils"
 
 interface FundiCardProps {
   fundi: Fundi
@@ -25,121 +20,117 @@ export function FundiCard({ fundi }: FundiCardProps) {
     .toUpperCase()
 
   return (
-    <Card className="group overflow-hidden border-border/70 bg-linear-to-b from-card via-card to-muted/20 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10">
-      <CardHeader className="pb-3">
-        <div className="mb-4 flex items-center justify-between">
-          <Badge
-            variant="outline"
-            className="border-primary/30 bg-primary/10 text-xs font-medium text-primary"
-          >
-            {fundi.category}
-          </Badge>
-          <span className="text-xs text-muted-foreground">
+    <Card className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/50 bg-card p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
+      <div>
+        {/* Top Badges Row */}
+        <div className="flex items-center justify-between gap-2 pb-3">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Badge
+              variant="outline"
+              className="border-primary/20 bg-primary/5 px-2 py-0.5 text-[10px] font-bold text-primary"
+            >
+              {fundi.category}
+            </Badge>
+            {fundi.premiumLevel === "top" && (
+              <Badge className="bg-amber-500/10 border border-amber-500/35 px-2 py-0.5 text-[10px] font-bold text-amber-500 hover:bg-amber-500/15">
+                Top Verified
+              </Badge>
+            )}
+            {fundi.premiumLevel === "verified" && (
+              <Badge className="bg-sky-500/10 border border-sky-500/35 px-2 py-0.5 text-[10px] font-bold text-sky-500 hover:bg-sky-500/15">
+                Verified
+              </Badge>
+            )}
+          </div>
+          <span className="text-[11px] font-bold text-muted-foreground whitespace-nowrap">
             {fundi.reviews}+ jobs
           </span>
         </div>
-        <div className="flex gap-3">
-          <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-primary/20 bg-primary/10 ring-2 ring-primary/10">
+
+        {/* Profile Info Row */}
+        <div className="flex items-center gap-3 border-t border-border/10 pt-3">
+          <div className="relative flex h-13 w-13 shrink-0 items-center justify-center rounded-full border border-border/40 bg-muted/40 shadow-xs">
             {fundi.image ? (
               <Image
                 src={fundi.image}
                 alt={fundi.name}
-                  fill
-                  unoptimized
+                fill
+                unoptimized
                 className="rounded-full object-cover"
               />
             ) : (
-              <span className="text-sm font-bold text-primary">{initials}</span>
+              <span className="text-xs font-black text-muted-foreground">{initials}</span>
             )}
           </div>
-          <div className="grow">
-            <div className="flex items-start justify-between gap-2">
-              <div>
-                <CardTitle className="text-lg leading-tight tracking-tight">
-                  {fundi.name}
-                </CardTitle>
-                <CardDescription className="mt-1 text-sm">
-                  {fundi.title}
-                </CardDescription>
-              </div>
-              {fundi.premiumLevel === "top" && (
-                <Badge className="flex gap-1 bg-amber-500 whitespace-nowrap text-amber-950 shadow-sm hover:bg-amber-500">
-                  <Star size={12} />
-                  Top Verified
-                </Badge>
-              )}
-              {fundi.premiumLevel === "verified" && (
-                <Badge className="flex gap-1 bg-sky-600 whitespace-nowrap text-white shadow-sm hover:bg-sky-600">
-                  <Shield size={12} />
-                  Verified
-                </Badge>
-              )}
-            </div>
+
+          <div className="min-w-0 flex-1">
+            <h3 className="truncate text-sm font-extrabold text-foreground group-hover:text-primary transition-colors duration-200">
+              {fundi.name}
+            </h3>
+            <p className="truncate text-xs font-semibold text-muted-foreground mt-0.5">
+              {fundi.title}
+            </p>
           </div>
         </div>
-      </CardHeader>
 
-      <CardContent className="space-y-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="flex items-center gap-1">
-            <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-            <span className="text-sm font-medium">{fundi.rating}</span>
+        {/* Rating and On-Call Row */}
+        <div className="flex flex-wrap items-center gap-2 mt-3 text-xs">
+          <div className="flex items-center gap-1 font-bold text-foreground">
+            <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
+            <span>{fundi.rating}</span>
+            <span className="font-medium text-muted-foreground">({fundi.reviews} reviews)</span>
           </div>
-          <span className="text-xs text-muted-foreground">
-            ({fundi.reviews} reviews)
-          </span>
+
           {fundi.isEmergency && (
-            <Badge
-              variant="outline"
-              className="ml-auto border-red-500/40 bg-red-500/10 text-red-500"
-            >
+            <span className="ml-auto rounded-full bg-red-500/10 border border-red-500/20 px-2 py-0.5 text-[9px] font-bold text-red-500">
               24/7 Emergency
-            </Badge>
+            </span>
           )}
           {fundi.isNearby && (
-            <Badge
-              variant="outline"
-              className="flex gap-1 border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
-            >
-              <MapPin size={12} />
+            <span className={cn("rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[9px] font-bold text-emerald-500", !fundi.isEmergency && "ml-auto")}>
               Nearby
-            </Badge>
+            </span>
           )}
         </div>
 
-        <p className="line-clamp-3 min-h-18 text-sm text-muted-foreground">
-          {fundi.description}
-        </p>
+        {/* Short Biography story description */}
+        {fundi.description && (
+          <p className="mt-2.5 line-clamp-2 text-xs text-muted-foreground leading-normal min-h-8">
+            {fundi.description}
+          </p>
+        )}
+      </div>
 
-        <div className="grid grid-cols-2 gap-2 pt-1">
-          <Button
-            variant="default"
-            size="sm"
-            className="h-10 rounded-xl bg-primary text-primary-foreground shadow-sm transition-transform group-hover:scale-[1.01]"
-            asChild
+      {/* Call to actions */}
+      <div className="mt-4 grid grid-cols-2 gap-2 pt-1">
+        <Button
+          variant="default"
+          size="sm"
+          className="h-9 cursor-pointer rounded-lg bg-primary text-xs font-bold shadow-2xs hover:bg-primary/95 transition-transform group-hover:scale-[1.01]"
+          asChild
+        >
+          <a
+            href={`https://wa.me/${fundi.whatsapp.replace(/\D/g, "")}?text=Hi%20${encodeURIComponent(fundi.name)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-1.5"
           >
-            <a
-              href={`https://wa.me/${fundi.whatsapp.replace(/\D/g, "")}?text=Hi%20${encodeURIComponent(fundi.name)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <MessageCircle className="mr-2 h-4 w-4" />
-              WhatsApp
-            </a>
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-10 rounded-xl border-primary/30 bg-background/60"
-            asChild
-          >
-            <a href={`tel:${fundi.phone}`}>
-              <Phone className="mr-2 h-4 w-4" />
-              Call
-            </a>
-          </Button>
-        </div>
-      </CardContent>
+            <MessageCircle className="h-4 w-4" />
+            WhatsApp
+          </a>
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-9 cursor-pointer rounded-lg border-border/80 hover:bg-muted text-xs font-bold"
+          asChild
+        >
+          <a href={`tel:${fundi.phone}`} className="flex items-center justify-center gap-1.5">
+            <Phone className="h-4 w-4" />
+            Call
+          </a>
+        </Button>
+      </div>
     </Card>
   )
 }
