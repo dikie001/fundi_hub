@@ -125,20 +125,6 @@ export default async function FundiProfilePage({ params }: PageProps) {
       {/* Main Container */}
       <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         
-        {/* Page Header */}
-        <div className="mb-6 flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-8 w-8 rounded-full border-border/60 bg-card hover:bg-accent text-muted-foreground hover:text-foreground shrink-0 cursor-pointer"
-            asChild
-          >
-            <Link href={`/#${fundiData.name.trim().replace(/\s+/g, "-")}`} aria-label="Back to home">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
-          <h1 className="text-xl font-bold tracking-tight text-foreground">Fundi Profile</h1>
-        </div>
 
         {/* Profile Hero Header Card */}
         <div className="relative mb-8 overflow-hidden rounded-3xl border border-border/50 bg-card p-6 shadow-xs md:p-8">
