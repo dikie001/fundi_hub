@@ -38,7 +38,8 @@ import {
   Trash2,
   Camera,
   CheckCircle2,
-  FileCheck
+  FileCheck,
+  PenLine
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -190,6 +191,7 @@ function DashboardInner() {
   const [isAddPortfolioOpen, setIsAddPortfolioOpen] = useState(false)
 
   // Profile Wizard / Completions States
+  const [isEditingProfile, setIsEditingProfile] = useState(false)
   const [wizardStep, setWizardStep] = useState(1)
   const [skills, setSkills] = useState<string[]>(["Emergency Repair", "Leak Detection", "Pipe Installation"])
   const [newSkillInput, setNewSkillInput] = useState("")
@@ -1112,12 +1114,291 @@ function DashboardInner() {
             }
             const completionScore = calculateCompletionScore()
 
+            if (!isEditingProfile) {
+              return (
+                <div className="space-y-6 animate-in fade-in duration-300">
+                  {/* Premium Profile Header Banner Card */}
+                  <Card className="border border-border/40 overflow-hidden bg-card">
+                    {/* Banner Image Cover */}
+                    <div className="h-32 w-full bg-gradient-to-r from-primary/10 via-primary/5 to-secondary/10 relative">
+                      <div className="absolute top-4 right-4 flex gap-2">
+                        <Button
+                          onClick={() => {
+                            setWizardStep(1)
+                            setIsEditingProfile(true)
+                          }}
+                          size="sm"
+                          variant="outline"
+                          className="h-8.5 text-xs font-semibold rounded-lg bg-card/85 backdrop-blur-xs border-border/40 hover:bg-card cursor-pointer flex items-center gap-1.5 shadow-xs"
+                        >
+                          <PenLine className="h-3.5 w-3.5" /> Edit Profile
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="px-6 pb-6 relative">
+                      {/* Avatar shifting upwards */}
+                      <div className="absolute -top-12 left-6 h-20 w-20 rounded-full border-4 border-card overflow-hidden bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-extrabold text-2xl shadow-md">
+                        {avatarUrl ? (
+                          <img src={avatarUrl} alt="Avatar" className="h-full w-full object-cover" />
+                        ) : (
+                          user?.name?.[0]?.toUpperCase()
+                        )}
+                      </div>
+
+                      {/* Header Info */}
+                      <div className="pt-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <h2 className="text-lg font-extrabold text-foreground">{editName || user?.name || "Fundi Partner"}</h2>
+                            {profile?.premiumLevel !== "none" && (
+                              <ShieldCheck className="h-4 w-4 text-blue-500" />
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground font-semibold">
+                            {editTitle || `${editTrade || "General"} Specialist`}
+                          </p>
+                        </div>
+
+                        {/* Quick Action Badges */}
+                        <div className="flex flex-wrap items-center gap-2.5">
+                          <span className="inline-flex items-center rounded-lg bg-primary/10 border border-primary/20 px-2.5 py-1 text-xs font-bold text-primary">
+                            {editTrade || "General"}
+                          </span>
+                          <span className="inline-flex items-center rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-xs font-bold text-emerald-500">
+                            {editYearsExp || "0"} Years Experience
+                          </span>
+                          <span className="inline-flex items-center rounded-lg bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 text-xs font-bold text-amber-600 dark:text-amber-500 flex items-center gap-1">
+                            <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
+                            {profile?.rating.toFixed(1) || "5.0"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+
+                  {/* Profile details grid */}
+                  <div className="grid gap-6 md:grid-cols-3">
+                    {/* Identity and Service Area */}
+                    <Card className="border border-border/40 bg-card p-5 space-y-4">
+                      <div className="flex items-center justify-between border-b border-border/30 pb-2">
+                        <h3 className="text-xs font-semibold text-foreground">Identity & Scope</h3>
+                        <Button 
+                          onClick={() => { setWizardStep(1); setIsEditingProfile(true); }}
+                          variant="ghost" 
+                          size="xs" 
+                          className="h-6 text-[10px] text-primary cursor-pointer"
+                        >
+                          Edit
+                        </Button>
+                      </div>
+
+                      <div className="space-y-3">
+                        <div className="space-y-0.5">
+                          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Service Coverage</span>
+                          <p className="text-xs text-foreground flex items-center gap-1.5 font-medium">
+                            <MapPin className="h-3.5 w-3.5 text-primary" />
+                            {editArea || "Not specified"}
+                          </p>
+                        </div>
+                        <div className="space-y-0.5">
+                          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Preferred Contact</span>
+                          <p className="text-xs text-foreground flex items-center gap-1.5 font-medium capitalize">
+                            <MessageSquare className="h-3.5 w-3.5 text-primary" />
+                            {preferredContact || "whatsapp"}
+                          </p>
+                        </div>
+                        <div className="space-y-0.5">
+                          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">National ID Status</span>
+                          <p className="text-xs text-foreground flex items-center gap-1.5 font-medium">
+                            <Shield className="h-3.5 w-3.5 text-primary" />
+                            Verified (ID ending in **8)
+                          </p>
+                        </div>
+                      </div>
+                    </Card>
+
+                    {/* About Story & Skills */}
+                    <Card className="border border-border/40 bg-card p-5 space-y-4 md:col-span-2">
+                      <div className="flex items-center justify-between border-b border-border/30 pb-2">
+                        <h3 className="text-xs font-semibold text-foreground">Bio Story & Skills</h3>
+                        <Button 
+                          onClick={() => { setWizardStep(2); setIsEditingProfile(true); }}
+                          variant="ghost" 
+                          size="xs" 
+                          className="h-6 text-[10px] text-primary cursor-pointer"
+                        >
+                          Edit
+                        </Button>
+                      </div>
+
+                      <div className="space-y-3">
+                        <div className="space-y-1">
+                          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Professional Bio</span>
+                          <p className="text-xs text-muted-foreground leading-relaxed">
+                            {editDesc || "No professional biography added yet. Update your profile step 2 to introduce yourself to clients!"}
+                          </p>
+                        </div>
+                        
+                        <div className="space-y-1.5 pt-1">
+                          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Specializations</span>
+                          <div className="flex flex-wrap gap-1.5">
+                            {skills.map((tag) => (
+                              <span key={tag} className="inline-flex items-center rounded bg-secondary px-2.5 py-0.5 text-xs text-secondary-foreground font-medium">
+                                {tag}
+                              </span>
+                            ))}
+                            {skills.length === 0 && (
+                              <span className="text-xs text-muted-foreground">No specialties selected.</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  </div>
+
+                  {/* Portfolio section */}
+                  <Card className="border border-border/40 bg-card">
+                    <CardHeader className="py-4 border-b border-border/25 flex flex-row items-center justify-between">
+                      <div>
+                        <CardTitle className="text-sm font-semibold text-foreground">Works Showcase Portfolio ({portfolioItems.length})</CardTitle>
+                        <CardDescription className="text-xs mt-0.5">Real photos of recent customer repairs and installations you completed.</CardDescription>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setIsAddPortfolioOpen(true)}
+                        className="h-8 text-xs font-medium rounded-lg cursor-pointer flex items-center gap-1"
+                      >
+                        <Plus className="h-3.5 w-3.5" /> Add Project
+                      </Button>
+                    </CardHeader>
+                    <CardContent className="pt-5">
+                      {portfolioItems.length > 0 ? (
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                          {portfolioItems.map((item) => (
+                            <div key={item.id} className="group relative rounded-xl overflow-hidden border border-border/30 bg-muted/20 aspect-video shadow-xs">
+                              <img
+                                src={item.image}
+                                alt={item.title}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent p-3 flex flex-col justify-end">
+                                <span className="text-[9px] font-semibold uppercase text-primary tracking-wider">{item.category}</span>
+                                <h5 className="text-xs font-semibold text-white truncate">{item.title}</h5>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center p-8 bg-muted/10 rounded-lg border border-dashed border-border/40">
+                          <ImageIcon className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                          <p className="text-xs text-muted-foreground">No portfolio photos uploaded.</p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  {/* Guided Profile builder checklist banner */}
+                  <Card className="border border-primary/20 bg-primary/5 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center text-primary">
+                        <CheckCircle2 className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-bold text-foreground">Guided Profile Builder</h4>
+                        <p className="text-[11px] text-muted-foreground">Your profile completion score is {completionScore}%. Complete all details to boost your matching priority.</p>
+                      </div>
+                    </div>
+                    <Button 
+                      onClick={() => setIsEditingProfile(true)}
+                      size="sm" 
+                      className="text-xs h-8.5 rounded-lg px-4 cursor-pointer"
+                    >
+                      {completionScore === 100 ? "Review Wizard Steps" : "Complete Profile Setup"}
+                    </Button>
+                  </Card>
+
+                  {/* Add Portfolio Dialog */}
+                  <Dialog open={isAddPortfolioOpen} onOpenChange={setIsAddPortfolioOpen}>
+                    <DialogContent className="border border-border bg-card p-5 rounded-lg shadow-lg w-full max-w-sm">
+                      <DialogHeader>
+                        <DialogTitle className="text-sm font-bold text-foreground">Add Portfolio Work</DialogTitle>
+                        <DialogDescription className="text-xs text-muted-foreground">Showcase pictures of jobs you did recently to attract clients.</DialogDescription>
+                      </DialogHeader>
+                      <form onSubmit={handlePortfolioUpload} className="space-y-4 mt-2">
+                        <div className="space-y-1">
+                          <Label htmlFor="port-title" className="text-xs font-semibold text-foreground">Project Title</Label>
+                          <Input
+                            id="port-title"
+                            value={newPortfolioTitle}
+                            onChange={(e) => setNewPortfolioTitle(e.target.value)}
+                            placeholder="e.g. Master kitchen plumbing"
+                            required
+                            className="text-xs h-9 rounded-lg"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label htmlFor="port-cat" className="text-xs font-semibold text-foreground">Work Category</Label>
+                          <select
+                            id="port-cat"
+                            value={newPortfolioCategory}
+                            onChange={(e) => setNewPortfolioCategory(e.target.value)}
+                            className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-xs focus-visible:outline-hidden dark:bg-card"
+                          >
+                            <option value="Wiring">Electrical Wiring</option>
+                            <option value="Installation">Equipment Installation</option>
+                            <option value="Repair">Trouble Repair</option>
+                            <option value="Piping">Plumbing Piping</option>
+                            <option value="General">Other Works</option>
+                          </select>
+                        </div>
+                        
+                        <div className="rounded-lg border border-dashed border-border/40 p-5 text-center bg-muted/15">
+                          <ImageIcon className="h-6 w-6 text-primary mx-auto mb-1.5" />
+                          <p className="text-[10px] font-bold text-foreground">Select photos of your work</p>
+                          <p className="text-[8px] text-muted-foreground mt-0.5">PNG, JPG up to 5MB (Simulated upload)</p>
+                        </div>
+
+                        <DialogFooter className="flex items-center justify-end gap-2 pt-2 border-t border-border/30">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={() => setIsAddPortfolioOpen(false)}
+                            className="text-xs h-9 px-4 rounded-lg cursor-pointer"
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            type="submit"
+                            className="text-xs h-9 px-4 rounded-lg font-medium cursor-pointer"
+                          >
+                            Save Work
+                          </Button>
+                        </DialogFooter>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              )
+            }
+
             return (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 
-                <div className="border-b border-border/40 pb-4">
-                  <h1 className="text-xl font-extrabold text-foreground">Profile & Works Portfolio</h1>
-                  <p className="text-xs text-muted-foreground mt-0.5">Configure your public identity cards and showcase photos of completed jobs to potential clients.</p>
+                <div className="flex items-center justify-between border-b border-border/40 pb-4">
+                  <div>
+                    <h1 className="text-xl font-extrabold text-foreground">Profile Builder Wizard</h1>
+                    <p className="text-xs text-muted-foreground mt-0.5">Configure your public identity cards and showcase photos of completed jobs to potential clients.</p>
+                  </div>
+                  <Button
+                    onClick={() => setIsEditingProfile(false)}
+                    variant="outline"
+                    size="sm"
+                    className="h-8.5 text-xs rounded-lg cursor-pointer"
+                  >
+                    View Profile Card
+                  </Button>
                 </div>
 
                 {/* Dynamic Stepper Header */}
@@ -1494,6 +1775,7 @@ function DashboardInner() {
                                 onClick={() => {
                                   setUpdateSuccess("All wizard profile configurations saved successfully!");
                                   setTimeout(() => setUpdateSuccess(""), 4000);
+                                  setIsEditingProfile(false);
                                 }}
                                 className="text-xs h-9 rounded-lg px-6"
                               >
