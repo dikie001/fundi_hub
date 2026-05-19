@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { MessageCircle, Phone, Star } from "lucide-react"
 import type { Fundi } from "@/lib/data"
 import Image from "next/image"
+import Link from "next/link"
 import { cn } from "@/lib/utils"
 
 interface FundiCardProps {
@@ -19,9 +20,11 @@ export function FundiCard({ fundi }: FundiCardProps) {
     .join("")
     .toUpperCase()
 
+  const profileLink = `/fundis/${encodeURIComponent(fundi.name.replace(/\s+/g, "-"))}`
+
   return (
     <Card className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/50 bg-card p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
-      <div>
+      <Link href={profileLink} className="block cursor-pointer focus:outline-hidden">
         {/* Top Badges Row */}
         <div className="flex items-center justify-between gap-2 pb-3">
           <div className="flex flex-wrap items-center gap-1.5">
@@ -99,7 +102,7 @@ export function FundiCard({ fundi }: FundiCardProps) {
             {fundi.description}
           </p>
         )}
-      </div>
+      </Link>
 
       {/* Call to actions */}
       <div className="mt-4 grid grid-cols-2 gap-2 pt-1">
