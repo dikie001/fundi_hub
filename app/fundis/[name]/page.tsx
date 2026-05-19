@@ -123,7 +123,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
       <Navigation />
 
       {/* Main Container */}
-      <main className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         
         {/* Back Link */}
         <div className="mb-6">
