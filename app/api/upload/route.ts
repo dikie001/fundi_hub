@@ -17,7 +17,11 @@ export async function POST(request: Request) {
     }
 
     const defaultFileName = fileName || `upload_${Date.now()}.png`
-    const uploadFolder = folder || "/general"
+    let uploadFolder = folder || "general"
+    // Normalize folder: ImageKit expects folder paths without a leading slash
+    if (uploadFolder.startsWith("/")) {
+      uploadFolder = uploadFolder.slice(1)
+    }
 
     // ImageKit expects the base64 string without the prefix data:image/...;base64,
     let base64Data = image

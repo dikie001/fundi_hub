@@ -427,20 +427,51 @@ function DashboardInner() {
       const reader = new FileReader()
       reader.onload = async (event) => {
         const base64String = event.target?.result as string
-        setAvatarProgress(50)
-        
+        setAvatarProgress(20)
+
         try {
+          // Upload to ImageKit via our upload API
+          const uploadRes = await fetch("/api/upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              image: base64String,
+              fileName: file.name,
+              folder: "fundi_hub/profile_images"
+            })
+          })
+
+          if (!uploadRes.ok) {
+            const err = await uploadRes.json()
+            console.error("Image upload failed:", err)
+            setIsAvatarUploading(false)
+            return
+          }
+
+          const uploadData = await uploadRes.json()
+          const imageUrl = uploadData.url || uploadData.data?.url
+          if (!imageUrl) {
+            console.error("Upload succeeded but no URL returned", uploadData)
+            setIsAvatarUploading(false)
+            return
+          }
+
+          setAvatarProgress(70)
+
+          // Save image URL to fundi profile
           const res = await fetch("/api/fundi/profile", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ image: base64String })
+            body: JSON.stringify({ image: imageUrl })
           })
+
           if (res.ok) {
-            setAvatarUrl(base64String)
+            setAvatarUrl(imageUrl)
             setAvatarProgress(100)
             fetchProfile()
           } else {
-            console.error("Failed to update avatar photo")
+            const err = await res.json()
+            console.error("Failed to save avatar URL to profile:", err)
           }
         } catch (error) {
           console.error("Avatar upload failed:", error)
