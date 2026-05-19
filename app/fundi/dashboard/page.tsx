@@ -25,14 +25,10 @@ import {
   ExternalLink,
   Shield,
   LayoutDashboard,
-  Menu,
-  X,
   ChevronRight,
-  Sparkles,
   TrendingUp,
   FolderKanban,
   HelpCircle,
-  CheckCircle2,
   Image as ImageIcon,
   Info,
   Sun,
@@ -43,7 +39,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Switch } from "@/components/ui/switch"
+import { Separator } from "@/components/ui/separator"
 import {
   Dialog,
   DialogContent,
@@ -52,6 +49,18 @@ import {
   DialogDescription,
   DialogFooter
 } from "@/components/ui/dialog"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarProvider,
+  SidebarTrigger,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarInset,
+} from "@/components/ui/sidebar"
 
 // Static mock incoming client leads to show matching recommendations dynamically based on trade
 const MOCK_CLIENT_LEADS = [
@@ -156,7 +165,6 @@ export default function FundiDashboard() {
 
   // Layout states
   const [activeTab, setActiveTab] = useState<"overview" | "leads" | "profile" | "referrals" | "membership">("overview")
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
 
   // Portfolio local state
   const [portfolioItems, setPortfolioItems] = useState(INITIAL_PORTFOLIO_ITEMS)
@@ -344,88 +352,83 @@ export default function FundiDashboard() {
   ]
 
   return (
-    <div className="flex min-h-screen bg-[oklch(0.99_0.002_30)] dark:bg-[oklch(0.13_0.002_30)] text-foreground transition-colors duration-300">
+    <SidebarProvider defaultOpen={true}>
       
-      {/* DESKTOP SIDEBAR */}
-      <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 border-r border-border/40 bg-card/45 backdrop-blur-lg">
-        <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
-          {/* Logo brand */}
-          <div className="flex items-center flex-shrink-0 px-6 gap-2">
-            <span className="text-xl font-black bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent tracking-tight">
+      {/* SHADCN COLLAPSIBLE SIDEBAR */}
+      <Sidebar className="border-r border-border/40 bg-card/45 backdrop-blur-lg">
+        
+        {/* Sidebar Header */}
+        <SidebarHeader className="flex flex-row items-center justify-between px-6 py-4 border-b border-border/25">
+          <div className="flex items-center gap-2">
+            <span className="text-lg font-black bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent tracking-tight">
               FundiHub
             </span>
-            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-black text-primary uppercase">
+            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-black text-primary uppercase">
               Partner
             </span>
           </div>
+        </SidebarHeader>
 
-          {/* User info panel in sidebar */}
-          <div className="mt-6 px-4">
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/40 border border-border/10">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-orange-500 text-white text-sm font-black shadow-xs relative flex-shrink-0">
-                {user?.name?.[0]?.toUpperCase() || "F"}
-                {profile?.premiumLevel !== "none" && (
-                  <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[8px] border border-white dark:border-zinc-900">
-                    ✓
-                  </span>
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-foreground truncate">{user?.name}</p>
-                <p className="text-xs text-muted-foreground truncate capitalize">{profile?.trade || "Partner"}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Navigation Links */}
-          <nav className="mt-6 flex-1 px-3 space-y-1">
+        {/* Sidebar Navigation Items - simple words/icons */}
+        <SidebarContent className="px-3 py-4">
+          <SidebarMenu className="space-y-1">
             {menuItems.map((item) => {
               const Icon = item.icon
               const isActive = activeTab === item.id
               return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setActiveTab(item.id as any)
-                    setIsMobileSidebarOpen(false)
-                  }}
-                  className={`flex items-center justify-between w-full px-4 py-2.5 text-sm font-semibold rounded-lg transition-all duration-150 cursor-pointer ${
-                    isActive
-                      ? "bg-primary/10 border border-primary/20 text-primary"
-                      : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <Icon className={`h-4.5 w-4.5 transition-colors ${isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`} />
+                <SidebarMenuItem key={item.id}>
+                  <SidebarMenuButton
+                    isActive={isActive}
+                    onClick={() => setActiveTab(item.id as any)}
+                    className="w-full text-sm font-semibold rounded-lg cursor-pointer"
+                  >
+                    <Icon className="h-4.5 w-4.5" />
                     <span>{item.label}</span>
-                  </div>
-                  {item.badge !== undefined && item.badge > 0 && (
-                    <span className="rounded-full bg-primary/20 text-primary px-2 py-0.5 text-xs font-black">
-                      {item.badge}
-                    </span>
-                  )}
-                </button>
+                    {item.badge !== undefined && item.badge > 0 && (
+                      <span className="ml-auto rounded-full bg-primary/20 text-primary px-2 py-0.5 text-xs font-black">
+                        {item.badge}
+                      </span>
+                    )}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
               )
             })}
-          </nav>
-        </div>
+          </SidebarMenu>
+        </SidebarContent>
 
-        {/* Sidebar Footer */}
-        <div className="flex-shrink-0 flex border-t border-border/30 p-4 bg-muted/10">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-2">
-              {mounted && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-lg h-9 w-9 cursor-pointer"
-                  onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-                  title="Toggle Mode"
-                >
-                  {resolvedTheme === "dark" ? <Sun className="h-4.5 w-4.5 text-amber-500" /> : <Moon className="h-4.5 w-4.5 text-zinc-700" />}
-                </Button>
-              )}
+        {/* Sidebar Footer with toggle & logout */}
+        <SidebarFooter className="p-4 space-y-4 border-t border-border/25 bg-muted/5">
+          
+          {/* On-Call Status toggle using only Shadcn Switch */}
+          <div className="flex items-center justify-between rounded-lg border border-border bg-card p-3.5 shadow-2xs">
+            <div className="space-y-0.5">
+              <Label htmlFor="emergency-toggle" className="text-xs font-bold text-foreground cursor-pointer">
+                On-Call Status
+              </Label>
+              <p className="text-[10px] text-muted-foreground font-semibold">
+                {profile?.isEmergency ? "Online" : "Offline"}
+              </p>
             </div>
+            <Switch
+              id="emergency-toggle"
+              checked={profile?.isEmergency || false}
+              onCheckedChange={() => handleToggleEmergency(profile?.isEmergency)}
+              className="cursor-pointer"
+            />
+          </div>
+
+          <div className="flex items-center justify-between border-t border-border/30 pt-3">
+            {mounted && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-lg h-9 w-9 cursor-pointer"
+                onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+                title="Toggle Mode"
+              >
+                {resolvedTheme === "dark" ? <Sun className="h-4.5 w-4.5 text-amber-500" /> : <Moon className="h-4.5 w-4.5 text-zinc-700" />}
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="sm"
@@ -436,112 +439,36 @@ export default function FundiDashboard() {
               <span>Sign Out</span>
             </Button>
           </div>
-        </div>
-      </aside>
+        </SidebarFooter>
 
-      {/* MOBILE HEADER BAR */}
-      <div className="md:hidden flex flex-col flex-1">
-        <header className="sticky top-0 z-40 flex items-center justify-between h-16 px-4 border-b border-border/40 bg-card/85 backdrop-blur-md">
+      </Sidebar>
+
+      {/* MAIN CONTAINER WORKSPACE */}
+      <SidebarInset className="flex-1 flex flex-col min-h-screen">
+        
+        {/* NORMAL NAVBAR - NO CLUTTER */}
+        <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border/40 bg-card/85 backdrop-blur-md px-6">
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsMobileSidebarOpen(true)}
-              className="p-1.5 rounded-lg border border-border/50 hover:bg-muted text-foreground"
-            >
-              <Menu className="h-5 w-5" />
-            </button>
-            <span className="text-lg font-black bg-gradient-to-r from-primary to-orange-500 bg-clip-text text-transparent">
-              FundiHub
-            </span>
+            <SidebarTrigger />
+            <Separator orientation="vertical" className="h-4" />
+            <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider capitalize">
+              {activeTab}
+            </h2>
           </div>
 
-          <div className="flex items-center gap-3">
-            {mounted && (
-              <button
-                onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-                className="p-2 rounded-lg hover:bg-muted text-foreground transition-colors"
-              >
-                {resolvedTheme === "dark" ? <Sun className="h-4 w-4 text-amber-500" /> : <Moon className="h-4 w-4 text-zinc-700" />}
-              </button>
-            )}
-            <div className="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+          {/* User Details initials indicator */}
+          <div className="flex items-center gap-2.5 bg-muted/40 p-1.5 pl-2.5 pr-2.5 border border-border/10 rounded-xl">
+            <div className="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-gradient-to-br from-primary to-orange-500 text-white text-xs font-black shadow-xs">
               {user?.name?.[0]?.toUpperCase()}
             </div>
+            <span className="text-xs font-bold text-foreground hidden sm:inline">
+              {user?.name}
+            </span>
           </div>
         </header>
-      </div>
 
-      {/* MOBILE DRAWER SIDEBAR */}
-      {isMobileSidebarOpen && (
-        <div className="fixed inset-0 z-50 flex md:hidden">
-          {/* Overlay */}
-          <div
-            onClick={() => setIsMobileSidebarOpen(false)}
-            className="fixed inset-0 bg-black/55 backdrop-blur-xs"
-          />
-
-          <div className="relative flex-1 flex flex-col max-w-xs w-full bg-card border-r border-border">
-            <div className="absolute top-0 right-0 -mr-12 pt-4">
-              <button
-                onClick={() => setIsMobileSidebarOpen(false)}
-                className="ml-1 flex items-center justify-center h-10 w-10 rounded-full bg-black/40 text-white"
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-
-            <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-              <div className="flex-shrink-0 flex items-center px-4 gap-2">
-                <span className="text-xl font-black text-primary">FundiHub</span>
-                <span className="rounded bg-primary/15 px-2 py-0.5 text-xs font-bold text-primary uppercase">Partner</span>
-              </div>
-              <nav className="mt-5 px-3 space-y-1.5">
-                {menuItems.map((item) => {
-                  const Icon = item.icon
-                  const isActive = activeTab === item.id
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => {
-                        setActiveTab(item.id as any)
-                        setIsMobileSidebarOpen(false)
-                      }}
-                      className={`group flex items-center justify-between w-full px-4 py-3 text-sm font-semibold rounded-lg transition-all cursor-pointer ${
-                        isActive
-                          ? "bg-primary/10 text-primary border-l-4 border-primary"
-                          : "text-muted-foreground hover:bg-muted/40 hover:text-foreground"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <Icon className="h-5 w-5" />
-                        <span>{item.label}</span>
-                      </div>
-                      {item.badge !== undefined && item.badge > 0 && (
-                        <span className="rounded-full bg-primary/20 text-primary px-2 py-0.5 text-xs font-bold">
-                          {item.badge}
-                        </span>
-                      )}
-                    </button>
-                  )
-                })}
-              </nav>
-            </div>
-
-            <div className="flex-shrink-0 flex border-t border-border p-4 bg-muted/10">
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-3 text-sm font-bold text-muted-foreground hover:text-foreground cursor-pointer"
-              >
-                <LogOut className="h-5 w-5" />
-                Logout Account
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MAIN CONTAINER */}
-      <main className="flex-grow md:pl-64 min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        {/* PAGE CONTENT */}
+        <div className="flex-grow max-w-7xl w-full mx-auto px-6 py-8">
           
           {/* OVERVIEW TAB CONTENT */}
           {activeTab === "overview" && (
@@ -556,30 +483,6 @@ export default function FundiDashboard() {
                   <p className="text-sm text-muted-foreground mt-1">
                     Welcome to your Partner Suite. You have <span className="font-bold text-primary">{matchingLeads.length} matching job opportunities</span> in {profile?.trade || "your trade"} today.
                   </p>
-                </div>
-                
-                {/* On-Call Status toggle */}
-                <div className="flex items-center gap-3 bg-card border border-border/50 rounded-xl px-4 py-2 shadow-2xs self-start sm:self-center">
-                  <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    On-Call Status
-                  </span>
-                  <button
-                    onClick={() => handleToggleEmergency(profile?.isEmergency)}
-                    className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden ${
-                      profile?.isEmergency ? "bg-emerald-500" : "bg-zinc-300 dark:bg-zinc-700"
-                    }`}
-                  >
-                    <span
-                      className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
-                        profile?.isEmergency ? "translate-x-4" : "translate-x-0"
-                      }`}
-                    />
-                  </button>
-                  <span className={`text-xs font-black uppercase tracking-wider ${
-                    profile?.isEmergency ? "text-emerald-500 animate-pulse" : "text-muted-foreground"
-                  }`}>
-                    {profile?.isEmergency ? "Online" : "Offline"}
-                  </span>
                 </div>
               </div>
 
@@ -682,10 +585,10 @@ export default function FundiDashboard() {
 
               </div>
 
-              {/* Grid Layout Split */}
+              {/* Grid layout splits */}
               <div className="grid gap-6 lg:grid-cols-3">
                 
-                {/* Left: Recommended Leads */}
+                {/* Left: Client matches feed */}
                 <div className="lg:col-span-2 space-y-4">
                   <div className="flex items-center justify-between">
                     <h2 className="text-sm font-black text-foreground tracking-tight uppercase flex items-center gap-1.5">
@@ -777,7 +680,7 @@ export default function FundiDashboard() {
                   )}
                 </div>
 
-                {/* Right: Widgets (Completeness Circle restoration) */}
+                {/* Right widgets column */}
                 <div className="space-y-5">
                   
                   {/* Profile Completeness: Circular gauge */}
@@ -814,7 +717,7 @@ export default function FundiDashboard() {
                     </CardContent>
                   </Card>
 
-                  {/* Refer & Earn */}
+                  {/* Refer & Earn link code */}
                   <Card className="border border-border/60 bg-card">
                     <CardHeader className="pb-1">
                       <CardTitle className="text-xs font-black tracking-wider uppercase text-foreground">
@@ -844,7 +747,7 @@ export default function FundiDashboard() {
                     </CardContent>
                   </Card>
 
-                  {/* Toolkit Downloads */}
+                  {/* Toolkit downloads */}
                   <Card className="border border-border/60 bg-card">
                     <CardHeader className="pb-1">
                       <CardTitle className="text-xs font-black tracking-wider uppercase text-foreground">
@@ -1514,7 +1417,7 @@ export default function FundiDashboard() {
                       Elite Ranking
                     </span>
                     <CardTitle className="text-lg font-black text-foreground">Top-Rank Verified Elite</CardTitle>
-                    <CardDescription className="text-xs mt-1">Propel your account card to first row searches</CardDescription>
+                    <CardDescription className="text-xs mt-1">Propel your card to top results</CardDescription>
                   </CardHeader>
                   <CardContent className="text-center space-y-5 px-4 pb-6">
                     <div className="space-y-1">
@@ -1556,7 +1459,7 @@ export default function FundiDashboard() {
           )}
 
         </div>
-      </main>
+      </SidebarInset>
 
       {/* Premium Badge Checkout Dialog */}
       <Dialog open={isPremiumModalOpen} onOpenChange={setIsPremiumModalOpen}>
@@ -1624,6 +1527,6 @@ export default function FundiDashboard() {
         </DialogContent>
       </Dialog>
 
-    </div>
+    </SidebarProvider>
   )
 }
