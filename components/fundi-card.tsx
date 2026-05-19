@@ -39,14 +39,10 @@ export function FundiCard({ fundi }: FundiCardProps) {
             >
               {fundi.category}
             </Badge>
-            {fundi.premiumLevel === "top" && (
-              <Badge className="bg-amber-500/10 border border-amber-500/35 px-2 py-0.5 text-[10px] font-bold text-amber-500 hover:bg-amber-500/15">
-                Top Verified
-              </Badge>
-            )}
-            {fundi.premiumLevel === "verified" && (
-              <Badge className="bg-sky-500/10 border border-sky-500/35 px-2 py-0.5 text-[10px] font-bold text-sky-500 hover:bg-sky-500/15">
-                Verified
+            {(fundi.premiumLevel === "top" || fundi.premiumLevel === "verified") && (
+              <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 border-none text-[10px] font-extrabold text-white shadow-xs px-2.5 py-0.5 flex items-center gap-1">
+                <Star className="h-3 w-3 fill-white" />
+                Premium Partner
               </Badge>
             )}
           </div>

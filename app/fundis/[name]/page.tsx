@@ -186,16 +186,10 @@ export default async function FundiProfilePage({ params }: PageProps) {
                     {fundiData.name}
                   </h1>
                   <div className="flex flex-wrap gap-1.5">
-                    {fundiData.premiumLevel === "top" && (
-                      <Badge className="bg-amber-500 text-amber-950 shadow-xs hover:bg-amber-500 text-[10px] py-0.5 px-2 font-bold">
-                        <Star size={10} className="mr-1 fill-amber-950" />
-                        Top Partner
-                      </Badge>
-                    )}
-                    {fundiData.premiumLevel === "verified" && (
-                      <Badge className="bg-sky-600 text-white shadow-xs hover:bg-sky-600 text-[10px] py-0.5 px-2 font-bold">
-                        <Shield size={10} className="mr-1" />
-                        Verified
+                    {(fundiData.premiumLevel === "top" || fundiData.premiumLevel === "verified") && (
+                      <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-none shadow-md text-[10px] py-0.5 px-2.5 font-bold flex items-center gap-1 hover:from-amber-600 hover:to-orange-600">
+                        <Star size={10} className="fill-white" />
+                        Premium Partner
                       </Badge>
                     )}
                   </div>

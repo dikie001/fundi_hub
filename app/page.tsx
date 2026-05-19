@@ -22,6 +22,8 @@ import {
   BarChart3,
   Heart,
   Search,
+  Sparkles,
+  Star,
 } from "lucide-react"
 import Link from "next/link"
 
@@ -457,26 +459,43 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="relative overflow-hidden border-2 border-amber-500/30 bg-gradient-to-b from-amber-500/10 via-card to-card shadow-lg shadow-amber-500/5 transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/50">
+              <div className="absolute top-0 right-0 -mr-8 -mt-8 h-24 w-24 rounded-full bg-amber-500/20 blur-xl pointer-events-none" />
               <CardHeader>
-                <CardTitle>Premium Badges</CardTitle>
-                <CardDescription className="text-sm">
-                  Additional visibility options
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2 text-foreground font-bold">
+                    <Sparkles className="h-5 w-5 text-amber-500 animate-pulse" />
+                    Premium Partner Badge
+                  </CardTitle>
+                  <span className="rounded-full bg-amber-500/10 px-2.5 py-0.5 text-[9px] font-black text-amber-500 uppercase tracking-wider">
+                    Most Popular
+                  </span>
+                </div>
+                <CardDescription className="text-2xl font-black text-primary pt-1">
+                  Ksh 500<span className="text-xs font-semibold text-muted-foreground">/month</span>
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-3 text-sm">
-                  <div>
-                    <p className="font-medium">✅ Verified Badge</p>
-                    <p className="text-muted-foreground">Ksh 300/month</p>
-                  </div>
-                  <div>
-                    <p className="font-medium">⭐ Top & Verified Badge</p>
-                    <p className="text-muted-foreground">Ksh 500/month</p>
-                  </div>
-                </div>
-                <Button className="w-full" variant="outline">
-                  Learn More
+                <ul className="space-y-2.5 text-xs text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500 shrink-0" />
+                    <span>Gold Premium badge on profile & card</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500 shrink-0" />
+                    <span>Always display at the top of searches</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500 shrink-0" />
+                    <span>5x matching priority for new job leads</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500 shrink-0" />
+                    <span>Instant client trust verification</span>
+                  </li>
+                </ul>
+                <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 border-none text-white font-bold cursor-pointer" asChild>
+                  <Link href="/auth/signup">Upgrade Now</Link>
                 </Button>
               </CardContent>
             </Card>
