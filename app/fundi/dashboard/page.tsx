@@ -1556,22 +1556,24 @@ function DashboardInner() {
                               htmlFor="avatar-upload-profile"
                               className="absolute inset-0 flex cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-border bg-gradient-to-br from-primary to-orange-500 text-2xl font-extrabold text-white shadow-sm transition-all hover:border-primary hover:shadow-md"
                             >
-                            {avatarUrl ? (
-                              <img
-                                src={avatarUrl}
-                                alt="Avatar"
-                                className="h-full w-full object-cover"
-                              />
-                            ) : (
-                              user?.name?.[0]?.toUpperCase()
-                            )}
+                              {avatarUrl ? (
+                                <img
+                                  src={avatarUrl}
+                                  alt="Avatar"
+                                  className="h-full w-full object-cover"
+                                />
+                              ) : (
+                                user?.name?.[0]?.toUpperCase()
+                              )}
                               <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/0 transition-all group-hover:bg-black/40">
                                 <Camera className="h-5 w-5 text-white opacity-0 transition-opacity group-hover:opacity-100" />
                               </div>
                             </label>
                             {isAvatarUploading && (
                               <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/60">
-                                <span className="text-xs font-bold text-white">{avatarProgress}%</span>
+                                <span className="text-xs font-bold text-white">
+                                  {avatarProgress}%
+                                </span>
                               </div>
                             )}
                           </div>
