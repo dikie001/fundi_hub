@@ -95,17 +95,17 @@ export function ReviewsList({ fundiUserId, initialReviews, clientReview }: Revie
         <div className="md:col-span-1">
           <Card className="sticky top-28 border border-border bg-card shadow-xs">
             <CardHeader className="pb-4">
-              <CardTitle className="text-xl font-bold">Write a Review</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-xl font-bold">Leave a Review</CardTitle>
+              {/* <CardDescription>
                 Share your experience hiring this expert to help others make informed decisions.
-              </CardDescription>
+              </CardDescription> */}
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Reviewer Name */}
                 {!isNameLocked && (
                   <div className="space-y-1.5">
-                    <label htmlFor="reviewer-name" className="text-xs font-bold text-muted-foreground uppercase">
+                    <label htmlFor="reviewer-name" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                       Your Name
                     </label>
                     <input
@@ -116,42 +116,36 @@ export function ReviewsList({ fundiUserId, initialReviews, clientReview }: Revie
                       value={reviewerName}
                       onChange={(e) => setReviewerName(e.target.value)}
                       placeholder="Enter your name"
-                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden"
+                      className="w-full rounded-xl border border-border/60 bg-muted/10 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/10 focus:outline-hidden transition-all duration-200"
                     />
                   </div>
                 )}
 
-                {/* Rating Stars Select */}
-                {/* Rating Stars Select */}
-                <div className="space-y-2 flex flex-col items-center justify-center py-3 bg-muted/20 border border-border/30 rounded-lg">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    Rating
-                  </label>
-                  <div className="flex items-center gap-3">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        type="button"
-                        onClick={() => setRating(star)}
-                        onMouseEnter={() => setHoverRating(star)}
-                        onMouseLeave={() => setHoverRating(null)}
-                        className="transition-all duration-200 hover:scale-125 hover:rotate-6 active:scale-95 focus:outline-hidden cursor-pointer"
-                      >
-                        <Star
-                          className={`h-7 w-7 transition-all duration-300 ${
-                            star <= (hoverRating ?? rating)
-                              ? "fill-amber-500 text-amber-500 filter drop-shadow-[0_0_3px_rgba(245,158,11,0.4)]"
-                              : "text-muted hover:text-muted-foreground/60"
-                          }`}
-                        />
-                      </button>
-                    ))}
-                  </div>
+                {/* Rating Row */}
+                <div className="flex items-center justify-center py-3 border-b border-border/15 gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setRating(star)}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(null)}
+                      className="transition-all duration-300 ease-out hover:scale-135 hover:rotate-12 active:scale-90 active:rotate-0 focus:outline-hidden cursor-pointer p-1"
+                    >
+                      <Star
+                        className={`h-8 w-8 transition-all duration-300 ease-out ${
+                          star <= (hoverRating ?? rating)
+                            ? "fill-amber-500 text-amber-500 filter drop-shadow-[0_0_6px_rgba(245,158,11,0.55)] scale-110"
+                            : "text-muted-foreground/20 hover:text-muted-foreground/50"
+                        }`}
+                      />
+                    </button>
+                  ))}
                 </div>
 
                 {/* Comment Box */}
                 <div className="space-y-1.5">
-                  <label htmlFor="comment" className="text-xs font-bold text-muted-foreground uppercase">
+                  <label htmlFor="comment" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                     Comment
                   </label>
                   <textarea
@@ -162,19 +156,19 @@ export function ReviewsList({ fundiUserId, initialReviews, clientReview }: Revie
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Tell others how they did..."
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden"
+                    className="w-full rounded-xl border border-border/60 bg-muted/10 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/10 focus:outline-hidden transition-all duration-200 resize-none"
                   />
                 </div>
 
                 {error && (
-                  <div className="flex items-center gap-2 rounded-lg bg-red-500/10 border border-red-500/20 p-3 text-xs font-medium text-red-500">
+                  <div className="flex items-center gap-2 rounded-xl bg-red-500/10 border border-red-500/20 p-3 text-xs font-medium text-red-500 animate-in fade-in duration-200">
                     <AlertCircle className="h-4 w-4 shrink-0" />
                     <span>{error}</span>
                   </div>
                 )}
 
                 {successMessage && (
-                  <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-3 text-xs font-medium text-emerald-500">
+                  <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-3 text-xs font-medium text-emerald-500 animate-in fade-in duration-200">
                     {successMessage}
                   </div>
                 )}
@@ -182,7 +176,7 @@ export function ReviewsList({ fundiUserId, initialReviews, clientReview }: Revie
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full h-11 bg-primary text-primary-foreground font-bold hover:bg-primary/90 flex items-center justify-center gap-2 rounded-xl transition-all"
+                  className="w-full h-11 bg-primary text-primary-foreground font-bold hover:bg-primary/95 flex items-center justify-center gap-2 rounded-xl transition-all duration-200 cursor-pointer shadow-sm shadow-primary/10"
                 >
                   {isSubmitting ? "Submitting..." : isNameLocked ? "Update Review" : "Submit Review"}
                 </Button>
