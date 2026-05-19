@@ -1,22 +1,29 @@
 import { db } from "@/lib/db"
-import { Fundi, categories as mockCategories, fundis as mockFundis } from "@/lib/data"
+import {
+  Fundi,
+  categories as mockCategories,
+  fundis as mockFundis,
+} from "@/lib/data"
 
 export async function getCategories() {
   try {
     const dbCategories = await db.category.findMany({
-      orderBy: { name: "asc" }
+      orderBy: { name: "asc" },
     })
-    
+
     if (dbCategories.length === 0) {
       return mockCategories
     }
-    
-    return dbCategories.map(cat => ({
+
+    return dbCategories.map((cat) => ({
       name: cat.name,
-      icon: cat.icon
+      icon: cat.icon,
     }))
   } catch (error) {
-    console.error("Error fetching categories from database, falling back to mock:", error)
+    console.error(
+      "Error fetching categories from database, falling back to mock:",
+      error
+    )
     return mockCategories
   }
 }
@@ -26,18 +33,18 @@ export async function getFundis(): Promise<Fundi[]> {
     const dbFundis = await db.user.findMany({
       where: {
         role: "fundi",
-        fundiProfile: { isNot: null }
+        fundiProfile: { isNot: null },
       },
       include: {
-        fundiProfile: true
-      }
+        fundiProfile: true,
+      },
     })
-    
+
     if (dbFundis.length === 0) {
       return mockFundis
     }
-    
-    return dbFundis.map(user => {
+
+    return dbFundis.map((user) => {
       const profile = user.fundiProfile!
       return {
         id: user.id,
@@ -53,11 +60,14 @@ export async function getFundis(): Promise<Fundi[]> {
         premiumLevel: profile.premiumLevel as "none" | "verified" | "top",
         isEmergency: profile.isEmergency,
         isNearby: profile.isNearby,
-        description: profile.description || ""
+        description: profile.description || "",
       }
     })
   } catch (error) {
-    console.error("Error fetching fundis from database, falling back to mock:", error)
+    console.error(
+      "Error fetching fundis from database, falling back to mock:",
+      error
+    )
     return mockFundis
   }
 }
