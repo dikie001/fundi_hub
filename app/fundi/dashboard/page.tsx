@@ -156,7 +156,7 @@ export default function FundiDashboard() {
 
   // Layout states
   const [activeTab, setActiveTab] = useState<"overview" | "leads" | "profile" | "referrals" | "membership">("overview")
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
 
   // Portfolio local state
   const [portfolioItems, setPortfolioItems] = useState(INITIAL_PORTFOLIO_ITEMS)
@@ -344,56 +344,76 @@ export default function FundiDashboard() {
   ]
 
   return (
-    <div className="flex flex-col min-h-screen bg-[oklch(0.99_0.002_30)] dark:bg-[oklch(0.13_0.002_30)] text-foreground transition-colors duration-300">
+    <div className="flex min-h-screen bg-[oklch(0.99_0.002_30)] dark:bg-[oklch(0.13_0.002_30)] text-foreground transition-colors duration-300">
       
-      {/* PREMIUM TOP NAVIGATION BAR */}
-      <header className="sticky top-0 z-50 border-b border-border bg-card/85 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            
-            {/* Left: Brand Identity & Active Profile */}
-            <div className="flex items-center gap-6">
-              <Link href="/" className="flex items-center gap-2">
-                <span className="text-xl font-black bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent tracking-tight">
-                  FundiHub
-                </span>
-                <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-black text-primary uppercase">
-                  Partner
-                </span>
-              </Link>
+      {/* DESKTOP SIDEBAR */}
+      <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 border-r border-border/40 bg-card/45 backdrop-blur-lg">
+        <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
+          {/* Logo brand */}
+          <div className="flex items-center flex-shrink-0 px-6 gap-2">
+            <span className="text-xl font-black bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent tracking-tight">
+              FundiHub
+            </span>
+            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-black text-primary uppercase">
+              Partner
+            </span>
+          </div>
 
-              {/* Desktop Horizontal Tabs */}
-              <nav className="hidden lg:flex items-center gap-1.5">
-                {menuItems.map((item) => {
-                  const isActive = activeTab === item.id
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => setActiveTab(item.id as any)}
-                      className={`relative px-3 py-2 text-sm font-medium rounded-lg transition-all cursor-pointer ${
-                        isActive
-                          ? "bg-primary/10 text-primary border border-primary/20"
-                          : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-                      }`}
-                    >
-                      <span className="flex items-center gap-2">
-                        {item.label}
-                        {item.badge !== undefined && item.badge > 0 && (
-                          <span className="rounded-full bg-primary/20 text-primary px-1.5 py-0.5 text-[10px] font-black">
-                            {item.badge}
-                          </span>
-                        )}
-                      </span>
-                    </button>
-                  )
-                })}
-              </nav>
+          {/* User info panel in sidebar */}
+          <div className="mt-6 px-4">
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/40 border border-border/10">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-orange-500 text-white text-sm font-black shadow-xs relative flex-shrink-0">
+                {user?.name?.[0]?.toUpperCase() || "F"}
+                {profile?.premiumLevel !== "none" && (
+                  <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[8px] border border-white dark:border-zinc-900">
+                    ✓
+                  </span>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-foreground truncate">{user?.name}</p>
+                <p className="text-xs text-muted-foreground truncate capitalize">{profile?.trade || "Partner"}</p>
+              </div>
             </div>
+          </div>
 
-            {/* Right: Theme, User Avatar dropdown / Logout */}
-            <div className="flex items-center gap-4">
-              
-              {/* Theme Switcher */}
+          {/* Navigation Links */}
+          <nav className="mt-6 flex-1 px-3 space-y-1">
+            {menuItems.map((item) => {
+              const Icon = item.icon
+              const isActive = activeTab === item.id
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setActiveTab(item.id as any)
+                    setIsMobileSidebarOpen(false)
+                  }}
+                  className={`flex items-center justify-between w-full px-4 py-2.5 text-sm font-semibold rounded-lg transition-all duration-150 cursor-pointer ${
+                    isActive
+                      ? "bg-primary/10 border border-primary/20 text-primary"
+                      : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className={`h-4.5 w-4.5 transition-colors ${isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`} />
+                    <span>{item.label}</span>
+                  </div>
+                  {item.badge !== undefined && item.badge > 0 && (
+                    <span className="rounded-full bg-primary/20 text-primary px-2 py-0.5 text-xs font-black">
+                      {item.badge}
+                    </span>
+                  )}
+                </button>
+              )
+            })}
+          </nav>
+        </div>
+
+        {/* Sidebar Footer */}
+        <div className="flex-shrink-0 flex border-t border-border/30 p-4 bg-muted/10">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-2">
               {mounted && (
                 <Button
                   variant="ghost"
@@ -402,265 +422,518 @@ export default function FundiDashboard() {
                   onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
                   title="Toggle Mode"
                 >
-                  {resolvedTheme === "dark" ? <Sun className="h-4 w-4 text-amber-500" /> : <Moon className="h-4 w-4 text-zinc-700" />}
+                  {resolvedTheme === "dark" ? <Sun className="h-4.5 w-4.5 text-amber-500" /> : <Moon className="h-4.5 w-4.5 text-zinc-700" />}
                 </Button>
               )}
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className="text-xs font-bold text-muted-foreground hover:text-destructive gap-1.5 cursor-pointer rounded-lg h-9 px-3"
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Sign Out</span>
+            </Button>
+          </div>
+        </div>
+      </aside>
 
-              {/* User Identity Avatar */}
-              <div className="hidden sm:flex items-center gap-2.5 bg-muted/40 p-1.5 pl-2.5 pr-2.5 border border-border/10 rounded-xl">
-                <div className="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-gradient-to-br from-primary to-orange-500 text-white text-xs font-black shadow-xs relative">
-                  {user?.name?.[0]?.toUpperCase()}
-                  {profile?.premiumLevel !== "none" && (
-                    <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3 items-center justify-center rounded-full bg-primary text-[7px] border border-white dark:border-zinc-900">
-                      ✓
-                    </span>
-                  )}
-                </div>
-                <div className="text-left max-w-[100px]">
-                  <p className="text-xs font-bold text-foreground truncate leading-none">{user?.name}</p>
-                  <p className="text-[10px] text-muted-foreground truncate mt-0.5 capitalize">{profile?.trade}</p>
-                </div>
-              </div>
+      {/* MOBILE HEADER BAR */}
+      <div className="md:hidden flex flex-col flex-1">
+        <header className="sticky top-0 z-40 flex items-center justify-between h-16 px-4 border-b border-border/40 bg-card/85 backdrop-blur-md">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsMobileSidebarOpen(true)}
+              className="p-1.5 rounded-lg border border-border/50 hover:bg-muted text-foreground"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+            <span className="text-lg font-black bg-gradient-to-r from-primary to-orange-500 bg-clip-text text-transparent">
+              FundiHub
+            </span>
+          </div>
 
-              {/* Logout Button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleLogout}
-                className="text-xs font-bold text-muted-foreground hover:text-destructive gap-1.5 cursor-pointer rounded-lg h-9"
-              >
-                <LogOut className="h-4 w-4" />
-                <span className="hidden md:inline">Sign Out</span>
-              </Button>
-
-              {/* Mobile Hamburger menu */}
+          <div className="flex items-center gap-3">
+            {mounted && (
               <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="lg:hidden p-2 rounded-lg border border-border hover:bg-muted text-foreground"
+                onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+                className="p-2 rounded-lg hover:bg-muted text-foreground transition-colors"
               >
-                {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                {resolvedTheme === "dark" ? <Sun className="h-4 w-4 text-amber-500" /> : <Moon className="h-4 w-4 text-zinc-700" />}
+              </button>
+            )}
+            <div className="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+              {user?.name?.[0]?.toUpperCase()}
+            </div>
+          </div>
+        </header>
+      </div>
+
+      {/* MOBILE DRAWER SIDEBAR */}
+      {isMobileSidebarOpen && (
+        <div className="fixed inset-0 z-50 flex md:hidden">
+          {/* Overlay */}
+          <div
+            onClick={() => setIsMobileSidebarOpen(false)}
+            className="fixed inset-0 bg-black/55 backdrop-blur-xs"
+          />
+
+          <div className="relative flex-1 flex flex-col max-w-xs w-full bg-card border-r border-border">
+            <div className="absolute top-0 right-0 -mr-12 pt-4">
+              <button
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className="ml-1 flex items-center justify-center h-10 w-10 rounded-full bg-black/40 text-white"
+              >
+                <X className="h-6 w-6" />
               </button>
             </div>
 
+            <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
+              <div className="flex-shrink-0 flex items-center px-4 gap-2">
+                <span className="text-xl font-black text-primary">FundiHub</span>
+                <span className="rounded bg-primary/15 px-2 py-0.5 text-xs font-bold text-primary uppercase">Partner</span>
+              </div>
+              <nav className="mt-5 px-3 space-y-1.5">
+                {menuItems.map((item) => {
+                  const Icon = item.icon
+                  const isActive = activeTab === item.id
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setActiveTab(item.id as any)
+                        setIsMobileSidebarOpen(false)
+                      }}
+                      className={`group flex items-center justify-between w-full px-4 py-3 text-sm font-semibold rounded-lg transition-all cursor-pointer ${
+                        isActive
+                          ? "bg-primary/10 text-primary border-l-4 border-primary"
+                          : "text-muted-foreground hover:bg-muted/40 hover:text-foreground"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Icon className="h-5 w-5" />
+                        <span>{item.label}</span>
+                      </div>
+                      {item.badge !== undefined && item.badge > 0 && (
+                        <span className="rounded-full bg-primary/20 text-primary px-2 py-0.5 text-xs font-bold">
+                          {item.badge}
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
+              </nav>
+            </div>
+
+            <div className="flex-shrink-0 flex border-t border-border p-4 bg-muted/10">
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-3 text-sm font-bold text-muted-foreground hover:text-foreground cursor-pointer"
+              >
+                <LogOut className="h-5 w-5" />
+                Logout Account
+              </button>
+            </div>
           </div>
         </div>
-
-        {/* Mobile menu dropdown */}
-        {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-border bg-card">
-            <div className="space-y-1.5 px-4 py-4">
-              {menuItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setActiveTab(item.id as any)
-                    setIsMobileMenuOpen(false)
-                  }}
-                  className={`flex items-center justify-between w-full px-4 py-2.5 text-sm font-semibold rounded-lg transition-all ${
-                    activeTab === item.id
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-muted/40 hover:text-foreground"
-                  }`}
-                >
-                  <span>{item.label}</span>
-                  {item.badge !== undefined && item.badge > 0 && (
-                    <span className="rounded-full bg-primary/20 text-primary px-1.5 py-0.5 text-xs font-black">
-                      {item.badge}
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </header>
+      )}
 
       {/* MAIN CONTAINER */}
-      <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        {/* OVERVIEW TAB CONTENT */}
-        {activeTab === "overview" && (
-          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            
-            {/* Header Greeting Row */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border/40 pb-5">
-              <div>
-                <h1 className="text-2xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
-                  Habari, {user?.name || "Partner"}! 👋
-                </h1>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Welcome to your Partner Suite. You have <span className="font-bold text-primary">{matchingLeads.length} matching job opportunities</span> in {profile?.trade || "your trade"} today.
-                </p>
-              </div>
+      <main className="flex-grow md:pl-64 min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+          
+          {/* OVERVIEW TAB CONTENT */}
+          {activeTab === "overview" && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
               
-              {/* On-Call Status toggle */}
-              <div className="flex items-center gap-3 bg-card border border-border/50 rounded-xl px-4 py-2 shadow-2xs self-start sm:self-center">
-                <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                  On-Call Status
-                </span>
-                <button
-                  onClick={() => handleToggleEmergency(profile?.isEmergency)}
-                  className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden ${
-                    profile?.isEmergency ? "bg-emerald-500" : "bg-zinc-300 dark:bg-zinc-700"
-                  }`}
-                >
-                  <span
-                    className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
-                      profile?.isEmergency ? "translate-x-4" : "translate-x-0"
-                    }`}
-                  />
-                </button>
-                <span className={`text-xs font-black uppercase tracking-wider ${
-                  profile?.isEmergency ? "text-emerald-500 animate-pulse" : "text-muted-foreground"
-                }`}>
-                  {profile?.isEmergency ? "Online" : "Offline"}
-                </span>
-              </div>
-            </div>
-
-            {/* Statistics Grid */}
-            <div className="grid gap-5 grid-cols-2 lg:grid-cols-4">
-              
-              {/* Metric: Rating */}
-              <Card className="border border-border/60 bg-card hover:shadow-md hover:border-primary/20 transition-all">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-xs font-black text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                    <Star className="h-4 w-4 text-primary fill-primary/10" />
-                    Satisfaction Rating
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-baseline gap-1.5 mt-1">
-                    <span className="text-2xl font-bold text-foreground">{profile?.rating.toFixed(1) || "5.0"}</span>
-                    <span className="text-xs text-muted-foreground">/ 5.0</span>
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1">
-                    <span className="text-amber-500">★</span>
-                    <span>({profile?.reviews || 0} client reviews)</span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Metric: Verification Tier */}
-              <Card className="border border-border/60 bg-card hover:shadow-md hover:border-primary/20 transition-all">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-xs font-black text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                    <Shield className="h-4 w-4 text-primary" />
-                    Verification Badge
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-sm font-bold text-foreground mt-1 truncate capitalize">
-                    {profile?.premiumLevel === "none" ? "Standard Plan" : profile?.premiumLevel + " Partner"}
-                  </div>
-                  
-                  <div className="flex gap-1.5 mt-2">
-                    <span className={`rounded-md px-2 py-0.5 text-[10px] font-black uppercase border cursor-pointer ${
-                      profile?.premiumLevel === "verified" || profile?.premiumLevel === "top"
-                        ? "bg-blue-500/10 border-blue-500/20 text-blue-500"
-                        : "bg-muted text-muted-foreground border-transparent hover:bg-muted/70"
-                    }`}
-                    onClick={() => profile?.premiumLevel === "none" && (setPremiumModalType("verified"), setIsPremiumModalOpen(true))}
-                    >
-                      Verified
-                    </span>
-                    <span className={`rounded-md px-2 py-0.5 text-[10px] font-black uppercase border cursor-pointer ${
-                      profile?.premiumLevel === "top"
-                        ? "bg-amber-500/10 border-amber-500/20 text-amber-500"
-                        : "bg-muted text-muted-foreground border-transparent hover:bg-muted/70"
-                    }`}
-                    onClick={() => profile?.premiumLevel !== "top" && (setPremiumModalType("top"), setIsPremiumModalOpen(true))}
-                    >
-                      Top Rank
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Metric: Completed Jobs */}
-              <Card className="border border-border/60 bg-card hover:shadow-md hover:border-primary/20 transition-all">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-xs font-black text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                    <Briefcase className="h-4 w-4 text-primary" />
-                    Jobs Completed
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-baseline gap-2 mt-1">
-                    <span className="text-2xl font-bold text-foreground">24</span>
-                    <span className="text-xs text-emerald-500 font-bold">+3 completed</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1.5">
-                    98% success rating
+              {/* Header Greeting Row */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border/40 pb-5">
+                <div>
+                  <h1 className="text-2xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
+                    Habari, {user?.name || "Partner"}! 👋
+                  </h1>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Welcome to your Partner Suite. You have <span className="font-bold text-primary">{matchingLeads.length} matching job opportunities</span> in {profile?.trade || "your trade"} today.
                   </p>
-                </CardContent>
-              </Card>
-
-              {/* Metric: Total Earnings */}
-              <Card className="border border-border/60 bg-card hover:shadow-md hover:border-primary/20 transition-all">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-xs font-black text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-primary" />
-                    Payout Earnings
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-foreground mt-1">
-                    KES {totalEarnings.toLocaleString()}
-                  </div>
-                  <div className="flex justify-between text-[10px] text-muted-foreground mt-1.5">
-                    <span>Referrals: KES {referralEarnings}</span>
-                    <span>Jobs: KES {jobEarnings}</span>
-                  </div>
-                </CardContent>
-              </Card>
-
-            </div>
-
-            {/* Split layout */}
-            <div className="grid gap-6 lg:grid-cols-3">
-              
-              {/* Left Side: Recommended Matches */}
-              <div className="lg:col-span-2 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-sm font-black text-foreground tracking-tight uppercase flex items-center gap-1.5">
-                    <Wrench className="h-4 w-4 text-primary" />
-                    Matching Client Leads ({matchingLeads.length})
-                  </h2>
+                </div>
+                
+                {/* On-Call Status toggle */}
+                <div className="flex items-center gap-3 bg-card border border-border/50 rounded-xl px-4 py-2 shadow-2xs self-start sm:self-center">
+                  <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    On-Call Status
+                  </span>
                   <button
-                    onClick={() => setActiveTab("leads")}
-                    className="text-xs font-bold text-primary hover:underline flex items-center gap-0.5 cursor-pointer"
+                    onClick={() => handleToggleEmergency(profile?.isEmergency)}
+                    className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden ${
+                      profile?.isEmergency ? "bg-emerald-500" : "bg-zinc-300 dark:bg-zinc-700"
+                    }`}
                   >
-                    View All Leads <ChevronRight className="h-3 w-3" />
+                    <span
+                      className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
+                        profile?.isEmergency ? "translate-x-4" : "translate-x-0"
+                      }`}
+                    />
                   </button>
+                  <span className={`text-xs font-black uppercase tracking-wider ${
+                    profile?.isEmergency ? "text-emerald-500 animate-pulse" : "text-muted-foreground"
+                  }`}>
+                    {profile?.isEmergency ? "Online" : "Offline"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Statistics Grid */}
+              <div className="grid gap-5 grid-cols-2 lg:grid-cols-4">
+                
+                {/* Metric: Rating */}
+                <Card className="border border-border/60 bg-card hover:shadow-md hover:border-primary/20 transition-all">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-xs font-black text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                      <Star className="h-4 w-4 text-primary fill-primary/10" />
+                      Satisfaction Rating
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-baseline gap-1.5 mt-1">
+                      <span className="text-2xl font-bold text-foreground">{profile?.rating.toFixed(1) || "5.0"}</span>
+                      <span className="text-xs text-muted-foreground">/ 5.0</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1">
+                      <span className="text-amber-500">★</span>
+                      <span>({profile?.reviews || 0} client reviews)</span>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Metric: Verification Tier */}
+                <Card className="border border-border/60 bg-card hover:shadow-md hover:border-primary/20 transition-all">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-xs font-black text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                      <Shield className="h-4 w-4 text-primary" />
+                      Verification Badge
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-sm font-bold text-foreground mt-1 truncate capitalize">
+                      {profile?.premiumLevel === "none" ? "Standard Plan" : profile?.premiumLevel + " Partner"}
+                    </div>
+                    
+                    <div className="flex gap-1.5 mt-2">
+                      <span className={`rounded-md px-2 py-0.5 text-[10px] font-black uppercase border cursor-pointer ${
+                        profile?.premiumLevel === "verified" || profile?.premiumLevel === "top"
+                          ? "bg-blue-500/10 border-blue-500/20 text-blue-500"
+                          : "bg-muted text-muted-foreground border-transparent hover:bg-muted/70"
+                      }`}
+                      onClick={() => profile?.premiumLevel === "none" && (setPremiumModalType("verified"), setIsPremiumModalOpen(true))}
+                      >
+                        Verified
+                      </span>
+                      <span className={`rounded-md px-2 py-0.5 text-[10px] font-black uppercase border cursor-pointer ${
+                        profile?.premiumLevel === "top"
+                          ? "bg-amber-500/10 border-amber-500/20 text-amber-500"
+                          : "bg-muted text-muted-foreground border-transparent hover:bg-muted/70"
+                      }`}
+                      onClick={() => profile?.premiumLevel !== "top" && (setPremiumModalType("top"), setIsPremiumModalOpen(true))}
+                      >
+                        Top Rank
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Metric: Completed Jobs */}
+                <Card className="border border-border/60 bg-card hover:shadow-md hover:border-primary/20 transition-all">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-xs font-black text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                      <Briefcase className="h-4 w-4 text-primary" />
+                      Jobs Completed
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-baseline gap-2 mt-1">
+                      <span className="text-2xl font-bold text-foreground">24</span>
+                      <span className="text-xs text-emerald-500 font-bold">+3 completed</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1.5">
+                      98% success rating
+                    </p>
+                  </CardContent>
+                </Card>
+
+                {/* Metric: Total Earnings */}
+                <Card className="border border-border/60 bg-card hover:shadow-md hover:border-primary/20 transition-all">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-xs font-black text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                      <DollarSign className="h-4 w-4 text-primary" />
+                      Payout Earnings
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-foreground mt-1">
+                      KES {totalEarnings.toLocaleString()}
+                    </div>
+                    <div className="flex justify-between text-[10px] text-muted-foreground mt-1.5">
+                      <span>Referrals: KES {referralEarnings}</span>
+                      <span>Jobs: KES {jobEarnings}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+
+              </div>
+
+              {/* Grid Layout Split */}
+              <div className="grid gap-6 lg:grid-cols-3">
+                
+                {/* Left: Recommended Leads */}
+                <div className="lg:col-span-2 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-sm font-black text-foreground tracking-tight uppercase flex items-center gap-1.5">
+                      <Wrench className="h-4 w-4 text-primary" />
+                      Matching Client Leads ({matchingLeads.length})
+                    </h2>
+                    <button
+                      onClick={() => setActiveTab("leads")}
+                      className="text-xs font-bold text-primary hover:underline flex items-center gap-0.5 cursor-pointer"
+                    >
+                      View All Leads <ChevronRight className="h-3 w-3" />
+                    </button>
+                  </div>
+
+                  {matchingLeads.length > 0 ? (
+                    <div className="space-y-4">
+                      {matchingLeads.slice(0, 2).map((lead) => (
+                        <Card key={lead.id} className="border-border bg-card hover:border-primary/45 transition-all duration-300 shadow-2xs group overflow-hidden">
+                          <CardHeader className="pb-3 bg-muted/15 border-b border-border/30 px-5 py-4">
+                            <div className="flex items-start justify-between gap-3">
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <span className="rounded bg-primary/10 px-2.5 py-0.5 text-xs font-black text-primary uppercase">
+                                    {lead.trade}
+                                  </span>
+                                  <span className="text-xs text-muted-foreground flex items-center gap-1 font-semibold">
+                                    <Clock className="h-3.5 w-3.5" /> {lead.createdAt}
+                                  </span>
+                                </div>
+                                <CardTitle className="text-sm font-bold text-foreground mt-2 tracking-tight group-hover:text-primary transition-colors">
+                                  {lead.title}
+                                </CardTitle>
+                              </div>
+                              <span className="text-sm font-black text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-2.5 py-1 flex-shrink-0">
+                                {lead.budget}
+                              </span>
+                            </div>
+                          </CardHeader>
+                          <CardContent className="p-5 space-y-4">
+                            <p className="text-xs text-muted-foreground leading-relaxed">
+                              {lead.description}
+                            </p>
+
+                            <div className="grid grid-cols-2 gap-3 pt-3 text-xs border-t border-border/20">
+                              <div className="flex items-center gap-1.5 text-muted-foreground">
+                                <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
+                                <span className="truncate">{lead.location}</span>
+                              </div>
+                              <div className="flex items-center gap-1.5 text-muted-foreground">
+                                <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
+                                <span className="truncate">{lead.urgency}</span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center justify-between pt-1 gap-3">
+                              <div className="text-xs text-muted-foreground">
+                                Client: <span className="font-bold text-foreground">{lead.clientName}</span>
+                              </div>
+                              <div className="flex gap-2">
+                                <Button size="sm" variant="outline" asChild className="h-8 text-xs font-bold rounded-lg cursor-pointer px-3">
+                                  <a href={`tel:${lead.phone}`} className="flex items-center gap-1.5">
+                                    <Phone className="h-3.5 w-3.5" /> Call
+                                  </a>
+                                </Button>
+                                <Button size="sm" asChild className="h-8 text-xs font-bold rounded-lg cursor-pointer px-3">
+                                  <a
+                                    href={`https://wa.me/${lead.phone.replace(/[^0-9]/g, "")}?text=Hello%20${lead.clientName},%2520I%2520saw%2520your%2520lead%2520on%2520FundiHub%252520for%252520'${encodeURIComponent(lead.title)}'%20and%252520I%252520am%252520available.`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-1.5"
+                                  >
+                                    <MessageSquare className="h-3.5 w-3.5" /> WhatsApp
+                                  </a>
+                                </Button>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  ) : (
+                    <Card className="border-border bg-card/30 p-8 text-center shadow-xs">
+                      <AlertCircle className="mx-auto h-8 w-8 text-muted-foreground mb-3" />
+                      <h3 className="text-sm font-bold text-foreground">No matches at the moment</h3>
+                      <p className="mt-2 text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
+                        We match incoming projects based on your trade ({profile?.trade || "General"}). Once a client submits a matching request, it will appear here.
+                      </p>
+                    </Card>
+                  )}
                 </div>
 
-                {matchingLeads.length > 0 ? (
-                  <div className="space-y-4">
-                    {matchingLeads.slice(0, 2).map((lead) => (
-                      <Card key={lead.id} className="border-border bg-card hover:border-primary/45 transition-all duration-300 shadow-2xs group overflow-hidden">
+                {/* Right: Widgets (Completeness Circle restoration) */}
+                <div className="space-y-5">
+                  
+                  {/* Profile Completeness: Circular gauge */}
+                  <Card className="border border-border/60 bg-card">
+                    <CardHeader className="pb-1">
+                      <CardTitle className="text-xs font-black tracking-wider uppercase text-foreground">
+                        Profile Completeness
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-col items-center text-center p-5 space-y-4">
+                      <div className="relative flex items-center justify-center">
+                        <svg className="w-20 h-20 transform -rotate-90">
+                          <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="5.5" className="text-muted/65" fill="transparent" />
+                          <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="5.5" className="text-primary" fill="transparent"
+                            strokeDasharray={213.62}
+                            strokeDashoffset={213.62 * (1 - 0.85)}
+                          />
+                        </svg>
+                        <span className="absolute text-base font-black text-foreground">85%</span>
+                      </div>
+                      
+                      <p className="text-xs text-muted-foreground leading-normal">
+                        Upload portfolio photos of previous jobs to reach 100% and unlock high-paying client leads.
+                      </p>
+                      
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setActiveTab("profile")}
+                        className="w-full text-xs font-bold rounded-xl h-8 cursor-pointer"
+                      >
+                        Manage Portfolio
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  {/* Refer & Earn */}
+                  <Card className="border border-border/60 bg-card">
+                    <CardHeader className="pb-1">
+                      <CardTitle className="text-xs font-black tracking-wider uppercase text-foreground">
+                        Refer & Earn Link
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-5 pt-3 space-y-3">
+                      <p className="text-xs text-muted-foreground leading-normal">
+                        Earn KES 100 instantly for every partner who signs up using your unique link.
+                      </p>
+                      
+                      <div className="flex items-center gap-1.5">
+                        <input
+                          type="text"
+                          readOnly
+                          value={user ? `${window.location.origin}/auth/signup?ref=${user.id}` : ""}
+                          className="flex-1 text-xs bg-muted/60 p-2.5 rounded-lg border border-border/40 font-mono text-muted-foreground outline-hidden select-all min-w-0"
+                        />
+                        <Button
+                          size="sm"
+                          onClick={copyReferralLink}
+                          className="h-8.5 rounded-lg font-bold text-xs cursor-pointer px-3 flex-shrink-0"
+                        >
+                          {copiedReferral ? "Copied!" : "Copy"}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Toolkit Downloads */}
+                  <Card className="border border-border/60 bg-card">
+                    <CardHeader className="pb-1">
+                      <CardTitle className="text-xs font-black tracking-wider uppercase text-foreground">
+                        Professional Toolkits
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-0 pt-1">
+                      <div className="divide-y divide-border/25 text-xs">
+                        <a href="#" className="flex items-center justify-between p-3.5 hover:bg-muted/40 transition-colors text-muted-foreground hover:text-foreground">
+                          <span className="flex items-center gap-2.5 font-medium">
+                            <Download className="h-4 w-4 text-primary" />
+                            Invoice Template (PDF)
+                          </span>
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                        <a href="#" className="flex items-center justify-between p-3.5 hover:bg-muted/40 transition-colors text-muted-foreground hover:text-foreground">
+                          <span className="flex items-center gap-2.5 font-medium">
+                            <HelpCircle className="h-4 w-4 text-primary" />
+                            Tax Compliance Guide
+                          </span>
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                        <a href="tel:+254799112919" className="flex items-center justify-between p-3.5 hover:bg-muted/40 transition-colors text-muted-foreground hover:text-foreground">
+                          <span className="flex items-center gap-2.5 font-medium">
+                            <Phone className="h-4 w-4 text-primary" />
+                            24/7 Agent Support
+                          </span>
+                          <ChevronRight className="h-3 w-3" />
+                        </a>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                </div>
+
+              </div>
+
+            </div>
+          )}
+
+          {/* CLIENT LEADS TAB CONTENT */}
+          {activeTab === "leads" && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-border/40 pb-4">
+                <div>
+                  <h1 className="text-xl font-extrabold text-foreground">Client Lead Matches</h1>
+                  <p className="text-xs text-muted-foreground mt-0.5">Review, apply, and contact clients looking for {profile?.trade || "General"} services.</p>
+                </div>
+                <div className="flex gap-1.5 bg-muted/40 p-1 rounded-xl border border-border/20 self-start sm:self-center">
+                  <button className="px-3.5 py-1.5 rounded-lg bg-card border border-border text-xs font-black uppercase text-primary">
+                    Matching ({matchingLeads.length})
+                  </button>
+                  <button className="px-3.5 py-1.5 rounded-lg text-muted-foreground hover:text-foreground text-xs font-bold uppercase cursor-pointer">
+                    Applied (0)
+                  </button>
+                  <button className="px-3.5 py-1.5 rounded-lg text-muted-foreground hover:text-foreground text-xs font-bold uppercase cursor-pointer">
+                    Archived (0)
+                  </button>
+                </div>
+              </div>
+
+              {matchingLeads.length > 0 ? (
+                <div className="grid gap-5 md:grid-cols-2">
+                  {matchingLeads.map((lead) => (
+                    <Card key={lead.id} className="border-border bg-card hover:border-primary/45 transition-colors shadow-2xs flex flex-col justify-between overflow-hidden">
+                      <div>
                         <CardHeader className="pb-3 bg-muted/15 border-b border-border/30 px-5 py-4">
                           <div className="flex items-start justify-between gap-3">
-                            <div>
+                            <div className="space-y-1">
                               <div className="flex items-center gap-2">
-                                <span className="rounded bg-primary/10 px-2.5 py-0.5 text-xs font-black text-primary uppercase">
+                                <span className="rounded bg-primary/10 px-2 py-0.5 text-xs font-black text-primary uppercase">
                                   {lead.trade}
                                 </span>
                                 <span className="text-xs text-muted-foreground flex items-center gap-1 font-semibold">
                                   <Clock className="h-3.5 w-3.5" /> {lead.createdAt}
                                 </span>
                               </div>
-                              <CardTitle className="text-sm font-bold text-foreground mt-2 tracking-tight group-hover:text-primary transition-colors">
+                              <CardTitle className="text-sm font-black text-foreground mt-2 tracking-tight group-hover:text-primary transition-colors">
                                 {lead.title}
                               </CardTitle>
                             </div>
-                            <span className="text-sm font-black text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-2.5 py-1 flex-shrink-0">
+                            <span className="text-xs font-black text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 rounded-md px-2.5 py-1 flex-shrink-0">
                               {lead.budget}
                             </span>
                           </div>
                         </CardHeader>
+                        
                         <CardContent className="p-5 space-y-4">
-                          <p className="text-xs text-muted-foreground leading-relaxed">
+                          <p className="text-xs text-muted-foreground leading-normal">
                             {lead.description}
                           </p>
 
@@ -674,822 +947,615 @@ export default function FundiDashboard() {
                               <span className="truncate">{lead.urgency}</span>
                             </div>
                           </div>
-
-                          <div className="flex items-center justify-between pt-1 gap-3">
-                            <div className="text-xs text-muted-foreground">
-                              Client: <span className="font-bold text-foreground">{lead.clientName}</span>
-                            </div>
-                            <div className="flex gap-2">
-                              <Button size="sm" variant="outline" asChild className="h-8 text-xs font-bold rounded-lg cursor-pointer px-3">
-                                <a href={`tel:${lead.phone}`} className="flex items-center gap-1.5">
-                                  <Phone className="h-3.5 w-3.5" /> Call
-                                </a>
-                              </Button>
-                              <Button size="sm" asChild className="h-8 text-xs font-bold rounded-lg cursor-pointer px-3">
-                                <a
-                                  href={`https://wa.me/${lead.phone.replace(/[^0-9]/g, "")}?text=Hello%20${lead.clientName},%20I%2520saw%2520your%2520lead%2520on%2520FundiHub%252520for%252520'${encodeURIComponent(lead.title)}'%20and%252520I%252520am%252520available.`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex items-center gap-1.5"
-                                >
-                                  <MessageSquare className="h-3.5 w-3.5" /> WhatsApp
-                                </a>
-                              </Button>
-                            </div>
-                          </div>
                         </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <Card className="border-border bg-card/30 p-8 text-center shadow-xs">
-                    <AlertCircle className="mx-auto h-8 w-8 text-muted-foreground mb-3" />
-                    <h3 className="text-sm font-bold text-foreground">No matches at the moment</h3>
-                    <p className="mt-2 text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
-                      We match incoming projects based on your trade ({profile?.trade || "General"}). Once a client submits a matching request, it will appear here.
-                    </p>
-                  </Card>
-                )}
-              </div>
-
-              {/* Right Side: Widgets (Circular gauge restored, copier, toolkits) */}
-              <div className="space-y-5">
-                
-                {/* Profile Completeness: Circular gauge restored and made highly elegant */}
-                <Card className="border border-border/60 bg-card">
-                  <CardHeader className="pb-1">
-                    <CardTitle className="text-xs font-black tracking-wider uppercase text-foreground">
-                      Profile Completeness
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex flex-col items-center text-center p-5 space-y-4">
-                    <div className="relative flex items-center justify-center">
-                      <svg className="w-20 h-20 transform -rotate-90">
-                        <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="5.5" className="text-muted/65" fill="transparent" />
-                        <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="5.5" className="text-primary" fill="transparent"
-                          strokeDasharray={213.62}
-                          strokeDashoffset={213.62 * (1 - 0.85)}
-                        />
-                      </svg>
-                      <span className="absolute text-base font-black text-foreground">85%</span>
-                    </div>
-                    
-                    <p className="text-xs text-muted-foreground leading-normal">
-                      Upload portfolio photos of previous jobs to reach 100% and unlock high-paying client leads.
-                    </p>
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setActiveTab("profile")}
-                      className="w-full text-xs font-bold rounded-xl h-8 cursor-pointer"
-                    >
-                      Manage Portfolio
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                {/* Refer & Earn Copier */}
-                <Card className="border border-border/60 bg-card">
-                  <CardHeader className="pb-1">
-                    <CardTitle className="text-xs font-black tracking-wider uppercase text-foreground">
-                      Refer & Earn Link
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-5 pt-3 space-y-3">
-                    <p className="text-xs text-muted-foreground leading-normal">
-                      Earn KES 100 instantly for every partner who signs up using your unique link.
-                    </p>
-                    
-                    <div className="flex items-center gap-1.5">
-                      <input
-                        type="text"
-                        readOnly
-                        value={user ? `${window.location.origin}/auth/signup?ref=${user.id}` : ""}
-                        className="flex-1 text-xs bg-muted/60 p-2.5 rounded-lg border border-border/40 font-mono text-muted-foreground outline-hidden select-all min-w-0"
-                      />
-                      <Button
-                        size="sm"
-                        onClick={copyReferralLink}
-                        className="h-8.5 rounded-lg font-bold text-xs cursor-pointer px-3 flex-shrink-0"
-                      >
-                        {copiedReferral ? "Copied!" : "Copy"}
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Resource Downloads */}
-                <Card className="border border-border/60 bg-card">
-                  <CardHeader className="pb-1">
-                    <CardTitle className="text-xs font-black tracking-wider uppercase text-foreground">
-                      Professional Toolkits
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-0 pt-1">
-                    <div className="divide-y divide-border/25 text-xs">
-                      <a href="#" className="flex items-center justify-between p-3.5 hover:bg-muted/40 transition-colors text-muted-foreground hover:text-foreground">
-                        <span className="flex items-center gap-2.5 font-medium">
-                          <Download className="h-4 w-4 text-primary" />
-                          Invoice Template (PDF)
-                        </span>
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
-                      <a href="#" className="flex items-center justify-between p-3.5 hover:bg-muted/40 transition-colors text-muted-foreground hover:text-foreground">
-                        <span className="flex items-center gap-2.5 font-medium">
-                          <HelpCircle className="h-4 w-4 text-primary" />
-                          Tax Compliance Guide
-                        </span>
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
-                      <a href="tel:+254799112919" className="flex items-center justify-between p-3.5 hover:bg-muted/40 transition-colors text-muted-foreground hover:text-foreground">
-                        <span className="flex items-center gap-2.5 font-medium">
-                          <Phone className="h-4 w-4 text-primary" />
-                          24/7 Agent Support
-                        </span>
-                        <ChevronRight className="h-3 w-3" />
-                      </a>
-                    </div>
-                  </CardContent>
-                </Card>
-
-              </div>
-
-            </div>
-
-          </div>
-        )}
-
-        {/* CLIENT LEADS TAB CONTENT */}
-        {activeTab === "leads" && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-border/40 pb-4">
-              <div>
-                <h1 className="text-xl font-extrabold text-foreground">Client Lead Matches</h1>
-                <p className="text-xs text-muted-foreground mt-0.5">Review, apply, and contact clients looking for {profile?.trade || "General"} services.</p>
-              </div>
-              <div className="flex gap-1.5 bg-muted/40 p-1 rounded-xl border border-border/20 self-start sm:self-center">
-                <button className="px-3.5 py-1.5 rounded-lg bg-card border border-border text-xs font-black uppercase text-primary">
-                  Matching ({matchingLeads.length})
-                </button>
-                <button className="px-3.5 py-1.5 rounded-lg text-muted-foreground hover:text-foreground text-xs font-bold uppercase cursor-pointer">
-                  Applied (0)
-                </button>
-                <button className="px-3.5 py-1.5 rounded-lg text-muted-foreground hover:text-foreground text-xs font-bold uppercase cursor-pointer">
-                  Archived (0)
-                </button>
-              </div>
-            </div>
-
-            {matchingLeads.length > 0 ? (
-              <div className="grid gap-5 md:grid-cols-2">
-                {matchingLeads.map((lead) => (
-                  <Card key={lead.id} className="border-border bg-card hover:border-primary/45 transition-colors shadow-2xs flex flex-col justify-between overflow-hidden">
-                    <div>
-                      <CardHeader className="pb-3 bg-muted/15 border-b border-border/30 px-5 py-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <span className="rounded bg-primary/10 px-2 py-0.5 text-xs font-black text-primary uppercase">
-                                {lead.trade}
-                              </span>
-                              <span className="text-xs text-muted-foreground flex items-center gap-1 font-semibold">
-                                <Clock className="h-3.5 w-3.5" /> {lead.createdAt}
-                              </span>
-                            </div>
-                            <CardTitle className="text-sm font-black text-foreground mt-2 tracking-tight group-hover:text-primary transition-colors">
-                              {lead.title}
-                            </CardTitle>
-                          </div>
-                          <span className="text-xs font-black text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 rounded-md px-2.5 py-1 flex-shrink-0">
-                            {lead.budget}
-                          </span>
-                        </div>
-                      </CardHeader>
-                      
-                      <CardContent className="p-5 space-y-4">
-                        <p className="text-xs text-muted-foreground leading-normal">
-                          {lead.description}
-                        </p>
-
-                        <div className="grid grid-cols-2 gap-3 pt-3 text-xs border-t border-border/20">
-                          <div className="flex items-center gap-1.5 text-muted-foreground">
-                            <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
-                            <span className="truncate">{lead.location}</span>
-                          </div>
-                          <div className="flex items-center gap-1.5 text-muted-foreground">
-                            <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
-                            <span className="truncate">{lead.urgency}</span>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </div>
-
-                    <div className="p-5 bg-muted/10 border-t border-border/25 flex items-center justify-between gap-4">
-                      <div className="text-xs text-muted-foreground">
-                        Client: <span className="font-bold text-foreground">{lead.clientName}</span>
                       </div>
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm" asChild className="h-8.5 text-xs font-bold rounded-lg cursor-pointer px-3.5">
-                          <a href={`tel:${lead.phone}`} className="flex items-center gap-1.5">
-                            <Phone className="h-3.5 w-3.5" /> Call Client
-                          </a>
-                        </Button>
-                        <Button size="sm" asChild className="h-8.5 text-xs font-bold rounded-lg cursor-pointer px-3.5">
-                          <a
-                            href={`https://wa.me/${lead.phone.replace(/[^0-9]/g, "")}?text=Hello%20${lead.clientName},%2520I%2520saw%2520your%2520lead%2520on%2520FundiHub%252520for%252520'${encodeURIComponent(lead.title)}'%20and%252520I%252520am%252520available.`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-1.5"
-                          >
-                            <MessageSquare className="h-3.5 w-3.5" /> WhatsApp
-                          </a>
-                        </Button>
+
+                      <div className="p-5 bg-muted/10 border-t border-border/25 flex items-center justify-between gap-4">
+                        <div className="text-xs text-muted-foreground">
+                          Client: <span className="font-bold text-foreground">{lead.clientName}</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="sm" asChild className="h-8.5 text-xs font-bold rounded-lg cursor-pointer px-3.5">
+                            <a href={`tel:${lead.phone}`} className="flex items-center gap-1.5">
+                              <Phone className="h-3.5 w-3.5" /> Call Client
+                            </a>
+                          </Button>
+                          <Button size="sm" asChild className="h-8.5 text-xs font-bold rounded-lg cursor-pointer px-3.5">
+                            <a
+                              href={`https://wa.me/${lead.phone.replace(/[^0-9]/g, "")}?text=Hello%20${lead.clientName},%2520I%2520saw%2520your%2520lead%2520on%2520FundiHub%252520for%252520'${encodeURIComponent(lead.title)}'%20and%252520I%252520am%252520available.`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1.5"
+                            >
+                              <MessageSquare className="h-3.5 w-3.5" /> WhatsApp
+                            </a>
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <Card className="border-border bg-card/30 p-12 text-center shadow-2xs">
-                <AlertCircle className="mx-auto h-9 w-9 text-muted-foreground mb-3" />
-                <h3 className="text-sm font-bold text-foreground">No matches at the moment</h3>
-                <p className="mt-2 text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
-                  We match incoming projects based on your skill category ({profile?.trade || "General"}). Once a client submits a request, it will appear here.
-                </p>
-              </Card>
-            )}
-          </div>
-        )}
-
-        {/* PROFILE & PORTFOLIO TAB CONTENT */}
-        {activeTab === "profile" && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            
-            <div className="border-b border-border/40 pb-4">
-              <h1 className="text-xl font-extrabold text-foreground">Profile & Works Portfolio</h1>
-              <p className="text-xs text-muted-foreground mt-0.5">Configure your public identity cards and showcase photos of completed jobs to potential clients.</p>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Card className="border-border bg-card/30 p-12 text-center shadow-2xs">
+                  <AlertCircle className="mx-auto h-9 w-9 text-muted-foreground mb-3" />
+                  <h3 className="text-sm font-bold text-foreground">No matches at the moment</h3>
+                  <p className="mt-2 text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
+                    We match incoming projects based on your skill category ({profile?.trade || "General"}). Once a client submits a request, it will appear here.
+                  </p>
+                </Card>
+              )}
             </div>
+          )}
 
-            <div className="grid gap-6 lg:grid-cols-5">
+          {/* PROFILE & PORTFOLIO TAB CONTENT */}
+          {activeTab === "profile" && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
               
-              {/* Form column */}
-              <div className="lg:col-span-3 space-y-5">
-                <Card className="border border-border/40 bg-card">
-                  <CardHeader className="py-4">
-                    <CardTitle className="text-sm font-bold text-foreground">Professional Information</CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <form onSubmit={handleUpdateProfile} className="space-y-4">
-                      {updateSuccess && (
-                        <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3.5 py-2.5 text-xs text-emerald-500 flex items-center gap-2">
-                          <Check className="h-4 w-4" /> <span>{updateSuccess}</span>
-                        </div>
-                      )}
+              <div className="border-b border-border/40 pb-4">
+                <h1 className="text-xl font-extrabold text-foreground">Profile & Works Portfolio</h1>
+                <p className="text-xs text-muted-foreground mt-0.5">Configure your public identity cards and showcase photos of completed jobs to potential clients.</p>
+              </div>
 
-                      <div className="space-y-1.5">
-                        <Label htmlFor="edit-name" className="text-xs font-bold text-foreground">Full Name</Label>
-                        <Input
-                          id="edit-name"
-                          value={editName}
-                          onChange={(e) => setEditName(e.target.value)}
-                          placeholder="e.g. John Doe"
-                          className="w-full text-xs h-9 rounded-lg"
-                          required
-                        />
-                      </div>
+              <div className="grid gap-6 lg:grid-cols-5">
+                
+                {/* Form column */}
+                <div className="lg:col-span-3 space-y-5">
+                  <Card className="border border-border/40 bg-card">
+                    <CardHeader className="py-4">
+                      <CardTitle className="text-sm font-bold text-foreground">Professional Information</CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <form onSubmit={handleUpdateProfile} className="space-y-4">
+                        {updateSuccess && (
+                          <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3.5 py-2.5 text-xs text-emerald-500 flex items-center gap-2">
+                            <Check className="h-4 w-4" /> <span>{updateSuccess}</span>
+                          </div>
+                        )}
 
-                      <div className="space-y-1.5">
-                        <Label htmlFor="edit-title" className="text-xs font-bold text-foreground">Professional Tagline / Title</Label>
-                        <Input
-                          id="edit-title"
-                          value={editTitle}
-                          onChange={(e) => setEditTitle(e.target.value)}
-                          placeholder="e.g. Master Plumber & Piping Expert"
-                          className="w-full text-xs h-9 rounded-lg"
-                          required
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1.5">
-                          <Label htmlFor="edit-trade" className="text-xs font-bold text-foreground">Primary Trade</Label>
+                          <Label htmlFor="edit-name" className="text-xs font-bold text-foreground">Full Name</Label>
                           <Input
-                            id="edit-trade"
-                            value={editTrade}
-                            disabled
-                            className="w-full text-xs h-9 rounded-lg bg-muted text-muted-foreground cursor-not-allowed"
-                          />
-                        </div>
-                        <div className="space-y-1.5">
-                          <Label htmlFor="edit-exp" className="text-xs font-bold text-foreground">Experience (Years)</Label>
-                          <Input
-                            id="edit-exp"
-                            value={editYearsExp}
-                            onChange={(e) => setEditYearsExp(e.target.value)}
-                            placeholder="e.g. 5 Years"
+                            id="edit-name"
+                            value={editName}
+                            onChange={(e) => setEditName(e.target.value)}
+                            placeholder="e.g. John Doe"
                             className="w-full text-xs h-9 rounded-lg"
                             required
                           />
                         </div>
+
+                        <div className="space-y-1.5">
+                          <Label htmlFor="edit-title" className="text-xs font-bold text-foreground">Professional Tagline / Title</Label>
+                          <Input
+                            id="edit-title"
+                            value={editTitle}
+                            onChange={(e) => setEditTitle(e.target.value)}
+                            placeholder="e.g. Master Plumber & Piping Expert"
+                            className="w-full text-xs h-9 rounded-lg"
+                            required
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-1.5">
+                            <Label htmlFor="edit-trade" className="text-xs font-bold text-foreground">Primary Trade</Label>
+                            <Input
+                              id="edit-trade"
+                              value={editTrade}
+                              disabled
+                              className="w-full text-xs h-9 rounded-lg bg-muted text-muted-foreground cursor-not-allowed"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <Label htmlFor="edit-exp" className="text-xs font-bold text-foreground">Experience (Years)</Label>
+                            <Input
+                              id="edit-exp"
+                              value={editYearsExp}
+                              onChange={(e) => setEditYearsExp(e.target.value)}
+                              placeholder="e.g. 5 Years"
+                              className="w-full text-xs h-9 rounded-lg"
+                              required
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <Label htmlFor="edit-area" className="text-xs font-bold text-foreground">Service Area Coverage</Label>
+                          <Input
+                            id="edit-area"
+                            value={editArea}
+                            onChange={(e) => setEditArea(e.target.value)}
+                            placeholder="e.g. Nairobi, Kilimani & Westlands"
+                            className="w-full text-xs h-9 rounded-lg"
+                            required
+                          />
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <Label htmlFor="edit-desc" className="text-xs font-bold text-foreground">Professional Description / Bio</Label>
+                          <textarea
+                            id="edit-desc"
+                            value={editDesc}
+                            onChange={(e) => setEditDesc(e.target.value)}
+                            placeholder="Describe your expertise, typical jobs you take..."
+                            className="flex min-h-24 w-full rounded-lg border border-input bg-transparent px-3 py-2 text-xs shadow-xs placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/10"
+                            required
+                          />
+                        </div>
+
+                        <Button
+                          type="submit"
+                          disabled={isUpdating}
+                          className="w-full font-bold h-9 text-xs rounded-lg cursor-pointer mt-1"
+                        >
+                          {isUpdating ? (
+                            <>
+                              <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> Saving Details...
+                            </>
+                          ) : (
+                            "Save Profile Details"
+                          )}
+                        </Button>
+                      </form>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Preview and Gallery column */}
+                <div className="lg:col-span-2 space-y-5">
+                  
+                  {/* Public Card Preview */}
+                  <Card className="border border-border/40 bg-gradient-to-b from-card to-muted/15 relative overflow-hidden">
+                    <CardHeader className="py-3.5 border-b border-border/25">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-xs font-black tracking-wider uppercase text-foreground">Public Card Preview</CardTitle>
+                        <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[9px] font-black text-emerald-500 uppercase tracking-wide">
+                          Active Search Listing
+                        </span>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-4 space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-extrabold text-sm">
+                          {user?.name?.[0]?.toUpperCase()}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <h4 className="font-extrabold text-sm text-foreground">{user?.name}</h4>
+                            {profile?.premiumLevel !== "none" && (
+                              <ShieldCheck className="h-4 w-4 text-blue-500" />
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground font-semibold">{editTitle || `${editTrade} Specialist`}</p>
+                        </div>
                       </div>
 
-                      <div className="space-y-1.5">
-                        <Label htmlFor="edit-area" className="text-xs font-bold text-foreground">Service Area Coverage</Label>
-                        <Input
-                          id="edit-area"
-                          value={editArea}
-                          onChange={(e) => setEditArea(e.target.value)}
-                          placeholder="e.g. Nairobi, Kilimani & Westlands"
-                          className="w-full text-xs h-9 rounded-lg"
-                          required
-                        />
+                      <div className="flex flex-wrap items-center gap-2 pt-1">
+                        <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
+                          {editTrade}
+                        </span>
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                          <MapPin className="h-3 w-3 text-primary" /> {editArea || "Nairobi"}
+                        </span>
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                          <Star className="h-3 w-3 text-amber-500 fill-amber-500" /> {profile?.rating.toFixed(1)} ({profile?.reviews || 0} reviews)
+                        </span>
                       </div>
 
-                      <div className="space-y-1.5">
-                        <Label htmlFor="edit-desc" className="text-xs font-bold text-foreground">Professional Description / Bio</Label>
-                        <textarea
-                          id="edit-desc"
-                          value={editDesc}
-                          onChange={(e) => setEditDesc(e.target.value)}
-                          placeholder="Describe your expertise, typical jobs you take..."
-                          className="flex min-h-24 w-full rounded-lg border border-input bg-transparent px-3 py-2 text-xs shadow-xs placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/10"
-                          required
-                        />
-                      </div>
+                      <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed border-t border-border/20 pt-2.5">
+                        {editDesc || "No description set yet. Write a professional description to describe your skills."}
+                      </p>
+                    </CardContent>
+                  </Card>
 
+                  {/* Portfolio showcase photos */}
+                  <Card className="border border-border/40 bg-card">
+                    <CardHeader className="py-3 border-b border-border/25 flex flex-row items-center justify-between">
+                      <CardTitle className="text-xs font-black tracking-wider uppercase text-foreground">Work Portfolio ({portfolioItems.length})</CardTitle>
+                      <Button
+                        size="xs"
+                        variant="outline"
+                        onClick={() => setIsAddPortfolioOpen(true)}
+                        className="h-7 text-xs font-black rounded-lg cursor-pointer"
+                      >
+                        + Add Work
+                      </Button>
+                    </CardHeader>
+                    <CardContent className="pt-4">
+                      {portfolioItems.length > 0 ? (
+                        <div className="grid grid-cols-2 gap-3">
+                          {portfolioItems.map((item) => (
+                            <div key={item.id} className="group relative rounded-lg overflow-hidden border border-border/30 bg-muted/20 aspect-video">
+                              <img
+                                src={item.image}
+                                alt={item.title}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent p-2.5 flex flex-col justify-end">
+                                <span className="text-[9px] font-black uppercase text-primary tracking-wider">{item.category}</span>
+                                <h5 className="text-[11px] font-bold text-white truncate">{item.title}</h5>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center p-6 bg-muted/15 rounded-lg border border-dashed border-border/40">
+                          <ImageIcon className="h-6 w-6 text-muted-foreground mx-auto mb-1.5" />
+                          <p className="text-xs text-muted-foreground">No portfolio photos uploaded.</p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                </div>
+
+              </div>
+
+              {/* Add Portfolio Dialog */}
+              <Dialog open={isAddPortfolioOpen} onOpenChange={setIsAddPortfolioOpen}>
+                <DialogContent className="border border-border bg-card p-5 rounded-lg shadow-lg w-full max-w-sm">
+                  <DialogHeader>
+                    <DialogTitle className="text-sm font-bold text-foreground">Add Portfolio Work</DialogTitle>
+                    <DialogDescription className="text-xs text-muted-foreground">Showcase pictures of jobs you did recently to attract clients.</DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleAddPortfolioItem} className="space-y-4 mt-2">
+                    <div className="space-y-1">
+                      <Label htmlFor="port-title" className="text-xs font-bold text-foreground">Project Title</Label>
+                      <Input
+                        id="port-title"
+                        value={newPortfolioTitle}
+                        onChange={(e) => setNewPortfolioTitle(e.target.value)}
+                        placeholder="e.g. Master kitchen plumbing"
+                        required
+                        className="text-xs h-9 rounded-lg"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="port-cat" className="text-xs font-bold text-foreground">Work Category</Label>
+                      <select
+                        id="port-cat"
+                        value={newPortfolioCategory}
+                        onChange={(e) => setNewPortfolioCategory(e.target.value)}
+                        className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-xs focus-visible:outline-hidden"
+                      >
+                        <option value="Wiring">Electrical Wiring</option>
+                        <option value="Installation">Equipment Installation</option>
+                        <option value="Repair">Trouble Repair</option>
+                        <option value="Piping">Plumbing Piping</option>
+                        <option value="General">Other Works</option>
+                      </select>
+                    </div>
+                    
+                    <div className="rounded-lg border border-dashed border-border/40 p-5 text-center bg-muted/15">
+                      <ImageIcon className="h-6 w-6 text-primary mx-auto mb-1.5" />
+                      <p className="text-[10px] font-bold text-foreground">Select photos of your work</p>
+                      <p className="text-[8px] text-muted-foreground mt-0.5">PNG, JPG up to 5MB (Simulated upload)</p>
+                    </div>
+
+                    <DialogFooter className="flex items-center justify-end gap-2 pt-2 border-t border-border/30">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => setIsAddPortfolioOpen(false)}
+                        className="text-xs h-9 px-4 rounded-lg cursor-pointer"
+                      >
+                        Cancel
+                      </Button>
                       <Button
                         type="submit"
-                        disabled={isUpdating}
-                        className="w-full font-bold h-9 text-xs rounded-lg cursor-pointer mt-1"
+                        className="text-xs h-9 px-4 rounded-lg font-bold cursor-pointer"
                       >
-                        {isUpdating ? (
-                          <>
-                            <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> Saving Details...
-                          </>
-                        ) : (
-                          "Save Profile Details"
-                        )}
+                        Save Work
                       </Button>
-                    </form>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
+
+            </div>
+          )}
+
+          {/* REFERRALS & REWARDS TAB CONTENT */}
+          {activeTab === "referrals" && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              
+              <div className="border-b border-border/40 pb-4">
+                <h1 className="text-xl font-extrabold text-foreground">Referrals & Rewards</h1>
+                <p className="text-xs text-muted-foreground mt-0.5">Monitor your invite lists, copy registration links, and track your wallet payout statistics.</p>
+              </div>
+
+              {/* Stats overview cards row */}
+              <div className="grid gap-4 grid-cols-3">
+                <Card className="border border-border/40 bg-gradient-to-br from-primary/5 to-transparent">
+                  <CardContent className="p-4">
+                    <div className="text-xs font-black text-muted-foreground uppercase tracking-wider">Total Referred</div>
+                    <div className="text-lg font-black text-foreground mt-1.5">{referralCount} Partners</div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border border-border/40 bg-gradient-to-br from-emerald-500/5 to-transparent">
+                  <CardContent className="p-4">
+                    <div className="text-xs font-black text-muted-foreground uppercase tracking-wider">Pending Payout</div>
+                    <div className="text-lg font-black text-foreground mt-1.5">
+                      {user?.referrals?.filter((r: any) => r.status === "pending" || r.status === "registered").length || 0}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border border-border/40 bg-gradient-to-br from-blue-500/5 to-transparent">
+                  <CardContent className="p-4">
+                    <div className="text-xs font-black text-muted-foreground uppercase tracking-wider">Withdrawn Earnings</div>
+                    <div className="text-lg font-black text-foreground mt-1.5">KES {referralEarnings}</div>
                   </CardContent>
                 </Card>
               </div>
 
-              {/* Preview and Gallery column */}
-              <div className="lg:col-span-2 space-y-5">
+              {/* Refer link widgets grid */}
+              <div className="grid gap-6 md:grid-cols-5">
                 
-                {/* Public Card Preview */}
-                <Card className="border border-border/40 bg-gradient-to-b from-card to-muted/15 relative overflow-hidden">
-                  <CardHeader className="py-3.5 border-b border-border/25">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-xs font-black tracking-wider uppercase text-foreground">Public Card Preview</CardTitle>
-                      <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[9px] font-black text-emerald-500 uppercase tracking-wide">
-                        Active Search Listing
-                      </span>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="pt-4 space-y-3">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-extrabold text-sm">
-                        {user?.name?.[0]?.toUpperCase()}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <h4 className="font-extrabold text-sm text-foreground">{user?.name}</h4>
-                          {profile?.premiumLevel !== "none" && (
-                            <ShieldCheck className="h-4 w-4 text-blue-500" />
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground font-semibold">{editTitle || `${editTrade} Specialist`}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-2 pt-1">
-                      <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
-                        {editTrade}
-                      </span>
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <MapPin className="h-3 w-3 text-primary" /> {editArea || "Nairobi"}
-                      </span>
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <Star className="h-3 w-3 text-amber-500 fill-amber-500" /> {profile?.rating.toFixed(1)} ({profile?.reviews || 0} reviews)
-                      </span>
-                    </div>
-
-                    <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed border-t border-border/20 pt-2.5">
-                      {editDesc || "No description set yet. Write a professional description to describe your skills."}
-                    </p>
-                  </CardContent>
-                </Card>
-
-                {/* Portfolio showcase photos */}
-                <Card className="border border-border/40 bg-card">
-                  <CardHeader className="py-3 border-b border-border/25 flex flex-row items-center justify-between">
-                    <CardTitle className="text-xs font-black tracking-wider uppercase text-foreground">Work Portfolio ({portfolioItems.length})</CardTitle>
-                    <Button
-                      size="xs"
-                      variant="outline"
-                      onClick={() => setIsAddPortfolioOpen(true)}
-                      className="h-7 text-xs font-black rounded-lg cursor-pointer"
-                    >
-                      + Add Work
-                    </Button>
-                  </CardHeader>
-                  <CardContent className="pt-4">
-                    {portfolioItems.length > 0 ? (
-                      <div className="grid grid-cols-2 gap-3">
-                        {portfolioItems.map((item) => (
-                          <div key={item.id} className="group relative rounded-lg overflow-hidden border border-border/30 bg-muted/20 aspect-video">
-                            <img
-                              src={item.image}
-                              alt={item.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent p-2.5 flex flex-col justify-end">
-                              <span className="text-[9px] font-black uppercase text-primary tracking-wider">{item.category}</span>
-                              <h5 className="text-[11px] font-bold text-white truncate">{item.title}</h5>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center p-6 bg-muted/15 rounded-lg border border-dashed border-border/40">
-                        <ImageIcon className="h-6 w-6 text-muted-foreground mx-auto mb-1.5" />
-                        <p className="text-xs text-muted-foreground">No portfolio photos uploaded.</p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-              </div>
-
-            </div>
-
-            {/* Add Portfolio Dialog */}
-            <Dialog open={isAddPortfolioOpen} onOpenChange={setIsAddPortfolioOpen}>
-              <DialogContent className="border border-border bg-card p-5 rounded-lg shadow-lg w-full max-w-sm">
-                <DialogHeader>
-                  <DialogTitle className="text-sm font-bold text-foreground">Add Portfolio Work</DialogTitle>
-                  <DialogDescription className="text-xs text-muted-foreground">Showcase pictures of jobs you did recently to attract clients.</DialogDescription>
-                </DialogHeader>
-                <form onSubmit={handleAddPortfolioItem} className="space-y-4 mt-2">
-                  <div className="space-y-1">
-                    <Label htmlFor="port-title" className="text-xs font-bold text-foreground">Project Title</Label>
-                    <Input
-                      id="port-title"
-                      value={newPortfolioTitle}
-                      onChange={(e) => setNewPortfolioTitle(e.target.value)}
-                      placeholder="e.g. Master kitchen plumbing"
-                      required
-                      className="text-xs h-9 rounded-lg"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <Label htmlFor="port-cat" className="text-xs font-bold text-foreground">Work Category</Label>
-                    <select
-                      id="port-cat"
-                      value={newPortfolioCategory}
-                      onChange={(e) => setNewPortfolioCategory(e.target.value)}
-                      className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-xs focus-visible:outline-hidden"
-                    >
-                      <option value="Wiring">Electrical Wiring</option>
-                      <option value="Installation">Equipment Installation</option>
-                      <option value="Repair">Trouble Repair</option>
-                      <option value="Piping">Plumbing Piping</option>
-                      <option value="General">Other Works</option>
-                    </select>
-                  </div>
-                  
-                  <div className="rounded-lg border border-dashed border-border/40 p-5 text-center bg-muted/15">
-                    <ImageIcon className="h-6 w-6 text-primary mx-auto mb-1.5" />
-                    <p className="text-[10px] font-bold text-foreground">Select photos of your work</p>
-                    <p className="text-[8px] text-muted-foreground mt-0.5">PNG, JPG up to 5MB (Simulated upload)</p>
-                  </div>
-
-                  <DialogFooter className="flex items-center justify-end gap-2 pt-2 border-t border-border/30">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={() => setIsAddPortfolioOpen(false)}
-                      className="text-xs h-9 px-4 rounded-lg cursor-pointer"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      type="submit"
-                      className="text-xs h-9 px-4 rounded-lg font-bold cursor-pointer"
-                    >
-                      Save Work
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
-
-          </div>
-        )}
-
-        {/* REFERRALS & REWARDS TAB CONTENT */}
-        {activeTab === "referrals" && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            
-            <div className="border-b border-border/40 pb-4">
-              <h1 className="text-xl font-extrabold text-foreground">Referrals & Rewards</h1>
-              <p className="text-xs text-muted-foreground mt-0.5">Monitor your invite lists, copy registration links, and track your wallet payout statistics.</p>
-            </div>
-
-            {/* Stats overview cards row */}
-            <div className="grid gap-4 grid-cols-3">
-              <Card className="border border-border/40 bg-gradient-to-br from-primary/5 to-transparent">
-                <CardContent className="p-4">
-                  <div className="text-xs font-black text-muted-foreground uppercase tracking-wider">Total Referred</div>
-                  <div className="text-lg font-black text-foreground mt-1.5">{referralCount} Partners</div>
-                </CardContent>
-              </Card>
-
-              <Card className="border border-border/40 bg-gradient-to-br from-emerald-500/5 to-transparent">
-                <CardContent className="p-4">
-                  <div className="text-xs font-black text-muted-foreground uppercase tracking-wider">Pending Payout</div>
-                  <div className="text-lg font-black text-foreground mt-1.5">
-                    {user?.referrals?.filter((r: any) => r.status === "pending" || r.status === "registered").length || 0}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border border-border/40 bg-gradient-to-br from-blue-500/5 to-transparent">
-                <CardContent className="p-4">
-                  <div className="text-xs font-black text-muted-foreground uppercase tracking-wider">Withdrawn Earnings</div>
-                  <div className="text-lg font-black text-foreground mt-1.5">KES {referralEarnings}</div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Refer link widgets grid */}
-            <div className="grid gap-6 md:grid-cols-5">
-              
-              {/* Refer code card */}
-              <div className="md:col-span-3 space-y-5">
-                <Card className="border border-border/40 bg-card">
-                  <CardHeader className="py-4">
-                    <CardTitle className="text-sm font-bold text-foreground">Your Referral Link</CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-0 space-y-4">
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        readOnly
-                        value={user ? `${window.location.origin}/auth/signup?ref=${user.id}` : ""}
-                        className="flex-grow text-xs bg-muted p-3 rounded-lg border border-border/30 font-mono text-muted-foreground outline-hidden select-all"
-                      />
-                      <Button
-                        onClick={copyReferralLink}
-                        className="h-10 px-4 rounded-lg font-bold text-xs cursor-pointer flex-shrink-0"
-                      >
-                        {copiedReferral ? "Copied!" : "Copy"}
-                      </Button>
-                    </div>
-
-                    <div className="flex items-center gap-2 pt-1">
-                      <span className="text-xs font-bold text-muted-foreground uppercase mr-1">Quick Share:</span>
-                      <Button size="xs" variant="outline" className="rounded-md h-7 text-xs font-bold cursor-pointer" asChild>
-                        <a
-                          href={`https://wa.me/?text=Hello!%20Join%20FundiHub%2520as%2520a%2520skilled%2520fundi%2520using%2520my%2520link%2520and%252520start%252520getting%252520direct%252520jobs:%20${encodeURIComponent(user ? `${window.location.origin}/auth/signup?ref=${user.id}` : "")}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                {/* Refer code card */}
+                <div className="md:col-span-3 space-y-5">
+                  <Card className="border border-border/40 bg-card">
+                    <CardHeader className="py-4">
+                      <CardTitle className="text-sm font-bold text-foreground">Your Referral Link</CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-0 space-y-4">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          readOnly
+                          value={user ? `${window.location.origin}/auth/signup?ref=${user.id}` : ""}
+                          className="flex-grow text-xs bg-muted p-3 rounded-lg border border-border/30 font-mono text-muted-foreground outline-hidden select-all"
+                        />
+                        <Button
+                          onClick={copyReferralLink}
+                          className="h-10 px-4 rounded-lg font-bold text-xs cursor-pointer flex-shrink-0"
                         >
-                          WhatsApp
-                        </a>
-                      </Button>
-                      <Button size="xs" variant="outline" className="rounded-md h-7 text-xs font-bold cursor-pointer" asChild>
-                        <a
-                          href={`https://twitter.com/intent/tweet?text=Register%20on%20FundiHub%20to%20get%20client%20job%20leads%20near%20you.%20Link:%20${encodeURIComponent(user ? `${window.location.origin}/auth/signup?ref=${user.id}` : "")}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Twitter
-                        </a>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                          {copiedReferral ? "Copied!" : "Copy"}
+                        </Button>
+                      </div>
 
-                {/* Referral History database log list */}
-                <Card className="border border-border/40 bg-card overflow-hidden">
-                  <CardHeader className="py-4 border-b border-border/30">
-                    <CardTitle className="text-xs font-bold text-foreground">Referral History Activity</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-0">
-                    {user?.referrals?.length > 0 ? (
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-left text-xs border-collapse">
-                          <thead>
-                            <tr className="bg-muted/20 text-muted-foreground border-b border-border/35 font-bold">
-                              <th className="p-3.5">Referee Name</th>
-                              <th className="p-3.5">Trade</th>
-                              <th className="p-3.5">Status</th>
-                              <th className="p-3.5 text-right">Commission</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-border/25">
-                            {user.referrals.map((ref: any) => (
-                              <tr key={ref.id} className="hover:bg-muted/10">
-                                <td className="p-3.5 font-bold text-foreground">{ref.refereeName}</td>
-                                <td className="p-3.5 text-muted-foreground capitalize">{ref.refereeTrade}</td>
-                                <td className="p-3.5">
-                                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase ${
-                                    ref.status === "paid"
-                                      ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/15"
-                                      : ref.status === "registered"
-                                      ? "bg-blue-500/10 text-blue-500 border border-blue-500/15"
-                                      : "bg-amber-500/10 text-amber-500 border border-amber-500/15"
-                                  }`}>
-                                    {ref.status}
-                                  </span>
-                                </td>
-                                <td className="p-3.5 text-right font-black text-foreground">KES {ref.commission}</td>
+                      <div className="flex items-center gap-2 pt-1">
+                        <span className="text-xs font-bold text-muted-foreground uppercase mr-1">Quick Share:</span>
+                        <Button size="xs" variant="outline" className="rounded-md h-7 text-xs font-bold cursor-pointer" asChild>
+                          <a
+                            href={`https://wa.me/?text=Hello!%20Join%20FundiHub%2520as%2520a%2520skilled%2520fundi%2520using%2520my%2520link%2520and%252520start%252520getting%252520direct%252520jobs:%20${encodeURIComponent(user ? `${window.location.origin}/auth/signup?ref=${user.id}` : "")}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            WhatsApp
+                          </a>
+                        </Button>
+                        <Button size="xs" variant="outline" className="rounded-md h-7 text-xs font-bold cursor-pointer" asChild>
+                          <a
+                            href={`https://twitter.com/intent/tweet?text=Register%20on%20FundiHub%20to%20get%20client%20job%20leads%20near%20you.%20Link:%20${encodeURIComponent(user ? `${window.location.origin}/auth/signup?ref=${user.id}` : "")}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Twitter
+                          </a>
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Referral History database log list */}
+                  <Card className="border border-border/40 bg-card overflow-hidden">
+                    <CardHeader className="py-4 border-b border-border/30">
+                      <CardTitle className="text-xs font-bold text-foreground">Referral History Activity</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                      {user?.referrals?.length > 0 ? (
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-left text-xs border-collapse">
+                            <thead>
+                              <tr className="bg-muted/20 text-muted-foreground border-b border-border/35 font-bold">
+                                <th className="p-3.5">Referee Name</th>
+                                <th className="p-3.5">Trade</th>
+                                <th className="p-3.5">Status</th>
+                                <th className="p-3.5 text-right">Commission</th>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    ) : (
-                      <div className="text-center p-8 text-muted-foreground space-y-2">
-                        <Info className="h-6 w-6 text-muted-foreground mx-auto" />
-                        <p className="text-xs">No referrals logged. Share your link to start earning!</p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Earnings Chart sidebar column */}
-              <div className="md:col-span-2 space-y-5">
-                <Card className="border border-border/40 bg-card">
-                  <CardHeader className="py-4 border-b border-border/30">
-                    <CardTitle className="text-xs font-black tracking-wider uppercase text-foreground">Weekly Payout Analytics</CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-5 space-y-5">
-                    
-                    {/* Compact pure CSS Bar Chart */}
-                    <div className="h-28 flex items-end justify-between gap-3.5 pt-1">
-                      <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                        <div className="w-full bg-muted rounded-t-md h-[10%] relative group cursor-pointer hover:bg-primary/20 transition-colors">
-                          <span className="absolute bottom-full left-1/2 -translate-x-1/2 bg-popover text-[8px] text-popover-foreground px-1.5 py-0.5 rounded-sm border border-border shadow-xs opacity-0 group-hover:opacity-100 transition-opacity">KES 100</span>
+                            </thead>
+                            <tbody className="divide-y divide-border/25">
+                              {user.referrals.map((ref: any) => (
+                                <tr key={ref.id} className="hover:bg-muted/10">
+                                  <td className="p-3.5 font-bold text-foreground">{ref.refereeName}</td>
+                                  <td className="p-3.5 text-muted-foreground capitalize">{ref.refereeTrade}</td>
+                                  <td className="p-3.5">
+                                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase ${
+                                      ref.status === "paid"
+                                        ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/15"
+                                        : ref.status === "registered"
+                                        ? "bg-blue-500/10 text-blue-500 border border-blue-500/15"
+                                        : "bg-amber-500/10 text-amber-500 border border-amber-500/15"
+                                    }`}>
+                                      {ref.status}
+                                    </span>
+                                  </td>
+                                  <td className="p-3.5 text-right font-black text-foreground">KES {ref.commission}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
                         </div>
-                        <span className="text-[9px] text-muted-foreground font-bold">W1</span>
-                      </div>
-                      <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                        <div className="w-full bg-primary/40 rounded-t-md h-[40%] relative group cursor-pointer hover:bg-primary/60 transition-colors">
-                          <span className="absolute bottom-full left-1/2 -translate-x-1/2 bg-popover text-[8px] text-popover-foreground px-1.5 py-0.5 rounded-sm border border-border shadow-xs opacity-0 group-hover:opacity-100 transition-opacity">KES 400</span>
+                      ) : (
+                        <div className="text-center p-8 text-muted-foreground space-y-2">
+                          <Info className="h-6 w-6 text-muted-foreground mx-auto" />
+                          <p className="text-xs">No referrals logged. Share your link to start earning!</p>
                         </div>
-                        <span className="text-[9px] text-muted-foreground font-bold">W2</span>
-                      </div>
-                      <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                        <div className="w-full bg-primary/80 rounded-t-md h-[75%] relative group cursor-pointer hover:bg-primary transition-colors">
-                          <span className="absolute bottom-full left-1/2 -translate-x-1/2 bg-popover text-[8px] text-popover-foreground px-1.5 py-0.5 rounded-sm border border-border shadow-xs opacity-0 group-hover:opacity-100 transition-opacity">KES 750</span>
-                        </div>
-                        <span className="text-[9px] text-muted-foreground font-bold">W3</span>
-                      </div>
-                      <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                        <div className="w-full bg-primary rounded-t-md h-[95%] relative group cursor-pointer hover:bg-primary transition-colors">
-                          <span className="absolute bottom-full left-1/2 -translate-x-1/2 bg-popover text-[8px] text-popover-foreground px-1.5 py-0.5 rounded-sm border border-border shadow-xs opacity-0 group-hover:opacity-100 transition-opacity">KES 950</span>
-                        </div>
-                        <span className="text-[9px] text-muted-foreground font-bold">W4</span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2 pt-2.5 border-t border-border/25 text-xs text-muted-foreground leading-normal">
-                      <div className="flex items-center justify-between font-bold text-foreground">
-                        <span>Promotion Payouts:</span>
-                        <span className="text-primary font-black">KES 100 / sign-up</span>
-                      </div>
-                      <p>Referral payouts transfer automatically to your registered MPesa mobile number on Friday mornings.</p>
-                    </div>
-
-                  </CardContent>
-                </Card>
-              </div>
-
-            </div>
-
-          </div>
-        )}
-
-        {/* MEMBERSHIP BENEFITS TAB CONTENT */}
-        {activeTab === "membership" && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            
-            <div className="border-b border-border/40 pb-4">
-              <h1 className="text-xl font-extrabold text-foreground">Membership & Boost Tiers</h1>
-              <p className="text-xs text-muted-foreground mt-0.5">Upgrade your profile tier package to build massive customer trust and listing priority.</p>
-            </div>
-
-            {/* Pricing Cards Layout (Max-width container, more compact height) */}
-            <div className="grid gap-6 md:grid-cols-2 max-w-2xl mx-auto pt-3">
-              
-              {/* Package: Verified Trust Tick */}
-              <Card className={`border relative overflow-hidden transition-all duration-200 hover:shadow-md ${
-                profile?.premiumLevel === "verified"
-                  ? "border-blue-500/50 bg-blue-500/5"
-                  : "border-border bg-card"
-              }`}>
-                <CardHeader className="text-center pb-3 pt-6 px-4">
-                  <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest bg-blue-500/10 rounded-full px-3 py-1 mx-auto w-max mb-3">
-                    Trust Tick
-                  </span>
-                  <CardTitle className="text-lg font-black text-foreground">Verified Badge Tick</CardTitle>
-                  <CardDescription className="text-xs mt-1">Get verified instantly and earn consumer trust</CardDescription>
-                </CardHeader>
-                <CardContent className="text-center space-y-5 px-4 pb-6">
-                  <div className="space-y-1">
-                    <span className="text-3xl font-black text-foreground">KES 300</span>
-                    <span className="text-xs text-muted-foreground"> / month</span>
-                  </div>
-
-                  <div className="space-y-2.5 text-left text-xs text-muted-foreground max-w-[230px] mx-auto py-4 border-t border-b border-border/30">
-                    <div className="flex gap-2">
-                      <Check className="h-4 w-4 text-blue-500 flex-shrink-0" />
-                      <span>Displays Blue Verified checkmark icon</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <Check className="h-4 w-4 text-blue-500 flex-shrink-0" />
-                      <span>30% boost in search clicks</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <Check className="h-4 w-4 text-blue-500 flex-shrink-0" />
-                      <span>Premium Client Support Access</span>
-                    </div>
-                  </div>
-
-                  <Button
-                    onClick={() => {
-                      setPremiumModalType("verified")
-                      setIsPremiumModalOpen(true)
-                    }}
-                    disabled={profile?.premiumLevel === "verified" || profile?.premiumLevel === "top"}
-                    className="w-full rounded-lg font-bold cursor-pointer h-10 text-xs"
-                  >
-                    {profile?.premiumLevel === "verified" || profile?.premiumLevel === "top" ? "Tier Active" : "Activate Verified Tick"}
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Package: Top Ranked visibility */}
-              <Card className={`border relative overflow-hidden transition-all duration-200 hover:shadow-md ${
-                profile?.premiumLevel === "top"
-                  ? "border-amber-500/50 bg-amber-500/5"
-                  : "border-border bg-card"
-              }`}>
-                <div className="absolute top-0 right-0 bg-amber-500 text-white font-black text-[8px] uppercase tracking-wider px-3 py-1 rounded-bl-lg shadow-xs">
-                  Popular
+                      )}
+                    </CardContent>
+                  </Card>
                 </div>
-                <CardHeader className="text-center pb-3 pt-6 px-4">
-                  <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest bg-amber-500/10 rounded-full px-3 py-1 mx-auto w-max mb-3">
-                    Elite Ranking
-                  </span>
-                  <CardTitle className="text-lg font-black text-foreground">Top-Rank Verified Elite</CardTitle>
-                  <CardDescription className="text-xs mt-1">Propel your account card to first row searches</CardDescription>
-                </CardHeader>
-                <CardContent className="text-center space-y-5 px-4 pb-6">
-                  <div className="space-y-1">
-                    <span className="text-3xl font-black text-foreground">KES 500</span>
-                    <span className="text-xs text-muted-foreground"> / month</span>
-                  </div>
 
-                  <div className="space-y-2.5 text-left text-xs text-muted-foreground max-w-[230px] mx-auto py-4 border-t border-b border-border/30">
-                    <div className="flex gap-2">
-                      <Check className="h-4 w-4 text-amber-500 flex-shrink-0" />
-                      <span>Verified Badge tick displays</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <Check className="h-4 w-4 text-amber-500 flex-shrink-0" />
-                      <span>Top row sorting priority</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <Check className="h-4 w-4 text-amber-500 flex-shrink-0" />
-                      <span>Up to 5x higher client leads</span>
-                    </div>
-                  </div>
+                {/* Earnings Chart sidebar column */}
+                <div className="md:col-span-2 space-y-5">
+                  <Card className="border border-border/40 bg-card">
+                    <CardHeader className="py-4 border-b border-border/30">
+                      <CardTitle className="text-xs font-black tracking-wider uppercase text-foreground">Weekly Payout Analytics</CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-5 space-y-5">
+                      
+                      {/* Compact pure CSS Bar Chart */}
+                      <div className="h-28 flex items-end justify-between gap-3.5 pt-1">
+                        <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                          <div className="w-full bg-muted rounded-t-md h-[10%] relative group cursor-pointer hover:bg-primary/20 transition-colors">
+                            <span className="absolute bottom-full left-1/2 -translate-x-1/2 bg-popover text-[8px] text-popover-foreground px-1.5 py-0.5 rounded-sm border border-border shadow-xs opacity-0 group-hover:opacity-100 transition-opacity">KES 100</span>
+                          </div>
+                          <span className="text-[9px] text-muted-foreground font-bold">W1</span>
+                        </div>
+                        <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                          <div className="w-full bg-primary/40 rounded-t-md h-[40%] relative group cursor-pointer hover:bg-primary/60 transition-colors">
+                            <span className="absolute bottom-full left-1/2 -translate-x-1/2 bg-popover text-[8px] text-popover-foreground px-1.5 py-0.5 rounded-sm border border-border shadow-xs opacity-0 group-hover:opacity-100 transition-opacity">KES 400</span>
+                          </div>
+                          <span className="text-[9px] text-muted-foreground font-bold">W2</span>
+                        </div>
+                        <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                          <div className="w-full bg-primary/80 rounded-t-md h-[75%] relative group cursor-pointer hover:bg-primary transition-colors">
+                            <span className="absolute bottom-full left-1/2 -translate-x-1/2 bg-popover text-[8px] text-popover-foreground px-1.5 py-0.5 rounded-sm border border-border shadow-xs opacity-0 group-hover:opacity-100 transition-opacity">KES 750</span>
+                          </div>
+                          <span className="text-[9px] text-muted-foreground font-bold">W3</span>
+                        </div>
+                        <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                          <div className="w-full bg-primary rounded-t-md h-[95%] relative group cursor-pointer hover:bg-primary transition-colors">
+                            <span className="absolute bottom-full left-1/2 -translate-x-1/2 bg-popover text-[8px] text-popover-foreground px-1.5 py-0.5 rounded-sm border border-border shadow-xs opacity-0 group-hover:opacity-100 transition-opacity">KES 950</span>
+                          </div>
+                          <span className="text-[9px] text-muted-foreground font-bold">W4</span>
+                        </div>
+                      </div>
 
-                  <Button
-                    onClick={() => {
-                      setPremiumModalType("top")
-                      setIsPremiumModalOpen(true)
-                    }}
-                    disabled={profile?.premiumLevel === "top"}
-                    className="w-full rounded-lg font-bold cursor-pointer h-10 text-xs"
-                  >
-                    {profile?.premiumLevel === "top" ? "Tier Active" : "Upgrade to Top Partner"}
-                  </Button>
-                </CardContent>
-              </Card>
+                      <div className="space-y-2 pt-2.5 border-t border-border/25 text-xs text-muted-foreground leading-normal">
+                        <div className="flex items-center justify-between font-bold text-foreground">
+                          <span>Promotion Payouts:</span>
+                          <span className="text-primary font-black">KES 100 / sign-up</span>
+                        </div>
+                        <p>Referral payouts transfer automatically to your registered MPesa mobile number on Friday mornings.</p>
+                      </div>
+
+                    </CardContent>
+                  </Card>
+                </div>
+
+              </div>
 
             </div>
+          )}
 
-          </div>
-        )}
+          {/* MEMBERSHIP BENEFITS TAB CONTENT */}
+          {activeTab === "membership" && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              
+              <div className="border-b border-border/40 pb-4">
+                <h1 className="text-xl font-extrabold text-foreground">Membership & Boost Tiers</h1>
+                <p className="text-xs text-muted-foreground mt-0.5">Upgrade your profile tier package to build massive customer trust and listing priority.</p>
+              </div>
 
+              {/* Pricing Cards Layout (Max-width container, more compact height) */}
+              <div className="grid gap-6 md:grid-cols-2 max-w-2xl mx-auto pt-3">
+                
+                {/* Package: Verified Trust Tick */}
+                <Card className={`border relative overflow-hidden transition-all duration-200 hover:shadow-md ${
+                  profile?.premiumLevel === "verified"
+                    ? "border-blue-500/50 bg-blue-500/5"
+                    : "border-border bg-card"
+                }`}>
+                  <CardHeader className="text-center pb-3 pt-6 px-4">
+                    <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest bg-blue-500/10 rounded-full px-3 py-1 mx-auto w-max mb-3">
+                      Trust Tick
+                    </span>
+                    <CardTitle className="text-lg font-black text-foreground">Verified Badge Tick</CardTitle>
+                    <CardDescription className="text-xs mt-1">Get verified instantly and earn consumer trust</CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-center space-y-5 px-4 pb-6">
+                    <div className="space-y-1">
+                      <span className="text-3xl font-black text-foreground">KES 300</span>
+                      <span className="text-xs text-muted-foreground"> / month</span>
+                    </div>
+
+                    <div className="space-y-2.5 text-left text-xs text-muted-foreground max-w-[230px] mx-auto py-4 border-t border-b border-border/30">
+                      <div className="flex gap-2">
+                        <Check className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                        <span>Displays Blue Verified checkmark icon</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <Check className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                        <span>30% boost in search clicks</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <Check className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                        <span>Premium Client Support Access</span>
+                      </div>
+                    </div>
+
+                    <Button
+                      onClick={() => {
+                        setPremiumModalType("verified")
+                        setIsPremiumModalOpen(true)
+                      }}
+                      disabled={profile?.premiumLevel === "verified" || profile?.premiumLevel === "top"}
+                      className="w-full rounded-lg font-bold cursor-pointer h-10 text-xs"
+                    >
+                      {profile?.premiumLevel === "verified" || profile?.premiumLevel === "top" ? "Tier Active" : "Activate Verified Tick"}
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Package: Top Ranked visibility */}
+                <Card className={`border relative overflow-hidden transition-all duration-200 hover:shadow-md ${
+                  profile?.premiumLevel === "top"
+                    ? "border-amber-500/50 bg-amber-500/5"
+                    : "border-border bg-card"
+                }`}>
+                  <div className="absolute top-0 right-0 bg-amber-500 text-white font-black text-[8px] uppercase tracking-wider px-3 py-1 rounded-bl-lg shadow-xs">
+                    Popular
+                  </div>
+                  <CardHeader className="text-center pb-3 pt-6 px-4">
+                    <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest bg-amber-500/10 rounded-full px-3 py-1 mx-auto w-max mb-3">
+                      Elite Ranking
+                    </span>
+                    <CardTitle className="text-lg font-black text-foreground">Top-Rank Verified Elite</CardTitle>
+                    <CardDescription className="text-xs mt-1">Propel your account card to first row searches</CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-center space-y-5 px-4 pb-6">
+                    <div className="space-y-1">
+                      <span className="text-3xl font-black text-foreground">KES 500</span>
+                      <span className="text-xs text-muted-foreground"> / month</span>
+                    </div>
+
+                    <div className="space-y-2.5 text-left text-xs text-muted-foreground max-w-[230px] mx-auto py-4 border-t border-b border-border/30">
+                      <div className="flex gap-2">
+                        <Check className="h-4 w-4 text-amber-500 flex-shrink-0" />
+                        <span>Verified Badge tick displays</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <Check className="h-4 w-4 text-amber-500 flex-shrink-0" />
+                        <span>Top row sorting priority</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <Check className="h-4 w-4 text-amber-500 flex-shrink-0" />
+                        <span>Up to 5x higher client leads</span>
+                      </div>
+                    </div>
+
+                    <Button
+                      onClick={() => {
+                        setPremiumModalType("top")
+                        setIsPremiumModalOpen(true)
+                      }}
+                      disabled={profile?.premiumLevel === "top"}
+                      className="w-full rounded-lg font-bold cursor-pointer h-10 text-xs"
+                    >
+                      {profile?.premiumLevel === "top" ? "Tier Active" : "Upgrade to Top Partner"}
+                    </Button>
+                  </CardContent>
+                </Card>
+
+              </div>
+
+            </div>
+          )}
+
+        </div>
       </main>
 
       {/* Premium Badge Checkout Dialog */}
