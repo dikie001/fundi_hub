@@ -103,33 +103,30 @@ export function ReviewsList({ fundiUserId, initialReviews, clientReview }: Revie
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Reviewer Name */}
-                <div className="space-y-1.5">
-                  <label htmlFor="reviewer-name" className="text-xs font-bold text-muted-foreground uppercase">
-                    Your Name
-                  </label>
-                  <input
-                    id="reviewer-name"
-                    type="text"
-                    required
-                    disabled={isSubmitting || isNameLocked}
-                    value={reviewerName}
-                    onChange={(e) => setReviewerName(e.target.value)}
-                    placeholder="Enter your name"
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden disabled:opacity-70 disabled:cursor-not-allowed"
-                  />
-                  {isNameLocked && (
-                    <span className="text-[10px] text-muted-foreground font-medium mt-0.5 block">
-                      Name is locked to your previous review
-                    </span>
-                  )}
-                </div>
+                {!isNameLocked && (
+                  <div className="space-y-1.5">
+                    <label htmlFor="reviewer-name" className="text-xs font-bold text-muted-foreground uppercase">
+                      Your Name
+                    </label>
+                    <input
+                      id="reviewer-name"
+                      type="text"
+                      required
+                      disabled={isSubmitting}
+                      value={reviewerName}
+                      onChange={(e) => setReviewerName(e.target.value)}
+                      placeholder="Enter your name"
+                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden"
+                    />
+                  </div>
+                )}
 
                 {/* Rating Stars Select */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-muted-foreground uppercase">
                     Rating
                   </label>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
                         key={star}
@@ -137,20 +134,17 @@ export function ReviewsList({ fundiUserId, initialReviews, clientReview }: Revie
                         onClick={() => setRating(star)}
                         onMouseEnter={() => setHoverRating(star)}
                         onMouseLeave={() => setHoverRating(null)}
-                        className="transition-transform duration-100 hover:scale-110 focus:outline-hidden"
+                        className="transition-all duration-200 hover:scale-125 hover:rotate-6 active:scale-95 focus:outline-hidden cursor-pointer"
                       >
                         <Star
-                          className={`h-6 w-6 ${
+                          className={`h-7 w-7 transition-all duration-300 ${
                             star <= (hoverRating ?? rating)
-                              ? "fill-amber-500 text-amber-500"
-                              : "text-muted"
+                              ? "fill-amber-500 text-amber-500 filter drop-shadow-[0_0_3px_rgba(245,158,11,0.4)]"
+                              : "text-muted hover:text-muted-foreground/60"
                           }`}
                         />
                       </button>
                     ))}
-                    <span className="ml-2 text-xs font-bold text-muted-foreground">
-                      {rating} / 5
-                    </span>
                   </div>
                 </div>
 
