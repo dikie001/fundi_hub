@@ -5,6 +5,7 @@ import { Navigation } from "@/components/navigation"
 import { FundiCard } from "@/components/fundi-card"
 import { CategoryCard } from "@/components/category-card"
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Card,
   CardContent,
@@ -12,7 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { fundis as fallbackFundis, categories as fallbackCategories, Fundi } from "@/lib/data"
+import { categories as fallbackCategories, Fundi } from "@/lib/data"
 import {
   ArrowRight,
   TrendingUp,
@@ -25,8 +26,9 @@ import {
 import Link from "next/link"
 
 export default function Home() {
-  const [fundis, setFundis] = useState<Fundi[]>(fallbackFundis)
+  const [fundis, setFundis] = useState<Fundi[]>([])
   const [categories, setCategories] = useState<{ name: string; icon: string }[]>(fallbackCategories)
+  const [isLoadingFundis, setIsLoadingFundis] = useState(true)
 
   useEffect(() => {
     async function loadData() {
@@ -37,18 +39,51 @@ export default function Home() {
         ])
         if (fundisRes.ok) {
           const fundisData = await fundisRes.json()
-          setFundis(fundisData)
+          setFundis(Array.isArray(fundisData) ? fundisData : [])
         }
         if (categoriesRes.ok) {
           const categoriesData = await categoriesRes.json()
           setCategories(categoriesData)
         }
       } catch (error) {
-        console.error("Failed to load DB data, using static mock fallback:", error)
+        console.error("Failed to load DB data:", error)
+      } finally {
+        setIsLoadingFundis(false)
       }
     }
     loadData()
   }, [])
+
+  const renderFundiSkeletons = () =>
+    Array.from({ length: 3 }).map((_, index) => (
+      <div
+        key={index}
+        className="overflow-hidden rounded-2xl border border-border/60 bg-card/70 p-5"
+      >
+        <div className="mb-5 flex items-start gap-3">
+          <Skeleton className="h-16 w-16 rounded-full" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-5 w-2/3" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+          <Skeleton className="h-6 w-24 rounded-full" />
+        </div>
+        <div className="mb-4 flex items-center gap-2">
+          <Skeleton className="h-4 w-12" />
+          <Skeleton className="h-4 w-20" />
+          <Skeleton className="ml-auto h-5 w-24 rounded-full" />
+        </div>
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-5/6" />
+          <Skeleton className="h-4 w-4/6" />
+        </div>
+        <div className="mt-5 grid grid-cols-2 gap-2">
+          <Skeleton className="h-10 w-full rounded-xl" />
+          <Skeleton className="h-10 w-full rounded-xl" />
+        </div>
+      </div>
+    ))
 
   const featuredFundis = fundis
     .filter((f) => f.premiumLevel === "top")
@@ -64,7 +99,7 @@ export default function Home() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-primary/10 to-transparent px-4 py-20 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-linear-to-b from-primary/10 to-transparent px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
@@ -104,9 +139,11 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {featuredFundis.map((fundi) => (
-              <FundiCard key={fundi.id} fundi={fundi} />
-            ))}
+            {isLoadingFundis
+              ? renderFundiSkeletons()
+              : featuredFundis.map((fundi) => (
+                  <FundiCard key={fundi.id} fundi={fundi} />
+                ))}
           </div>
         </div>
       </section>
@@ -121,9 +158,11 @@ export default function Home() {
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {topRatedFundis.map((fundi) => (
-              <FundiCard key={fundi.id} fundi={fundi} />
-            ))}
+            {isLoadingFundis
+              ? renderFundiSkeletons()
+              : topRatedFundis.map((fundi) => (
+                  <FundiCard key={fundi.id} fundi={fundi} />
+                ))}
           </div>
         </div>
       </section>
@@ -141,9 +180,11 @@ export default function Home() {
             </div>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {nearbyFundis.map((fundi) => (
-              <FundiCard key={fundi.id} fundi={fundi} />
-            ))}
+            {isLoadingFundis
+              ? renderFundiSkeletons()
+              : nearbyFundis.map((fundi) => (
+                  <FundiCard key={fundi.id} fundi={fundi} />
+                ))}
           </div>
         </div>
       </section>
@@ -163,9 +204,11 @@ export default function Home() {
             </div>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {emergencyFundis.map((fundi) => (
-              <FundiCard key={fundi.id} fundi={fundi} />
-            ))}
+            {isLoadingFundis
+              ? renderFundiSkeletons()
+              : emergencyFundis.map((fundi) => (
+                  <FundiCard key={fundi.id} fundi={fundi} />
+                ))}
           </div>
         </div>
       </section>
@@ -199,7 +242,7 @@ export default function Home() {
       {/* Refer & Earn Banner */}
       <section className="border-b border-border px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
+          <Card className="border-2 border-primary/20 bg-linear-to-r from-primary/5 to-primary/10">
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div>

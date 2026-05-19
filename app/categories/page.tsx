@@ -4,14 +4,15 @@ import { useState, useEffect } from "react"
 import { Navigation } from "@/components/navigation"
 import { FundiCard } from "@/components/fundi-card"
 import { CategoryCard } from "@/components/category-card"
-import { Button } from "@/components/ui/button"
-import { fundis as fallbackFundis, categories as fallbackCategories, Fundi } from "@/lib/data"
+import { Skeleton } from "@/components/ui/skeleton"
+import { categories as fallbackCategories, Fundi } from "@/lib/data"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 export default function CategoriesPage() {
-  const [fundis, setFundis] = useState<Fundi[]>(fallbackFundis)
+  const [fundis, setFundis] = useState<Fundi[]>([])
   const [categories, setCategories] = useState<{ name: string; icon: string }[]>(fallbackCategories)
+  const [isLoadingFundis, setIsLoadingFundis] = useState(true)
 
   useEffect(() => {
     async function loadData() {
@@ -22,18 +23,49 @@ export default function CategoriesPage() {
         ])
         if (fundisRes.ok) {
           const fundisData = await fundisRes.json()
-          setFundis(fundisData)
+          setFundis(Array.isArray(fundisData) ? fundisData : [])
         }
         if (categoriesRes.ok) {
           const categoriesData = await categoriesRes.json()
           setCategories(categoriesData)
         }
       } catch (error) {
-        console.error("Failed to load DB data, using static mock fallback:", error)
+        console.error("Failed to load DB data:", error)
+      } finally {
+        setIsLoadingFundis(false)
       }
     }
     loadData()
   }, [])
+
+  const renderFundiSkeletons = () =>
+    Array.from({ length: 6 }).map((_, index) => (
+      <div
+        key={index}
+        className="overflow-hidden rounded-2xl border border-border/60 bg-card/70 p-5"
+      >
+        <div className="mb-5 flex items-start gap-3">
+          <Skeleton className="h-16 w-16 rounded-full" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-5 w-2/3" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+        </div>
+        <div className="mb-4 flex items-center gap-2">
+          <Skeleton className="h-4 w-12" />
+          <Skeleton className="h-4 w-20" />
+        </div>
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-5/6" />
+          <Skeleton className="h-4 w-4/6" />
+        </div>
+        <div className="mt-5 grid grid-cols-2 gap-2">
+          <Skeleton className="h-10 w-full rounded-xl" />
+          <Skeleton className="h-10 w-full rounded-xl" />
+        </div>
+      </div>
+    ))
   return (
     <div className="flex min-h-screen flex-col">
       <Navigation />
@@ -75,9 +107,9 @@ export default function CategoriesPage() {
         <div className="mx-auto max-w-7xl">
           <h2 className="mb-8 text-3xl font-bold">All Available Fundis</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {fundis.map((fundi) => (
-              <FundiCard key={fundi.id} fundi={fundi} />
-            ))}
+            {isLoadingFundis
+              ? renderFundiSkeletons()
+              : fundis.map((fundi) => <FundiCard key={fundi.id} fundi={fundi} />)}
           </div>
         </div>
       </section>
