@@ -21,6 +21,7 @@ export async function PUT(request: Request) {
       description,
       isEmergency,
       preferredContact,
+      premiumLevel,
     } = body
 
     const user = await db.user.findUnique({
@@ -49,6 +50,7 @@ export async function PUT(request: Request) {
         description: description !== undefined ? description : user.fundiProfile?.description,
         isEmergency: isEmergency !== undefined ? isEmergency : user.fundiProfile?.isEmergency,
         preferredContact: preferredContact !== undefined ? preferredContact : user.fundiProfile?.preferredContact,
+        premiumLevel: premiumLevel !== undefined ? premiumLevel : user.fundiProfile?.premiumLevel,
       },
     })
 

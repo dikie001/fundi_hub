@@ -20,6 +20,7 @@ export async function POST(request: Request) {
       projectLocation,
       budgetRange,
       urgency,
+      referrerId,
     } = body
 
     if (!email || !password || !name || !phone || !userType) {
@@ -83,6 +84,28 @@ export async function POST(request: Request) {
             }),
       },
     })
+
+    if (userType === "fundi" && referrerId) {
+      try {
+        const referrer = await db.user.findUnique({
+          where: { id: referrerId }
+        })
+        if (referrer) {
+          await db.referral.create({
+            data: {
+              referrerId,
+              refereeName: name,
+              refereePhone: phone,
+              refereeTrade: trade || "General",
+              status: "registered",
+              commission: 100.0
+            }
+          })
+        }
+      } catch (err) {
+        console.error("Error creating referral record:", err)
+      }
+    }
 
     return NextResponse.json(
       { message: "Registration successful", userId: user.id },

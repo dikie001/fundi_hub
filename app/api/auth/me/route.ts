@@ -16,6 +16,7 @@ export async function GET() {
       include: {
         fundiProfile: true,
         clientProfile: true,
+        referrals: true,
       },
     })
 

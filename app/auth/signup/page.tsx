@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
 import {
   Eye,
   EyeOff,
@@ -110,6 +110,17 @@ const steps = [
 export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [referrerId, setReferrerId] = useState("")
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search)
+      const ref = params.get("ref")
+      if (ref) {
+        setReferrerId(ref)
+      }
+    }
+  }, [])
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [userType, setUserType] = useState<UserType | null>(null)
   const [currentStep, setCurrentStep] = useState(1)
@@ -341,6 +352,7 @@ export default function SignupPage() {
         body: JSON.stringify({
           userType,
           ...formData,
+          referrerId,
           email: `${formData.phone.replace(/[^0-9]/g, "")}@fundihub.com`,
         }),
       })
