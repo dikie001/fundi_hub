@@ -68,18 +68,11 @@ type SignupFormData = {
 const totalSteps = 5
 
 const TRADES_LIST = [
-  "Electrician",
   "Plumber",
+  "Electrician",
   "Carpenter",
   "Painter",
-  "Mason",
-  "Tiler",
-  "Welder",
-  "Landscaper",
-  "Cleaner",
-  "Mechanic",
-  "Locksmith",
-  "HVAC Tech"
+  "Mason"
 ]
 
 const EXPERIENCE_LEVELS = [
@@ -201,9 +194,12 @@ export default function SignupPage() {
 
   const handleSelectProjectCategory = (val: string) => {
     if (val === "Other") {
+      updateField("projectCategory", "Other")
       setOtherFieldType("projectCategory")
       setOtherInputValue("")
-      setIsOtherModalOpen(true)
+      setTimeout(() => {
+        setIsOtherModalOpen(true)
+      }, 100)
     } else {
       updateField("projectCategory", val)
     }
@@ -211,9 +207,12 @@ export default function SignupPage() {
 
   const handleSelectTrade = (val: string) => {
     if (val === "Other") {
+      updateField("trade", "Other")
       setOtherFieldType("trade")
       setOtherInputValue("")
-      setIsOtherModalOpen(true)
+      setTimeout(() => {
+        setIsOtherModalOpen(true)
+      }, 100)
     } else {
       updateField("trade", val)
     }
@@ -244,7 +243,7 @@ export default function SignupPage() {
 
     if (currentStep === 3) {
       if (userType === "fundi") {
-        if (!formData.trade.trim()) {
+        if (!formData.trade.trim() || formData.trade === "Other") {
           setStepError("Please enter your primary trade.")
           return false
         }
@@ -261,7 +260,7 @@ export default function SignupPage() {
           return false
         }
       } else {
-        if (!formData.projectCategory.trim()) {
+        if (!formData.projectCategory.trim() || formData.projectCategory === "Other") {
           setStepError("Please specify the service needed.")
           return false
         }
