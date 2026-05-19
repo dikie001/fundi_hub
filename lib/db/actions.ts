@@ -1,8 +1,5 @@
 import { db } from "@/lib/db"
-import {
-  Fundi,
-  categories as mockCategories,
-} from "@/lib/data"
+import { Fundi, categories as mockCategories } from "@/lib/data"
 
 export async function getCategories() {
   try {

@@ -11,7 +11,8 @@ import Link from "next/link"
 
 export default function CategoriesPage() {
   const [fundis, setFundis] = useState<Fundi[]>([])
-  const [categories, setCategories] = useState<{ name: string; icon: string }[]>(fallbackCategories)
+  const [categories, setCategories] =
+    useState<{ name: string; icon: string }[]>(fallbackCategories)
   const [isLoadingFundis, setIsLoadingFundis] = useState(true)
 
   useEffect(() => {
@@ -109,7 +110,9 @@ export default function CategoriesPage() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {isLoadingFundis
               ? renderFundiSkeletons()
-              : fundis.map((fundi) => <FundiCard key={fundi.id} fundi={fundi} />)}
+              : fundis.map((fundi) => (
+                  <FundiCard key={fundi.id} fundi={fundi} />
+                ))}
           </div>
         </div>
       </section>

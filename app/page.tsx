@@ -27,7 +27,8 @@ import Link from "next/link"
 
 export default function Home() {
   const [fundis, setFundis] = useState<Fundi[]>([])
-  const [categories, setCategories] = useState<{ name: string; icon: string }[]>(fallbackCategories)
+  const [categories, setCategories] =
+    useState<{ name: string; icon: string }[]>(fallbackCategories)
   const [isLoadingFundis, setIsLoadingFundis] = useState(true)
 
   useEffect(() => {
