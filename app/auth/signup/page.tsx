@@ -137,14 +137,14 @@ export default function SignupPage() {
 
   // Memoized trade options containing custom inputs if they are set
   const clientTrades = useMemo(() => {
-    if (formData.projectCategory && !TRADES_LIST.includes(formData.projectCategory)) {
+    if (formData.projectCategory && formData.projectCategory !== "Other" && !TRADES_LIST.includes(formData.projectCategory)) {
       return [...TRADES_LIST, formData.projectCategory]
     }
     return TRADES_LIST
   }, [formData.projectCategory])
 
   const fundiTrades = useMemo(() => {
-    if (formData.trade && !TRADES_LIST.includes(formData.trade)) {
+    if (formData.trade && formData.trade !== "Other" && !TRADES_LIST.includes(formData.trade)) {
       return [...TRADES_LIST, formData.trade]
     }
     return TRADES_LIST
@@ -501,7 +501,9 @@ export default function SignupPage() {
                       disabled={isLoading}
                     >
                       <SelectTrigger id="projectCategory" className="w-full">
-                        <SelectValue placeholder="Select the service you need..." />
+                        <SelectValue placeholder="Select the service you need...">
+                          {formData.projectCategory && formData.projectCategory !== "Other" ? formData.projectCategory : undefined}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {clientTrades.map((t) => (
@@ -588,7 +590,9 @@ export default function SignupPage() {
                       disabled={isLoading}
                     >
                       <SelectTrigger id="trade" className="w-full">
-                        <SelectValue placeholder="Select your primary trade..." />
+                        <SelectValue placeholder="Select your primary trade...">
+                          {formData.trade && formData.trade !== "Other" ? formData.trade : undefined}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {fundiTrades.map((t) => (
