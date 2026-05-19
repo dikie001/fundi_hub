@@ -125,15 +125,19 @@ export default async function FundiProfilePage({ params }: PageProps) {
       {/* Main Container */}
       <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         
-        {/* Back Link */}
-        <div className="mb-6">
-          <Link 
-            href={`/#${fundiData.name.trim().replace(/\s+/g, "-")}`}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground transition-colors hover:text-primary"
+        {/* Page Header */}
+        <div className="mb-6 flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8 rounded-full border-border/60 bg-card hover:bg-accent text-muted-foreground hover:text-foreground shrink-0 cursor-pointer"
+            asChild
           >
-            <ArrowLeft className="h-4 w-4" />
-            Back to home
-          </Link>
+            <Link href={`/#${fundiData.name.trim().replace(/\s+/g, "-")}`} aria-label="Back to home">
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+          </Button>
+          <h1 className="text-xl font-bold tracking-tight text-foreground">Fundi Profile</h1>
         </div>
 
         {/* Profile Hero Header Card */}
@@ -142,9 +146,9 @@ export default async function FundiProfilePage({ params }: PageProps) {
           <div className="absolute top-0 right-0 -mr-20 -mt-20 h-80 w-80 rounded-full bg-primary/5 blur-3xl" />
           
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+            <div className="flex flex-row gap-4 sm:gap-6 items-center">
               {/* Profile Avatar */}
-              <div className={`relative flex h-24 w-24 shrink-0 items-center justify-center rounded-full border bg-muted/40 shadow-inner ring-4 ${
+              <div className={`relative flex h-20 w-20 sm:h-28 sm:w-28 shrink-0 items-center justify-center rounded-full border bg-muted/40 shadow-inner ring-4 ${
                 fundiData.premiumLevel === "top" 
                   ? "ring-amber-500/20 border-amber-500/50" 
                   : fundiData.premiumLevel === "verified"
@@ -165,38 +169,40 @@ export default async function FundiProfilePage({ params }: PageProps) {
               </div>
 
               {/* Bio Identity details */}
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
+                  <h1 className="text-xl font-extrabold tracking-tight text-foreground sm:text-3xl">
                     {fundiData.name}
                   </h1>
-                  {fundiData.premiumLevel === "top" && (
-                    <Badge className="bg-amber-500 text-amber-950 shadow-xs hover:bg-amber-500">
-                      <Star size={12} className="mr-1 fill-amber-950" />
-                      Top Partner
-                    </Badge>
-                  )}
-                  {fundiData.premiumLevel === "verified" && (
-                    <Badge className="bg-sky-600 text-white shadow-xs hover:bg-sky-600">
-                      <Shield size={12} className="mr-1" />
-                      Verified
-                    </Badge>
-                  )}
+                  <div className="flex flex-wrap gap-1.5">
+                    {fundiData.premiumLevel === "top" && (
+                      <Badge className="bg-amber-500 text-amber-950 shadow-xs hover:bg-amber-500 text-[10px] py-0.5 px-2 font-bold">
+                        <Star size={10} className="mr-1 fill-amber-950" />
+                        Top Partner
+                      </Badge>
+                    )}
+                    {fundiData.premiumLevel === "verified" && (
+                      <Badge className="bg-sky-600 text-white shadow-xs hover:bg-sky-600 text-[10px] py-0.5 px-2 font-bold">
+                        <Shield size={10} className="mr-1" />
+                        Verified
+                      </Badge>
+                    )}
+                  </div>
                 </div>
-                <p className="text-base font-semibold text-muted-foreground">{fundiData.title}</p>
+                <p className="text-sm sm:text-base font-semibold text-muted-foreground">{fundiData.title}</p>
                 
                 {/* Meta details list */}
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-1 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1.5 font-bold text-foreground">
-                    <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-1 text-xs sm:text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1 font-bold text-foreground shrink-0">
+                    <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
                     {fundiData.rating}
                     <span className="font-medium text-muted-foreground">({fundiData.reviews} reviews)</span>
                   </span>
-                  <span className="flex items-center gap-1">
-                    <MapPin className="h-4 w-4 text-primary" />
+                  <span className="flex items-center gap-1 shrink-0">
+                    <MapPin className="h-3.5 w-3.5 text-primary" />
                     {fundiData.serviceArea}
                   </span>
-                  <span className="rounded-md border border-primary/20 bg-primary/5 px-2 py-0.5 text-[10px] font-bold text-primary uppercase">
+                  <span className="rounded-md border border-primary/20 bg-primary/5 px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-primary uppercase shrink-0">
                     {fundiData.category}
                   </span>
                 </div>
@@ -220,7 +226,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
         </div>
 
         {/* Detail Content Grid */}
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-3 md:gap-8">
           
           {/* Main Info Column (Left 2/3) */}
           <div className="space-y-8 md:col-span-2">
@@ -241,7 +247,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
                 <Separator className="bg-border/50" />
 
                 {/* Experience & Stats Row */}
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 pt-2">
+                <div className="flex flex-wrap justify-between sm:justify-start gap-4 sm:gap-16 pt-2">
                   <div className="space-y-1">
                     <span className="text-xs text-muted-foreground">Experience</span>
                     <p className="text-sm font-bold text-foreground">{fundiData.yearsExperience}</p>
