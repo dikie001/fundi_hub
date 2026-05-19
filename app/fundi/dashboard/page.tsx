@@ -1192,21 +1192,21 @@ function DashboardInner() {
 
                       <div className="space-y-4">
                         <div className="space-y-1">
-                          <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Service Coverage</span>
+                          <span className="text-sm font-semibold text-muted-foreground">Service Coverage</span>
                           <p className="text-sm text-foreground flex items-center gap-2 font-medium">
                             <MapPin className="h-4 w-4 text-primary" />
                             {editArea || "Not specified"}
                           </p>
                         </div>
                         <div className="space-y-1">
-                          <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Preferred Contact</span>
+                          <span className="text-sm font-semibold text-muted-foreground">Preferred Contact</span>
                           <p className="text-sm text-foreground flex items-center gap-2 font-medium capitalize">
                             <MessageSquare className="h-4 w-4 text-primary" />
                             {preferredContact || "whatsapp"}
                           </p>
                         </div>
                         <div className="space-y-1">
-                          <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">National ID Status</span>
+                          <span className="text-sm font-semibold text-muted-foreground">National ID Status</span>
                           <p className="text-sm text-foreground flex items-center gap-2 font-medium">
                             <Shield className="h-4 w-4 text-primary" />
                             Verified (ID ending in **8)
@@ -1231,14 +1231,14 @@ function DashboardInner() {
 
                       <div className="space-y-4">
                         <div className="space-y-1">
-                          <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Professional Bio</span>
+                          <span className="text-sm font-semibold text-muted-foreground">Professional Bio</span>
                           <p className="text-sm text-muted-foreground leading-relaxed">
                             {editDesc || "No professional biography added yet. Update your profile step 2 to introduce yourself to clients!"}
                           </p>
                         </div>
                         
                         <div className="space-y-2 pt-1">
-                          <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Specializations</span>
+                          <span className="text-sm font-semibold text-muted-foreground">Specializations</span>
                           <div className="flex flex-wrap gap-2">
                             {skills.map((tag) => (
                               <span key={tag} className="inline-flex items-center rounded bg-secondary px-3 py-1 text-xs text-secondary-foreground font-medium border border-border/30">
@@ -1792,63 +1792,63 @@ function DashboardInner() {
                     {/* Completion Checklist */}
                     <Card className="border border-border/60 bg-card">
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-xs font-semibold text-foreground">
+                        <CardTitle className="text-base font-bold text-foreground">
                           Profile Task Checklist
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="p-5 pt-1 space-y-3">
-                        <div className="flex items-center justify-between text-xs border-b border-border/25 pb-2 mb-2">
+                        <div className="flex items-center justify-between text-sm border-b border-border/25 pb-2 mb-2">
                           <span className="text-muted-foreground">Completeness Score:</span>
                           <span className="font-bold text-primary">{completionScore}%</span>
                         </div>
                         
                         <div className="space-y-2.5">
-                          <div className="flex items-center justify-between text-xs">
+                          <div className="flex items-center justify-between text-sm">
                             <span className={cn("flex items-center gap-2", basicInfoDone ? "text-foreground" : "text-muted-foreground")}>
-                              <CheckCircle2 className={cn("h-4 w-4 transition-all duration-300", basicInfoDone ? "text-emerald-500 fill-emerald-500/10" : "text-muted-foreground/40")} />
+                              <CheckCircle2 className={cn("h-4.5 w-4.5 transition-all duration-300", basicInfoDone ? "text-emerald-500 fill-emerald-500/10" : "text-muted-foreground/40")} />
                               Basic Identity Details
                             </span>
-                            <span className="text-[10px] text-muted-foreground font-mono">20%</span>
+                            <span className="text-xs text-muted-foreground font-semibold">20%</span>
                           </div>
                           
-                          <div className="flex items-center justify-between text-xs">
+                          <div className="flex items-center justify-between text-sm">
                             <span className={cn("flex items-center gap-2", serviceAreaDone ? "text-foreground" : "text-muted-foreground")}>
-                              <CheckCircle2 className={cn("h-4 w-4 transition-all duration-300", serviceAreaDone ? "text-emerald-500 fill-emerald-500/10" : "text-muted-foreground/40")} />
+                              <CheckCircle2 className={cn("h-4.5 w-4.5 transition-all duration-300", serviceAreaDone ? "text-emerald-500 fill-emerald-500/10" : "text-muted-foreground/40")} />
                               Service scope & exp
                             </span>
-                            <span className="text-[10px] text-muted-foreground font-mono">20%</span>
+                            <span className="text-xs text-muted-foreground font-semibold">20%</span>
                           </div>
 
-                          <div className="flex items-center justify-between text-xs">
+                          <div className="flex items-center justify-between text-sm">
                             <span className={cn("flex items-center gap-2", bioDone ? "text-foreground" : "text-muted-foreground")}>
-                              <CheckCircle2 className={cn("h-4 w-4 transition-all duration-300", bioDone ? "text-emerald-500 fill-emerald-500/10" : "text-muted-foreground/40")} />
+                              <CheckCircle2 className={cn("h-4.5 w-4.5 transition-all duration-300", bioDone ? "text-emerald-500 fill-emerald-500/10" : "text-muted-foreground/40")} />
                               Detailed Bio Story
                             </span>
-                            <span className="text-[10px] text-muted-foreground font-mono">20%</span>
+                            <span className="text-xs text-muted-foreground font-semibold">20%</span>
                           </div>
 
-                          <div className="flex items-center justify-between text-xs">
+                          <div className="flex items-center justify-between text-sm">
                             <span className={cn("flex items-center gap-2", preferredContactDone ? "text-foreground" : "text-muted-foreground")}>
-                              <CheckCircle2 className={cn("h-4 w-4 transition-all duration-300", preferredContactDone ? "text-emerald-500 fill-emerald-500/10" : "text-muted-foreground/40")} />
+                              <CheckCircle2 className={cn("h-4.5 w-4.5 transition-all duration-300", preferredContactDone ? "text-emerald-500 fill-emerald-500/10" : "text-muted-foreground/40")} />
                               Contact Preference
                             </span>
-                            <span className="text-[10px] text-muted-foreground font-mono">15%</span>
+                            <span className="text-xs text-muted-foreground font-semibold">15%</span>
                           </div>
 
-                          <div className="flex items-center justify-between text-xs">
+                          <div className="flex items-center justify-between text-sm">
                             <span className={cn("flex items-center gap-2", avatarDone ? "text-foreground" : "text-muted-foreground")}>
-                              <CheckCircle2 className={cn("h-4 w-4 transition-all duration-300", avatarDone ? "text-emerald-500 fill-emerald-500/10" : "text-muted-foreground/40")} />
+                              <CheckCircle2 className={cn("h-4.5 w-4.5 transition-all duration-300", avatarDone ? "text-emerald-500 fill-emerald-500/10" : "text-muted-foreground/40")} />
                               Avatar Photo uploaded
                             </span>
-                            <span className="text-[10px] text-muted-foreground font-mono">15%</span>
+                            <span className="text-xs text-muted-foreground font-semibold">15%</span>
                           </div>
 
-                          <div className="flex items-center justify-between text-xs">
+                          <div className="flex items-center justify-between text-sm">
                             <span className={cn("flex items-center gap-2", portfolioDone ? "text-foreground animate-in" : "text-muted-foreground")}>
-                              <CheckCircle2 className={cn("h-4 w-4 transition-all duration-300", portfolioDone ? "text-emerald-500 fill-emerald-500/10" : "text-muted-foreground/40")} />
+                              <CheckCircle2 className={cn("h-4.5 w-4.5 transition-all duration-300", portfolioDone ? "text-emerald-500 fill-emerald-500/10" : "text-muted-foreground/40")} />
                               Portfolio Showcase photo
                             </span>
-                            <span className="text-[10px] text-muted-foreground font-mono">10%</span>
+                            <span className="text-xs text-muted-foreground font-semibold">10%</span>
                           </div>
                         </div>
                       </CardContent>
@@ -1858,8 +1858,8 @@ function DashboardInner() {
                     <Card className="border border-border/40 bg-gradient-to-b from-card to-muted/15 relative overflow-hidden">
                       <CardHeader className="py-3.5 border-b border-border/25">
                         <div className="flex items-center justify-between">
-                          <CardTitle className="text-xs font-semibold text-foreground">Public Card Preview</CardTitle>
-                          <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[9px] font-semibold text-emerald-500 uppercase tracking-wide">
+                          <CardTitle className="text-sm font-bold text-foreground">Public Card Preview</CardTitle>
+                          <span className="rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-500 tracking-wide">
                             Active Listing
                           </span>
                         </div>
@@ -1880,23 +1880,23 @@ function DashboardInner() {
                                 <ShieldCheck className="h-4 w-4 text-blue-500" />
                               )}
                             </div>
-                            <p className="text-xs text-muted-foreground font-semibold">{editTitle || `${editTrade} Specialist`}</p>
+                            <p className="text-sm text-muted-foreground font-semibold">{editTitle || `${editTrade} Specialist`}</p>
                           </div>
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2 pt-1">
-                          <span className="inline-flex items-center rounded bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
+                          <span className="inline-flex items-center rounded bg-primary/10 px-2.5 py-0.5 text-xs font-bold text-primary border border-primary/20">
                             {editTrade}
                           </span>
-                          <span className="text-xs text-muted-foreground flex items-center gap-1">
-                            <MapPin className="h-3 w-3 text-primary" /> {editArea || "Nairobi"}
+                          <span className="text-sm text-muted-foreground flex items-center gap-1">
+                            <MapPin className="h-4.5 w-4.5 text-primary" /> {editArea || "Nairobi"}
                           </span>
-                          <span className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Star className="h-3 w-3 text-amber-500 fill-amber-500" /> {profile?.rating.toFixed(1)} ({profile?.reviews || 0} reviews)
+                          <span className="text-sm text-muted-foreground flex items-center gap-1">
+                            <Star className="h-4.5 w-4.5 text-amber-500 fill-amber-500" /> {profile?.rating.toFixed(1)} ({profile?.reviews || 0} reviews)
                           </span>
                         </div>
 
-                        <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed border-t border-border/20 pt-2.5">
+                        <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed border-t border-border/20 pt-2.5">
                           {editDesc || "No description set yet. Write a professional description in Step 2 to describe your skills."}
                         </p>
                       </CardContent>
@@ -1908,30 +1908,30 @@ function DashboardInner() {
 
                 {/* Add Portfolio Dialog */}
                 <Dialog open={isAddPortfolioOpen} onOpenChange={setIsAddPortfolioOpen}>
-                  <DialogContent className="border border-border bg-card p-5 rounded-lg shadow-lg w-full max-w-sm">
+                  <DialogContent className="border border-border bg-card p-6 rounded-lg shadow-lg w-full max-w-sm">
                     <DialogHeader>
-                      <DialogTitle className="text-sm font-bold text-foreground">Add Portfolio Work</DialogTitle>
-                      <DialogDescription className="text-xs text-muted-foreground">Showcase pictures of jobs you did recently to attract clients.</DialogDescription>
+                      <DialogTitle className="text-base font-bold text-foreground">Add Portfolio Work</DialogTitle>
+                      <DialogDescription className="text-sm text-muted-foreground">Showcase pictures of jobs you did recently to attract clients.</DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handlePortfolioUpload} className="space-y-4 mt-2">
-                      <div className="space-y-1">
-                        <Label htmlFor="port-title" className="text-xs font-semibold text-foreground">Project Title</Label>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="port-title" className="text-sm font-semibold text-foreground">Project Title</Label>
                         <Input
                           id="port-title"
                           value={newPortfolioTitle}
                           onChange={(e) => setNewPortfolioTitle(e.target.value)}
                           placeholder="e.g. Master kitchen plumbing"
                           required
-                          className="text-xs h-9 rounded-lg"
+                          className="text-sm h-10 rounded-lg"
                         />
                       </div>
-                      <div className="space-y-1">
-                        <Label htmlFor="port-cat" className="text-xs font-semibold text-foreground">Work Category</Label>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="port-cat" className="text-sm font-semibold text-foreground">Work Category</Label>
                         <select
                           id="port-cat"
                           value={newPortfolioCategory}
                           onChange={(e) => setNewPortfolioCategory(e.target.value)}
-                          className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-xs focus-visible:outline-hidden dark:bg-card"
+                          className="flex h-10 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-sm focus-visible:outline-hidden dark:bg-card"
                         >
                           <option value="Wiring">Electrical Wiring</option>
                           <option value="Installation">Equipment Installation</option>
@@ -1942,9 +1942,9 @@ function DashboardInner() {
                       </div>
                       
                       <div className="rounded-lg border border-dashed border-border/40 p-5 text-center bg-muted/15">
-                        <ImageIcon className="h-6 w-6 text-primary mx-auto mb-1.5" />
-                        <p className="text-[10px] font-bold text-foreground">Select photos of your work</p>
-                        <p className="text-[8px] text-muted-foreground mt-0.5">PNG, JPG up to 5MB (Simulated upload)</p>
+                        <ImageIcon className="h-7 w-7 text-primary mx-auto mb-1.5" />
+                        <p className="text-sm font-semibold text-foreground">Select photos of your work</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">PNG, JPG up to 5MB (Simulated upload)</p>
                       </div>
 
                       <DialogFooter className="flex items-center justify-end gap-2 pt-2 border-t border-border/30">
@@ -1952,13 +1952,13 @@ function DashboardInner() {
                           type="button"
                           variant="ghost"
                           onClick={() => setIsAddPortfolioOpen(false)}
-                          className="text-xs h-9 px-4 rounded-lg cursor-pointer"
+                          className="text-sm h-10 px-4 rounded-lg cursor-pointer"
                         >
                           Cancel
                         </Button>
                         <Button
                           type="submit"
-                          className="text-xs h-9 px-4 rounded-lg font-medium cursor-pointer"
+                          className="text-sm h-10 px-4 rounded-lg font-semibold cursor-pointer"
                         >
                           Save Work
                         </Button>
