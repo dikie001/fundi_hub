@@ -3,7 +3,6 @@ import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { db } from "@/lib/db"
-import { fundis as mockFundis } from "@/lib/data"
 import { Navigation } from "@/components/navigation"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -96,26 +95,6 @@ export default async function FundiProfilePage({ params }: PageProps) {
       jobsCompleted: profile.jobsCompleted,
       successRate: profile.successRate,
       jobEarnings: profile.jobEarnings,
-    }
-  } else {
-    // 2. Fallback to Mock list
-    const mockFundi = mockFundis.find(
-      (f) =>
-        f.name.replace(/\s+/g, "-").toLowerCase() === resolvedParams.name.toLowerCase() ||
-        f.name.toLowerCase() === decodedName.toLowerCase()
-    )
-
-    if (mockFundi) {
-      fundiData = {
-        ...mockFundi,
-        skills: ["General Repairs", "Maintenance", "Consultation"],
-        yearsExperience: "5+ years",
-        serviceArea: "Nairobi",
-        portfolio: [],
-        jobsCompleted: mockFundi.reviews || 0,
-        successRate: 98,
-        jobEarnings: 0,
-      }
     }
   }
 

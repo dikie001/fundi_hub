@@ -1,7 +1,120 @@
 import { PrismaClient } from "@prisma/client"
-import { categories, fundis } from "../lib/data"
 
 const prisma = new PrismaClient()
+
+const categories = [
+  { name: "Plumbers", icon: "Wrench" },
+  { name: "Electricians", icon: "Zap" },
+  { name: "Welders", icon: "Flame" },
+  { name: "Carpenters", icon: "Hammer" },
+  { name: "Painters", icon: "Paintbrush" },
+  { name: "Mechanics", icon: "Wrench" },
+  { name: "CCTV Installers", icon: "Camera" },
+  { name: "Solar Technicians", icon: "Sun" },
+  { name: "Cleaners", icon: "Sparkles" },
+  { name: "Appliance Repair", icon: "Zap" },
+  { name: "Movers", icon: "Truck" },
+  { name: "WiFi Installers", icon: "Wifi" },
+]
+
+const fundis = [
+  {
+    name: "Joseph Kariuki",
+    title: "Expert Plumber",
+    category: "Plumbers",
+    rating: 4.9,
+    reviews: 287,
+    image: "",
+    phone: "+254712345678",
+    premiumLevel: "top" as const,
+    isEmergency: true,
+    isNearby: true,
+    description:
+      "15+ years experience in residential and commercial plumbing. 24/7 emergency services available.",
+    serviceArea: "Nairobi",
+    skills: "clogged drain, leak repair, piping, drainage installation",
+  },
+  {
+    name: "Moses Kipchoge",
+    title: "Master Electrician",
+    category: "Electricians",
+    rating: 4.8,
+    reviews: 234,
+    image: "",
+    phone: "+254723456789",
+    premiumLevel: "verified" as const,
+    isEmergency: true,
+    isNearby: false,
+    description:
+      "Certified electrician with expertise in wiring, installations, and troubleshooting.",
+    serviceArea: "Mombasa",
+    skills: "house wiring, electrical testing, power failure troubleshooting",
+  },
+  {
+    name: "Grace Mwangi",
+    title: "Professional Carpenter",
+    category: "Carpenters",
+    rating: 4.7,
+    reviews: 156,
+    image: "",
+    phone: "+254734567890",
+    premiumLevel: "none" as const,
+    isEmergency: false,
+    isNearby: true,
+    description:
+      "Custom furniture and home renovation specialist. Quality craftsmanship guaranteed.",
+    serviceArea: "Kisumu",
+    skills: "furniture repair, custom cabinets, woodworking, door installation",
+  },
+  {
+    name: "David Okonkwo",
+    title: "Certified Welder",
+    category: "Welders",
+    rating: 4.6,
+    reviews: 198,
+    image: "",
+    phone: "+254745678901",
+    premiumLevel: "top" as const,
+    isEmergency: false,
+    isNearby: false,
+    description:
+      "Skilled in all welding types. Industrial and domestic projects welcome.",
+    serviceArea: "Eldoret",
+    skills: "metal welding, gate repair, steel fabrication, structural welding",
+  },
+  {
+    name: "Patricia Adhiambo",
+    title: "Expert Painter",
+    category: "Painters",
+    rating: 4.5,
+    reviews: 167,
+    image: "",
+    phone: "+254756789012",
+    premiumLevel: "none" as const,
+    isEmergency: false,
+    isNearby: true,
+    description:
+      "Interior and exterior painting with attention to detail. Eco-friendly paints available.",
+    serviceArea: "Nairobi",
+    skills: "wall painting, house design, wall spray painting, wallpapering",
+  },
+  {
+    name: "Samuel Maina",
+    title: "Auto Mechanic",
+    category: "Mechanics",
+    rating: 4.8,
+    reviews: 312,
+    image: "",
+    phone: "+254767890123",
+    premiumLevel: "verified" as const,
+    isEmergency: true,
+    isNearby: false,
+    description:
+      "Engine repairs, maintenance, and diagnostics for all vehicle types.",
+    serviceArea: "Nakuru",
+    skills: "engine repair, car diagnostics, brake pad change, oil replacement",
+  },
+]
 
 async function main() {
   console.log("Cleaning up database...")
@@ -25,7 +138,7 @@ async function main() {
   console.log("Seeding fundis...")
   for (const fundi of fundis) {
     const email = `${fundi.name.toLowerCase().replace(/\s+/g, ".")}@example.com`
-    
+
     // Create User with role 'fundi'
     const user = await prisma.user.create({
       data: {
@@ -42,14 +155,15 @@ async function main() {
             reviews: fundi.reviews,
             image: fundi.image,
             trade: fundi.category,
-            yearsExperience: "5", // Default
-            serviceArea: "Nairobi", // Default
-            nationalId: "12345678", // Default
+            yearsExperience: "5",
+            serviceArea: fundi.serviceArea,
+            nationalId: "12345678",
             preferredContact: "whatsapp",
             premiumLevel: fundi.premiumLevel,
             isEmergency: fundi.isEmergency,
             isNearby: fundi.isNearby,
             description: fundi.description,
+            skills: fundi.skills,
           },
         },
       },

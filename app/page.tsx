@@ -13,7 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Fundi } from "@/lib/data"
+import { Fundi } from "@/lib/types"
 import {
   TrendingUp,
   MapPin,
@@ -122,34 +122,41 @@ export default function Home() {
       <Navigation />
 
       {/* Hero Section with Integrated Search */}
-      <section id="home" className="relative overflow-hidden bg-linear-to-b from-primary/10 to-transparent px-4 py-20 sm:px-6 lg:px-8 scroll-mt-24">
+      <section
+        id="home"
+        className="relative scroll-mt-24 overflow-hidden bg-linear-to-b from-primary/10 to-transparent px-4 py-20 sm:px-6 lg:px-8"
+      >
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
               Book Skilled Experts <span className="text-primary">Anytime</span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
-              Connect with verified, background-checked technical experts across Africa. Direct, transparent hiring with zero booking commissions.
+              Kenya’s trusted platform for finding skilled fundis. Verified
+              professionals.
             </p>
 
             {/* Integrated Search Bar */}
-            <div id="categories" className="relative mt-10 max-w-xl mx-auto scroll-mt-28">
+            <div
+              id="categories"
+              className="relative mx-auto mt-10 max-w-xl scroll-mt-28"
+            >
               <input
                 type="text"
                 placeholder="Search by category, task, name, or area (e.g. Plumber, Nairobi)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-14 w-full rounded-2xl border border-border bg-card/90 px-6 pr-12 text-sm font-semibold text-foreground shadow-lg focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden transition-all"
+                className="h-14 w-full rounded-2xl border border-border bg-card/90 px-6 pr-12 text-sm font-semibold text-foreground shadow-lg transition-all focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden"
               />
               {hasSearch ? (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground text-xs font-bold bg-muted hover:bg-muted/80 px-2.5 py-1.5 rounded-md transition-colors"
+                  className="absolute top-1/2 right-4 -translate-y-1/2 rounded-md bg-muted px-2.5 py-1.5 text-xs font-bold text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground"
                 >
                   Clear
                 </button>
               ) : (
-                <span className="absolute right-5 top-1/2 -translate-y-1/2 text-muted-foreground">
+                <span className="absolute top-1/2 right-5 -translate-y-1/2 text-muted-foreground">
                   🔍
                 </span>
               )}
@@ -168,14 +175,18 @@ export default function Home() {
 
       {/* Dynamic Search Results Section */}
       {hasSearch && (
-        <section className="border-b border-border px-4 py-16 sm:px-6 lg:px-8 bg-muted/10 animate-in fade-in slide-in-from-top-4 duration-300">
+        <section className="animate-in border-b border-border bg-muted/10 px-4 py-16 duration-300 fade-in slide-in-from-top-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl space-y-6">
             <div className="flex items-center justify-between border-b border-border/40 pb-4">
               <h3 className="text-lg font-bold text-foreground">
                 Search Results for &quot;{searchQuery}&quot;
               </h3>
-              <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary px-3 py-1 font-bold">
-                {filteredFundis.length} matching {filteredFundis.length === 1 ? 'expert' : 'experts'}
+              <Badge
+                variant="outline"
+                className="border-primary/30 bg-primary/10 px-3 py-1 font-bold text-primary"
+              >
+                {filteredFundis.length} matching{" "}
+                {filteredFundis.length === 1 ? "expert" : "experts"}
               </Badge>
             </div>
 
@@ -186,9 +197,14 @@ export default function Home() {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-border/60 rounded-2xl bg-card">
-                <p className="font-extrabold text-lg text-muted-foreground">No matching fundis found</p>
-                <p className="text-xs text-muted-foreground/60 mt-1.5">Try searching for other trades, skills, or locations (e.g. Plumbers, Mombasa)</p>
+              <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-card py-20 text-center">
+                <p className="text-lg font-extrabold text-muted-foreground">
+                  No matching fundis found
+                </p>
+                <p className="mt-1.5 text-xs text-muted-foreground/60">
+                  Try searching for other trades, skills, or locations (e.g.
+                  Plumbers, Mombasa)
+                </p>
               </div>
             )}
           </div>
@@ -197,7 +213,10 @@ export default function Home() {
 
       {/* Featured Fundis - Hidden when searching */}
       {!hasSearch && (
-        <section id="featured" className="border-b border-border px-4 py-16 sm:px-6 lg:px-8 scroll-mt-24">
+        <section
+          id="featured"
+          className="scroll-mt-24 border-b border-border px-4 py-16 sm:px-6 lg:px-8"
+        >
           <div className="mx-auto max-w-7xl">
             <div className="mb-8 flex items-center justify-between">
               <div>
@@ -249,7 +268,9 @@ export default function Home() {
                   <MapPin className="text-primary" />
                   Nearby Fundis
                 </h2>
-                <p className="mt-2 text-muted-foreground">Experts in your area</p>
+                <p className="mt-2 text-muted-foreground">
+                  Experts in your area
+                </p>
               </div>
             </div>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -290,7 +311,10 @@ export default function Home() {
       )}
 
       {/* Refer & Earn Banner */}
-      <section id="refer-earn" className="border-b border-border px-4 py-16 sm:px-6 lg:px-8 scroll-mt-24">
+      <section
+        id="refer-earn"
+        className="scroll-mt-24 border-b border-border px-4 py-16 sm:px-6 lg:px-8"
+      >
         <div className="mx-auto max-w-7xl">
           <Card className="border-2 border-primary/20 bg-linear-to-r from-primary/5 to-primary/10">
             <CardHeader>
@@ -370,7 +394,10 @@ export default function Home() {
       </section>
 
       {/* Membership Plans */}
-      <section id="for-fundis" className="border-b border-border px-4 py-16 sm:px-6 lg:px-8 scroll-mt-24">
+      <section
+        id="for-fundis"
+        className="scroll-mt-24 border-b border-border px-4 py-16 sm:px-6 lg:px-8"
+      >
         <div className="mx-auto max-w-7xl">
           <h2 className="mb-4 text-center text-3xl font-bold">
             Fundi Membership Plans
