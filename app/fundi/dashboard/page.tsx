@@ -457,52 +457,66 @@ function DashboardInner() {
       const reader = new FileReader()
       reader.onload = async (event) => {
         const base64String = event.target?.result as string
-        setAvatarProgress(20)
+        setAvatarProgress(10)
 
         try {
-          // Upload to ImageKit via our upload API
-          const uploadRes = await fetch("/api/upload", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
+          // Use XMLHttpRequest so we can track upload progress reliably
+          await new Promise<void>((resolve, reject) => {
+            const xhr = new XMLHttpRequest()
+            xhr.open("POST", "/api/upload")
+            xhr.setRequestHeader("Content-Type", "application/json")
+
+            xhr.upload.onprogress = (ev) => {
+              if (ev.lengthComputable) {
+                const percent = Math.round((ev.loaded / ev.total) * 100)
+                setAvatarProgress(percent)
+              }
+            }
+
+            xhr.onload = async () => {
+              if (xhr.status >= 200 && xhr.status < 300) {
+                try {
+                  const uploadData = JSON.parse(xhr.responseText)
+                  const imageUrl = uploadData.url || uploadData.data?.url
+                  if (!imageUrl) {
+                    reject(new Error("Upload succeeded but no URL returned"))
+                    return
+                  }
+
+                  // Save image URL to fundi profile
+                  const res = await fetch("/api/fundi/profile", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ image: imageUrl }),
+                  })
+
+                  if (res.ok) {
+                    setAvatarUrl(imageUrl)
+                    setAvatarProgress(100)
+                    fetchProfile()
+                    resolve()
+                  } else {
+                    const err = await res.json()
+                    reject(new Error(err?.error || "Failed to save avatar URL to profile"))
+                  }
+                } catch (err) {
+                  reject(err)
+                }
+              } else {
+                reject(new Error(`Upload failed with status ${xhr.status}`))
+              }
+            }
+
+            xhr.onerror = () => reject(new Error("Network error during upload"))
+
+            const payload = JSON.stringify({
               image: base64String,
               fileName: file.name,
               folder: "fundi_hub/profile_pics",
-            }),
+            })
+
+            xhr.send(payload)
           })
-
-          if (!uploadRes.ok) {
-            const err = await uploadRes.json()
-            console.error("Image upload failed:", err)
-            setIsAvatarUploading(false)
-            return
-          }
-
-          const uploadData = await uploadRes.json()
-          const imageUrl = uploadData.url || uploadData.data?.url
-          if (!imageUrl) {
-            console.error("Upload succeeded but no URL returned", uploadData)
-            setIsAvatarUploading(false)
-            return
-          }
-
-          setAvatarProgress(70)
-
-          // Save image URL to fundi profile
-          const res = await fetch("/api/fundi/profile", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ image: imageUrl }),
-          })
-
-          if (res.ok) {
-            setAvatarUrl(imageUrl)
-            setAvatarProgress(100)
-            fetchProfile()
-          } else {
-            const err = await res.json()
-            console.error("Failed to save avatar URL to profile:", err)
-          }
         } catch (error) {
           console.error("Avatar upload failed:", error)
         } finally {
