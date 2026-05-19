@@ -4,6 +4,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { db } from "@/lib/db"
 import { Navigation } from "@/components/navigation"
+import { ReviewsList } from "@/components/reviews-list"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -47,7 +48,15 @@ export default async function FundiProfilePage({ params }: PageProps) {
       role: "fundi",
     },
     include: {
-      fundiProfile: true,
+      fundiProfile: {
+        include: {
+          reviewsList: {
+            orderBy: {
+              createdAt: "desc",
+            },
+          },
+        },
+      },
     },
   })
 
@@ -95,6 +104,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
       jobsCompleted: profile.jobsCompleted,
       successRate: profile.successRate,
       jobEarnings: profile.jobEarnings,
+      reviewsList: (profile as any).reviewsList || [],
     }
   }
 
@@ -398,6 +408,13 @@ export default async function FundiProfilePage({ params }: PageProps) {
 
           </div>
 
+        </div>
+
+        <Separator className="my-10" />
+
+        {/* Reviews Section */}
+        <div className="mt-8">
+          <ReviewsList fundiUserId={fundiData.id} initialReviews={fundiData.reviewsList || []} />
         </div>
 
       </main>
