@@ -1117,62 +1117,59 @@ function DashboardInner() {
             if (!isEditingProfile) {
               return (
                 <div className="space-y-6 animate-in fade-in duration-300">
-                  {/* Premium Profile Header Banner Card */}
-                  <Card className="border border-border/40 overflow-hidden bg-card">
-                    {/* Banner Image Cover */}
-                    <div className="h-32 w-full bg-gradient-to-r from-primary/10 via-primary/5 to-secondary/10 relative">
-                      <div className="absolute top-4 right-4 flex gap-2">
+                  {/* Compact Responsive Profile Header Card */}
+                  <Card className="border border-border/40 bg-card p-6 shadow-xs">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
+                        {/* Avatar */}
+                        <div className="h-20 w-20 rounded-full border-2 border-border overflow-hidden bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-extrabold text-2xl shadow-sm flex-shrink-0">
+                          {avatarUrl ? (
+                            <img src={avatarUrl} alt="Avatar" className="h-full w-full object-cover" />
+                          ) : (
+                            user?.name?.[0]?.toUpperCase()
+                          )}
+                        </div>
+
+                        {/* Name and Tagline */}
+                        <div className="space-y-2">
+                          <div className="flex flex-col sm:flex-row items-center gap-2 justify-center sm:justify-start">
+                            <h2 className="text-xl font-extrabold text-foreground">{editName || user?.name || "Fundi Partner"}</h2>
+                            {profile?.premiumLevel !== "none" && (
+                              <ShieldCheck className="h-4.5 w-4.5 text-blue-500" />
+                            )}
+                          </div>
+                          <p className="text-sm text-foreground font-semibold">
+                            {editTitle || `${editTrade || "General"} Specialist`}
+                          </p>
+
+                          {/* Quick Action Badges */}
+                          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
+                            <span className="inline-flex items-center rounded-lg bg-primary/10 border border-primary/20 px-2.5 py-1 text-xs font-semibold text-primary">
+                              {editTrade || "General"}
+                            </span>
+                            <span className="inline-flex items-center rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-xs font-semibold text-emerald-500">
+                              {editYearsExp || "0"} Years Experience
+                            </span>
+                            <span className="inline-flex items-center rounded-lg bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 text-xs font-semibold text-amber-600 dark:text-amber-500 flex items-center gap-1">
+                              <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
+                              {profile?.rating.toFixed(1) || "5.0"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Edit Profile Button */}
+                      <div className="flex justify-center md:justify-end w-full md:w-auto">
                         <Button
                           onClick={() => {
                             setWizardStep(1)
                             setIsEditingProfile(true)
                           }}
-                          size="sm"
                           variant="outline"
-                          className="h-8.5 text-xs font-semibold rounded-lg bg-card/85 backdrop-blur-xs border-border/40 hover:bg-card cursor-pointer flex items-center gap-1.5 shadow-xs"
+                          className="h-10 text-sm font-semibold rounded-lg border-border/60 hover:bg-muted cursor-pointer flex items-center gap-2 shadow-xs w-full md:w-auto px-4"
                         >
-                          <PenLine className="h-3.5 w-3.5" /> Edit Profile
+                          <PenLine className="h-4 w-4" /> Edit Profile
                         </Button>
-                      </div>
-                    </div>
-
-                    <div className="px-6 pb-6 relative">
-                      {/* Avatar shifting upwards */}
-                      <div className="absolute -top-12 left-6 h-20 w-20 rounded-full border-4 border-card overflow-hidden bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-extrabold text-2xl shadow-md">
-                        {avatarUrl ? (
-                          <img src={avatarUrl} alt="Avatar" className="h-full w-full object-cover" />
-                        ) : (
-                          user?.name?.[0]?.toUpperCase()
-                        )}
-                      </div>
-
-                      {/* Header Info */}
-                      <div className="pt-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <h2 className="text-lg font-extrabold text-foreground">{editName || user?.name || "Fundi Partner"}</h2>
-                            {profile?.premiumLevel !== "none" && (
-                              <ShieldCheck className="h-4 w-4 text-blue-500" />
-                            )}
-                          </div>
-                          <p className="text-xs text-muted-foreground font-semibold">
-                            {editTitle || `${editTrade || "General"} Specialist`}
-                          </p>
-                        </div>
-
-                        {/* Quick Action Badges */}
-                        <div className="flex flex-wrap items-center gap-2.5">
-                          <span className="inline-flex items-center rounded-lg bg-primary/10 border border-primary/20 px-2.5 py-1 text-xs font-bold text-primary">
-                            {editTrade || "General"}
-                          </span>
-                          <span className="inline-flex items-center rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-xs font-bold text-emerald-500">
-                            {editYearsExp || "0"} Years Experience
-                          </span>
-                          <span className="inline-flex items-center rounded-lg bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 text-xs font-bold text-amber-600 dark:text-amber-500 flex items-center gap-1">
-                            <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
-                            {profile?.rating.toFixed(1) || "5.0"}
-                          </span>
-                        </div>
                       </div>
                     </div>
                   </Card>
@@ -1180,38 +1177,38 @@ function DashboardInner() {
                   {/* Profile details grid */}
                   <div className="grid gap-6 md:grid-cols-3">
                     {/* Identity and Service Area */}
-                    <Card className="border border-border/40 bg-card p-5 space-y-4">
-                      <div className="flex items-center justify-between border-b border-border/30 pb-2">
-                        <h3 className="text-xs font-semibold text-foreground">Identity & Scope</h3>
+                    <Card className="border border-border/40 bg-card p-6 space-y-4">
+                      <div className="flex items-center justify-between border-b border-border/30 pb-3">
+                        <h3 className="text-sm font-bold text-foreground">Identity & Scope</h3>
                         <Button 
                           onClick={() => { setWizardStep(1); setIsEditingProfile(true); }}
                           variant="ghost" 
-                          size="xs" 
-                          className="h-6 text-[10px] text-primary cursor-pointer"
+                          size="sm" 
+                          className="h-7 text-xs text-primary font-bold cursor-pointer animate-none hover:bg-transparent"
                         >
                           Edit
                         </Button>
                       </div>
 
-                      <div className="space-y-3">
-                        <div className="space-y-0.5">
-                          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Service Coverage</span>
-                          <p className="text-xs text-foreground flex items-center gap-1.5 font-medium">
-                            <MapPin className="h-3.5 w-3.5 text-primary" />
+                      <div className="space-y-4">
+                        <div className="space-y-1">
+                          <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Service Coverage</span>
+                          <p className="text-sm text-foreground flex items-center gap-2 font-medium">
+                            <MapPin className="h-4 w-4 text-primary" />
                             {editArea || "Not specified"}
                           </p>
                         </div>
-                        <div className="space-y-0.5">
-                          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Preferred Contact</span>
-                          <p className="text-xs text-foreground flex items-center gap-1.5 font-medium capitalize">
-                            <MessageSquare className="h-3.5 w-3.5 text-primary" />
+                        <div className="space-y-1">
+                          <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Preferred Contact</span>
+                          <p className="text-sm text-foreground flex items-center gap-2 font-medium capitalize">
+                            <MessageSquare className="h-4 w-4 text-primary" />
                             {preferredContact || "whatsapp"}
                           </p>
                         </div>
-                        <div className="space-y-0.5">
-                          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">National ID Status</span>
-                          <p className="text-xs text-foreground flex items-center gap-1.5 font-medium">
-                            <Shield className="h-3.5 w-3.5 text-primary" />
+                        <div className="space-y-1">
+                          <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">National ID Status</span>
+                          <p className="text-sm text-foreground flex items-center gap-2 font-medium">
+                            <Shield className="h-4 w-4 text-primary" />
                             Verified (ID ending in **8)
                           </p>
                         </div>
@@ -1219,37 +1216,37 @@ function DashboardInner() {
                     </Card>
 
                     {/* About Story & Skills */}
-                    <Card className="border border-border/40 bg-card p-5 space-y-4 md:col-span-2">
-                      <div className="flex items-center justify-between border-b border-border/30 pb-2">
-                        <h3 className="text-xs font-semibold text-foreground">Bio Story & Skills</h3>
+                    <Card className="border border-border/40 bg-card p-6 space-y-4 md:col-span-2">
+                      <div className="flex items-center justify-between border-b border-border/30 pb-3">
+                        <h3 className="text-sm font-bold text-foreground">Bio Story & Skills</h3>
                         <Button 
                           onClick={() => { setWizardStep(2); setIsEditingProfile(true); }}
                           variant="ghost" 
-                          size="xs" 
-                          className="h-6 text-[10px] text-primary cursor-pointer"
+                          size="sm" 
+                          className="h-7 text-xs text-primary font-bold cursor-pointer animate-none hover:bg-transparent"
                         >
                           Edit
                         </Button>
                       </div>
 
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         <div className="space-y-1">
-                          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Professional Bio</span>
-                          <p className="text-xs text-muted-foreground leading-relaxed">
+                          <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Professional Bio</span>
+                          <p className="text-sm text-muted-foreground leading-relaxed">
                             {editDesc || "No professional biography added yet. Update your profile step 2 to introduce yourself to clients!"}
                           </p>
                         </div>
                         
-                        <div className="space-y-1.5 pt-1">
-                          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Specializations</span>
-                          <div className="flex flex-wrap gap-1.5">
+                        <div className="space-y-2 pt-1">
+                          <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Specializations</span>
+                          <div className="flex flex-wrap gap-2">
                             {skills.map((tag) => (
-                              <span key={tag} className="inline-flex items-center rounded bg-secondary px-2.5 py-0.5 text-xs text-secondary-foreground font-medium">
+                              <span key={tag} className="inline-flex items-center rounded bg-secondary px-3 py-1 text-xs text-secondary-foreground font-medium border border-border/30">
                                 {tag}
                               </span>
                             ))}
                             {skills.length === 0 && (
-                              <span className="text-xs text-muted-foreground">No specialties selected.</span>
+                              <span className="text-sm text-muted-foreground">No specialties selected.</span>
                             )}
                           </div>
                         </div>
@@ -1259,21 +1256,21 @@ function DashboardInner() {
 
                   {/* Portfolio section */}
                   <Card className="border border-border/40 bg-card">
-                    <CardHeader className="py-4 border-b border-border/25 flex flex-row items-center justify-between">
+                    <CardHeader className="py-4 px-6 border-b border-border/25 flex flex-row items-center justify-between">
                       <div>
-                        <CardTitle className="text-sm font-semibold text-foreground">Works Showcase Portfolio ({portfolioItems.length})</CardTitle>
-                        <CardDescription className="text-xs mt-0.5">Real photos of recent customer repairs and installations you completed.</CardDescription>
+                        <CardTitle className="text-base font-bold text-foreground">Works Showcase Portfolio ({portfolioItems.length})</CardTitle>
+                        <CardDescription className="text-sm text-muted-foreground mt-0.5">Real photos of recent customer repairs and installations you completed.</CardDescription>
                       </div>
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => setIsAddPortfolioOpen(true)}
-                        className="h-8 text-xs font-medium rounded-lg cursor-pointer flex items-center gap-1"
+                        className="h-9 text-xs font-semibold rounded-lg cursor-pointer flex items-center gap-1.5"
                       >
-                        <Plus className="h-3.5 w-3.5" /> Add Project
+                        <Plus className="h-4 w-4" /> Add Project
                       </Button>
                     </CardHeader>
-                    <CardContent className="pt-5">
+                    <CardContent className="p-6">
                       {portfolioItems.length > 0 ? (
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                           {portfolioItems.map((item) => (
@@ -1283,9 +1280,9 @@ function DashboardInner() {
                                 alt={item.title}
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                               />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent p-3 flex flex-col justify-end">
-                                <span className="text-[9px] font-semibold uppercase text-primary tracking-wider">{item.category}</span>
-                                <h5 className="text-xs font-semibold text-white truncate">{item.title}</h5>
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent p-3.5 flex flex-col justify-end">
+                                <span className="text-xs font-semibold uppercase text-primary tracking-wider">{item.category}</span>
+                                <h5 className="text-sm font-bold text-white truncate">{item.title}</h5>
                               </div>
                             </div>
                           ))}
@@ -1293,27 +1290,27 @@ function DashboardInner() {
                       ) : (
                         <div className="text-center p-8 bg-muted/10 rounded-lg border border-dashed border-border/40">
                           <ImageIcon className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                          <p className="text-xs text-muted-foreground">No portfolio photos uploaded.</p>
+                          <p className="text-sm text-muted-foreground">No portfolio photos uploaded.</p>
                         </div>
                       )}
                     </CardContent>
                   </Card>
 
                   {/* Guided Profile builder checklist banner */}
-                  <Card className="border border-primary/20 bg-primary/5 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <Card className="border border-primary/20 bg-primary/5 p-5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center text-primary">
                         <CheckCircle2 className="h-5 w-5" />
                       </div>
                       <div>
-                        <h4 className="text-xs font-bold text-foreground">Guided Profile Builder</h4>
-                        <p className="text-[11px] text-muted-foreground">Your profile completion score is {completionScore}%. Complete all details to boost your matching priority.</p>
+                        <h4 className="text-sm font-bold text-foreground">Guided Profile Builder</h4>
+                        <p className="text-sm text-muted-foreground">Your profile completion score is {completionScore}%. Complete all details to boost your matching priority.</p>
                       </div>
                     </div>
                     <Button 
                       onClick={() => setIsEditingProfile(true)}
                       size="sm" 
-                      className="text-xs h-8.5 rounded-lg px-4 cursor-pointer"
+                      className="text-sm h-10 rounded-lg px-4 cursor-pointer"
                     >
                       {completionScore === 100 ? "Review Wizard Steps" : "Complete Profile Setup"}
                     </Button>
@@ -1389,13 +1386,13 @@ function DashboardInner() {
                 <div className="flex items-center justify-between border-b border-border/40 pb-4">
                   <div>
                     <h1 className="text-xl font-extrabold text-foreground">Profile Builder Wizard</h1>
-                    <p className="text-xs text-muted-foreground mt-0.5">Configure your public identity cards and showcase photos of completed jobs to potential clients.</p>
+                    <p className="text-sm text-muted-foreground mt-0.5">Configure your public identity cards and showcase photos of completed jobs to potential clients.</p>
                   </div>
                   <Button
                     onClick={() => setIsEditingProfile(false)}
                     variant="outline"
                     size="sm"
-                    className="h-8.5 text-xs rounded-lg cursor-pointer"
+                    className="h-10 text-sm rounded-lg cursor-pointer px-4"
                   >
                     View Profile Card
                   </Button>
@@ -1406,32 +1403,32 @@ function DashboardInner() {
                   <div className="flex items-center gap-4 flex-wrap">
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => setWizardStep(1)}>
                       <span className={cn(
-                        "flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold border transition-colors",
+                        "flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold border transition-colors",
                         wizardStep === 1 ? "bg-primary text-white border-primary" : "bg-card text-muted-foreground border-border"
                       )}>1</span>
-                      <span className={cn("text-xs font-medium", wizardStep === 1 ? "text-foreground" : "text-muted-foreground")}>Identity & Contact</span>
+                      <span className={cn("text-sm font-semibold", wizardStep === 1 ? "text-foreground" : "text-muted-foreground")}>Identity & Contact</span>
                     </div>
                     <div className="hidden sm:block h-px w-6 bg-border" />
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => setWizardStep(2)}>
                       <span className={cn(
-                        "flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold border transition-colors",
+                        "flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold border transition-colors",
                         wizardStep === 2 ? "bg-primary text-white border-primary" : "bg-card text-muted-foreground border-border"
                       )}>2</span>
-                      <span className={cn("text-xs font-medium", wizardStep === 2 ? "text-foreground" : "text-muted-foreground")}>Bio & Skills</span>
+                      <span className={cn("text-sm font-semibold", wizardStep === 2 ? "text-foreground" : "text-muted-foreground")}>Bio & Skills</span>
                     </div>
                     <div className="hidden sm:block h-px w-6 bg-border" />
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => setWizardStep(3)}>
                       <span className={cn(
-                        "flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold border transition-colors",
+                        "flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold border transition-colors",
                         wizardStep === 3 ? "bg-primary text-white border-primary" : "bg-card text-muted-foreground border-border"
                       )}>3</span>
-                      <span className={cn("text-xs font-medium", wizardStep === 3 ? "text-foreground" : "text-muted-foreground")}>Media & Showcase</span>
+                      <span className={cn("text-sm font-semibold", wizardStep === 3 ? "text-foreground" : "text-muted-foreground")}>Media & Showcase</span>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-lg px-2.5 py-1">
-                    <span className="text-xs font-medium text-primary">Completion:</span>
-                    <span className="text-xs font-bold text-primary">{completionScore}%</span>
+                  <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-lg px-3 py-1">
+                    <span className="text-sm font-semibold text-primary">Completion:</span>
+                    <span className="text-sm font-bold text-primary">{completionScore}%</span>
                   </div>
                 </div>
 
@@ -1441,7 +1438,7 @@ function DashboardInner() {
                   <div className="lg:col-span-3 space-y-5">
                     <Card className="border border-border/40 bg-card">
                       <CardHeader className="py-4">
-                        <CardTitle className="text-sm font-semibold text-foreground">
+                        <CardTitle className="text-base font-bold text-foreground">
                           {wizardStep === 1 && "Step 1: Professional Information"}
                           {wizardStep === 2 && "Step 2: About & Skills Tags"}
                           {wizardStep === 3 && "Step 3: Photos & Gallery Showcase"}
@@ -1453,53 +1450,53 @@ function DashboardInner() {
                         {wizardStep === 1 && (
                           <form onSubmit={handleUpdateProfile} className="space-y-4">
                             {updateSuccess && (
-                              <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3.5 py-2.5 text-xs text-emerald-500 flex items-center gap-2">
+                              <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3.5 py-2.5 text-sm text-emerald-500 flex items-center gap-2">
                                 <Check className="h-4 w-4" /> <span>{updateSuccess}</span>
                               </div>
                             )}
 
                             <div className="space-y-1.5">
-                              <Label htmlFor="edit-name" className="text-xs font-medium text-foreground">Full Name</Label>
+                              <Label htmlFor="edit-name" className="text-sm font-semibold text-foreground">Full Name</Label>
                               <Input
                                 id="edit-name"
                                 value={editName}
                                 onChange={(e) => setEditName(e.target.value)}
                                 placeholder="e.g. John Doe"
-                                className="w-full text-xs h-9 rounded-lg"
+                                className="w-full text-sm h-10 rounded-lg"
                                 required
                               />
                             </div>
 
                             <div className="space-y-1.5">
-                              <Label htmlFor="edit-title" className="text-xs font-medium text-foreground">Professional Tagline / Title</Label>
+                              <Label htmlFor="edit-title" className="text-sm font-semibold text-foreground">Professional Tagline / Title</Label>
                               <Input
                                 id="edit-title"
                                 value={editTitle}
                                 onChange={(e) => setEditTitle(e.target.value)}
                                 placeholder="e.g. Master Plumber & Piping Expert"
-                                className="w-full text-xs h-9 rounded-lg"
+                                className="w-full text-sm h-10 rounded-lg"
                                 required
                               />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                               <div className="space-y-1.5">
-                                <Label htmlFor="edit-trade" className="text-xs font-medium text-foreground">Primary Trade</Label>
+                                <Label htmlFor="edit-trade" className="text-sm font-semibold text-foreground">Primary Trade</Label>
                                 <Input
                                   id="edit-trade"
                                   value={editTrade}
                                   disabled
-                                  className="w-full text-xs h-9 rounded-lg bg-muted text-muted-foreground cursor-not-allowed"
+                                  className="w-full text-sm h-10 rounded-lg bg-muted text-muted-foreground cursor-not-allowed"
                                 />
                               </div>
                               <div className="space-y-1.5">
-                                <Label htmlFor="edit-exp" className="text-xs font-medium text-foreground">Experience (Years)</Label>
+                                <Label htmlFor="edit-exp" className="text-sm font-semibold text-foreground">Experience (Years)</Label>
                                 <Input
                                   id="edit-exp"
                                   value={editYearsExp}
                                   onChange={(e) => setEditYearsExp(e.target.value)}
                                   placeholder="e.g. 5 Years"
-                                  className="w-full text-xs h-9 rounded-lg"
+                                  className="w-full text-sm h-10 rounded-lg"
                                   required
                                 />
                               </div>
@@ -1507,23 +1504,23 @@ function DashboardInner() {
 
                             <div className="grid grid-cols-2 gap-4">
                               <div className="space-y-1.5">
-                                <Label htmlFor="edit-area" className="text-xs font-medium text-foreground">Service Area Coverage</Label>
+                                <Label htmlFor="edit-area" className="text-sm font-semibold text-foreground">Service Area Coverage</Label>
                                 <Input
                                   id="edit-area"
                                   value={editArea}
                                   onChange={(e) => setEditArea(e.target.value)}
                                   placeholder="e.g. Nairobi, Kilimani & Westlands"
-                                  className="w-full text-xs h-9 rounded-lg"
+                                  className="w-full text-sm h-10 rounded-lg"
                                   required
                                 />
                               </div>
                               <div className="space-y-1.5">
-                                <Label htmlFor="preferred-contact" className="text-xs font-medium text-foreground">Contact Preference</Label>
+                                <Label htmlFor="preferred-contact" className="text-sm font-semibold text-foreground">Contact Preference</Label>
                                 <select
                                   id="preferred-contact"
                                   value={preferredContact}
                                   onChange={(e) => setPreferredContact(e.target.value)}
-                                  className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-xs focus-visible:outline-hidden dark:bg-card"
+                                  className="flex h-10 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-sm focus-visible:outline-hidden dark:bg-card"
                                 >
                                   <option value="whatsapp">WhatsApp Texting</option>
                                   <option value="phone">Direct Phone Call</option>
@@ -1535,11 +1532,11 @@ function DashboardInner() {
                             <Button
                               type="submit"
                               disabled={isUpdating}
-                              className="w-full font-medium h-9 text-xs rounded-lg cursor-pointer mt-1"
+                              className="w-full font-semibold h-10 text-sm rounded-lg cursor-pointer mt-1"
                             >
                               {isUpdating ? (
                                 <>
-                                  <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> Saving Details...
+                                  <Loader2 className="h-4 w-4 animate-spin mr-2" /> Saving Details...
                                 </>
                               ) : (
                                 "Save & Continue"
@@ -1552,34 +1549,34 @@ function DashboardInner() {
                         {wizardStep === 2 && (
                           <div className="space-y-5">
                             <div className="space-y-1.5">
-                              <Label htmlFor="edit-desc" className="text-xs font-medium text-foreground">Professional Description / Bio</Label>
+                              <Label htmlFor="edit-desc" className="text-sm font-semibold text-foreground">Professional Description / Bio</Label>
                               <textarea
                                 id="edit-desc"
                                 value={editDesc}
                                 onChange={(e) => setEditDesc(e.target.value)}
                                 placeholder="Describe your expertise, typical jobs you take..."
-                                className="flex min-h-24 w-full rounded-lg border border-input bg-transparent px-3 py-2 text-xs shadow-xs placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/10"
+                                className="flex min-h-24 w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm shadow-xs placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/10"
                                 required
                               />
                             </div>
 
                             <div className="space-y-2">
-                              <Label className="text-xs font-medium text-foreground">Skills / Specialty Badges</Label>
-                              <div className="flex flex-wrap gap-1.5 p-3 rounded-lg border border-border/40 bg-muted/10 min-h-12">
+                              <Label className="text-sm font-semibold text-foreground">Skills / Specialty Badges</Label>
+                              <div className="flex flex-wrap gap-2 p-3 rounded-lg border border-border/40 bg-muted/10 min-h-12">
                                 {skills.map((tag) => (
-                                  <span key={tag} className="inline-flex items-center gap-1 rounded bg-secondary px-2 py-0.5 text-xs text-secondary-foreground font-medium">
+                                  <span key={tag} className="inline-flex items-center gap-1.5 rounded bg-secondary px-3 py-1 text-sm text-secondary-foreground font-medium border border-border/30">
                                     {tag}
                                     <button
                                       type="button"
                                       onClick={() => handleRemoveSkill(tag)}
                                       className="text-muted-foreground hover:text-destructive cursor-pointer"
                                     >
-                                      <Trash2 className="h-3 w-3" />
+                                      <Trash2 className="h-3.5 w-3.5" />
                                     </button>
                                   </span>
                                 ))}
                                 {skills.length === 0 && (
-                                  <span className="text-xs text-muted-foreground">No specialty badges added yet.</span>
+                                  <span className="text-sm text-muted-foreground">No specialty badges added yet.</span>
                                 )}
                               </div>
                               
@@ -1588,7 +1585,7 @@ function DashboardInner() {
                                   value={newSkillInput}
                                   onChange={(e) => setNewSkillInput(e.target.value)}
                                   placeholder="e.g. Toilet Repair, Leak Tracing"
-                                  className="text-xs h-9"
+                                  className="text-sm h-10"
                                   onKeyDown={(e) => {
                                     if (e.key === "Enter") {
                                       e.preventDefault();
@@ -1608,7 +1605,7 @@ function DashboardInner() {
                                     }
                                   }}
                                   size="sm"
-                                  className="h-9 px-3.5 rounded-lg text-xs"
+                                  className="h-10 px-4 rounded-lg text-sm font-semibold"
                                 >
                                   Add
                                 </Button>
@@ -1616,7 +1613,7 @@ function DashboardInner() {
                             </div>
 
                             <div className="flex items-center justify-between gap-4 pt-2 border-t border-border/30">
-                              <Button type="button" variant="outline" onClick={() => setWizardStep(1)} className="text-xs h-9 rounded-lg">
+                              <Button type="button" variant="outline" onClick={() => setWizardStep(1)} className="text-sm h-10 rounded-lg px-4">
                                 Back
                               </Button>
                               <Button
@@ -1636,7 +1633,7 @@ function DashboardInner() {
                                     setIsUpdating(false)
                                   }
                                 }}
-                                className="text-xs h-9 rounded-lg px-6"
+                                className="text-sm h-10 rounded-lg px-6"
                               >
                                 Continue to Showcase
                               </Button>
@@ -1649,26 +1646,26 @@ function DashboardInner() {
                           <div className="space-y-5">
                             
                             {/* 1. Avatar upload with progress bar */}
-                            <div className="rounded-lg border border-border p-4 bg-muted/10 space-y-3">
+                            <div className="rounded-lg border border-border p-5 bg-muted/10 space-y-4">
                               <div className="flex items-center justify-between">
-                                <h4 className="text-xs font-semibold text-foreground">1. Face Avatar Photo</h4>
-                                {avatarDone && <span className="text-[10px] text-emerald-500 font-medium">Completed</span>}
+                                <h4 className="text-sm font-bold text-foreground">1. Face Avatar Photo</h4>
+                                {avatarDone && <span className="text-xs text-emerald-500 font-semibold">Completed</span>}
                               </div>
                               <div className="flex items-center gap-4">
-                                <div className="relative h-14 w-14 rounded-full border border-border/40 overflow-hidden flex items-center justify-center bg-muted flex-shrink-0">
+                                <div className="relative h-16 w-16 rounded-full border border-border/40 overflow-hidden flex items-center justify-center bg-muted flex-shrink-0">
                                   {avatarUrl ? (
                                     <img src={avatarUrl} alt="Avatar Preview" className="h-full w-full object-cover" />
                                   ) : (
-                                    <span className="text-lg font-black text-muted-foreground">{user?.name?.[0]?.toUpperCase()}</span>
+                                    <span className="text-xl font-black text-muted-foreground">{user?.name?.[0]?.toUpperCase()}</span>
                                   )}
                                   {isAvatarUploading && (
-                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-[10px] text-white font-bold">
+                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-xs text-white font-bold">
                                       {avatarProgress}%
                                     </div>
                                   )}
                                 </div>
-                                <div className="flex-1 space-y-1">
-                                  <p className="text-[11px] text-muted-foreground leading-normal">Configure a high quality face picture for your public search listings.</p>
+                                <div className="flex-1 space-y-2">
+                                  <p className="text-sm text-muted-foreground leading-normal">Configure a high quality face picture for your public search listings.</p>
                                   <div className="relative">
                                     <input
                                       type="file"
@@ -1682,11 +1679,11 @@ function DashboardInner() {
                                       type="button"
                                       variant="outline"
                                       size="sm"
-                                      className="h-8 text-xs cursor-pointer"
+                                      className="h-10 text-sm font-semibold cursor-pointer"
                                       asChild
                                     >
-                                      <label htmlFor="avatar-upload-file" className="cursor-pointer flex items-center gap-1.5">
-                                        <Camera className="h-3.5 w-3.5" />
+                                      <label htmlFor="avatar-upload-file" className="cursor-pointer flex items-center gap-1.5 px-4">
+                                        <Camera className="h-4 w-4" />
                                         {isAvatarUploading ? "Uploading..." : "Upload Avatar"}
                                       </label>
                                     </Button>
@@ -1695,11 +1692,11 @@ function DashboardInner() {
                               </div>
                               {isAvatarUploading && (
                                 <div className="space-y-1">
-                                  <div className="flex items-center justify-between text-[9px] text-muted-foreground font-mono">
+                                  <div className="flex items-center justify-between text-xs text-muted-foreground font-mono">
                                     <span>Transferring picture...</span>
                                     <span>{avatarProgress}%</span>
                                   </div>
-                                  <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
+                                  <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
                                     <div className="h-full bg-primary rounded-full transition-all duration-150" style={{ width: `${avatarProgress}%` }} />
                                   </div>
                                 </div>
@@ -1707,37 +1704,37 @@ function DashboardInner() {
                             </div>
 
                             {/* 2. Portfolio manager */}
-                            <div className="rounded-lg border border-border p-4 bg-muted/10 space-y-4">
+                            <div className="rounded-lg border border-border p-5 bg-muted/10 space-y-4">
                               <div className="flex items-center justify-between">
-                                <h4 className="text-xs font-semibold text-foreground">2. Project Showcase Photos</h4>
+                                <h4 className="text-sm font-bold text-foreground">2. Project Showcase Photos</h4>
                                 <Button
                                   type="button"
-                                  size="xs"
+                                  size="sm"
                                   variant="outline"
                                   onClick={() => setIsAddPortfolioOpen(true)}
-                                  className="h-7 text-[10px] font-medium rounded-lg cursor-pointer"
+                                  className="h-9 text-xs font-semibold rounded-lg cursor-pointer"
                                 >
                                   + Add Project
                                 </Button>
                               </div>
 
                               {isPortfolioUploading && (
-                                <div className="rounded-lg border border-border/40 bg-card p-3.5 space-y-2">
+                                <div className="rounded-lg border border-border/40 bg-card p-4 space-y-2.5">
                                   <div className="flex items-start justify-between gap-3">
                                     <div className="flex items-center gap-2">
                                       <FileCheck className="h-5 w-5 text-primary flex-shrink-0 animate-bounce" />
                                       <div className="min-w-0">
-                                        <p className="text-xs font-medium text-foreground truncate">{uploadFileName}</p>
-                                        <p className="text-[10px] text-muted-foreground">{uploadFileSize}</p>
+                                        <p className="text-sm font-semibold text-foreground truncate">{uploadFileName}</p>
+                                        <p className="text-xs text-muted-foreground">{uploadFileSize}</p>
                                       </div>
                                     </div>
-                                    <span className="text-xs font-semibold text-primary">{portfolioProgress}%</span>
+                                    <span className="text-sm font-bold text-primary">{portfolioProgress}%</span>
                                   </div>
-                                  <div className="space-y-1">
-                                    <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                                  <div className="space-y-1.5">
+                                    <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                                       <div className="h-full bg-primary rounded-full transition-all duration-75" style={{ width: `${portfolioProgress}%` }} />
                                     </div>
-                                    <p className="text-[9px] text-muted-foreground">Uploading project work mockup photo...</p>
+                                    <p className="text-xs text-muted-foreground">Uploading project work mockup photo...</p>
                                   </div>
                                 </div>
                               )}
@@ -1751,23 +1748,23 @@ function DashboardInner() {
                                         alt={item.title}
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                                       />
-                                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent p-2.5 flex flex-col justify-end">
-                                        <span className="text-[9px] font-medium uppercase text-primary tracking-wider">{item.category}</span>
-                                        <h5 className="text-[11px] font-medium text-white truncate">{item.title}</h5>
+                                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent p-3 flex flex-col justify-end">
+                                        <span className="text-xs font-semibold uppercase text-primary tracking-wider">{item.category}</span>
+                                        <h5 className="text-sm font-bold text-white truncate">{item.title}</h5>
                                       </div>
                                     </div>
                                   ))}
                                 </div>
                               ) : (
                                 <div className="text-center p-6 bg-card rounded-lg border border-dashed border-border/40">
-                                  <ImageIcon className="h-6 w-6 text-muted-foreground mx-auto mb-1.5" />
-                                  <p className="text-xs text-muted-foreground">No portfolio photos uploaded.</p>
+                                  <ImageIcon className="h-8 w-8 text-muted-foreground mx-auto mb-1.5" />
+                                  <p className="text-sm text-muted-foreground">No portfolio photos uploaded.</p>
                                 </div>
                               )}
                             </div>
 
                             <div className="flex items-center justify-between gap-4 pt-2 border-t border-border/30">
-                              <Button type="button" variant="outline" onClick={() => setWizardStep(2)} className="text-xs h-9 rounded-lg">
+                              <Button type="button" variant="outline" onClick={() => setWizardStep(2)} className="text-sm h-10 rounded-lg px-4">
                                 Back
                               </Button>
                               <Button
@@ -1777,7 +1774,7 @@ function DashboardInner() {
                                   setTimeout(() => setUpdateSuccess(""), 4000);
                                   setIsEditingProfile(false);
                                 }}
-                                className="text-xs h-9 rounded-lg px-6"
+                                className="text-sm h-10 rounded-lg px-6"
                               >
                                 Finish Profile
                               </Button>
