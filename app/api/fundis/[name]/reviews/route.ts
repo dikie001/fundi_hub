@@ -51,6 +51,18 @@ export async function GET(
   }
 }
 
+function getClientIp(request: NextRequest): string {
+  const forwardedFor = request.headers.get("x-forwarded-for")
+  if (forwardedFor) {
+    return forwardedFor.split(",")[0].trim()
+  }
+  const realIp = request.headers.get("x-real-ip")
+  if (realIp) {
+    return realIp.trim()
+  }
+  return (request as any).ip || "127.0.0.1"
+}
+
 export async function POST(
   request: NextRequest,
   props: { params: Promise<{ name: string }> }
@@ -81,16 +93,38 @@ export async function POST(
     }
 
     const profile = user.fundiProfile
+    const ip = getClientIp(request)
 
-    // Create review
-    const review = await db.review.create({
-      data: {
+    // Check if review by same IP already exists for this fundi profile
+    const existingReview = await db.review.findFirst({
+      where: {
         fundiProfileId: profile.id,
-        reviewerName,
-        rating: ratingVal,
-        comment,
+        ip: ip,
       },
     })
+
+    let review
+    if (existingReview) {
+      review = await db.review.update({
+        where: { id: existingReview.id },
+        data: {
+          reviewerName,
+          rating: ratingVal,
+          comment,
+          createdAt: new Date(),
+        },
+      })
+    } else {
+      review = await db.review.create({
+        data: {
+          fundiProfileId: profile.id,
+          reviewerName,
+          rating: ratingVal,
+          comment,
+          ip,
+        },
+      })
+    }
 
     // Fetch all reviews to recalculate profile rating
     const allReviews = await db.review.findMany({
@@ -99,7 +133,7 @@ export async function POST(
 
     const count = allReviews.length
     const sum = allReviews.reduce((acc, curr) => acc + curr.rating, 0)
-    const newRating = parseFloat((sum / count).toFixed(1))
+    const newRating = count > 0 ? parseFloat((sum / count).toFixed(1)) : 5.0
 
     // Update profile with new stats
     await db.fundiProfile.update({
@@ -110,9 +144,9 @@ export async function POST(
       },
     })
 
-    return NextResponse.json(review, { status: 201 })
+    return NextResponse.json(review, { status: existingReview ? 200 : 201 })
   } catch (error) {
-    console.error("Error creating review:", error)
+    console.error("Error creating/updating review:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

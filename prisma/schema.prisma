@@ -113,5 +113,6 @@ model Review {
   reviewerName   String
   rating         Int          @default(5)
   comment        String       @db.Text
+  ip             String?
   createdAt      DateTime     @default(now())
 }

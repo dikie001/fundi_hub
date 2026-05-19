@@ -53,7 +53,14 @@ export function ReviewsList({ fundiUserId, initialReviews }: ReviewsListProps) {
       }
 
       const newReview = await res.json()
-      setReviews([newReview, ...reviews])
+      setReviews((prevReviews) => {
+        const exists = prevReviews.some((r) => r.id === newReview.id)
+        if (exists) {
+          const filtered = prevReviews.filter((r) => r.id !== newReview.id)
+          return [newReview, ...filtered]
+        }
+        return [newReview, ...prevReviews]
+      })
       setReviewerName("")
       setRating(5)
       setComment("")
