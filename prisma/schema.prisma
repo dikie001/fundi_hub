@@ -67,6 +67,8 @@ model FundiProfile {
   isEmergency      Boolean      @default(false)
   isNearby         Boolean      @default(false)
   description      String?      @db.Text
+  skills           String       @default("")
+  portfolio        String       @default("[]")
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
 }
@@ -80,6 +82,7 @@ model ClientProfile {
   projectLocation String?
   budgetRange     String?
   urgency         String?
+   image String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }

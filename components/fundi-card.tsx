@@ -18,17 +18,27 @@ interface FundiCardProps {
 }
 
 export function FundiCard({ fundi }: FundiCardProps) {
+  const initials = fundi.name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+
   return (
     <Card className="overflow-hidden transition-all hover:shadow-lg">
       <CardHeader className="pb-3">
         <div className="flex gap-3">
-          <div className="relative h-16 w-16 flex-shrink-0">
-            <Image
-              src={fundi.image}
-              alt={fundi.name}
-              fill
-              className="rounded-full object-cover"
-            />
+          <div className="relative flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-primary/10">
+            {fundi.image ? (
+              <Image
+                src={fundi.image}
+                alt={fundi.name}
+                fill
+                className="rounded-full object-cover"
+              />
+            ) : (
+              <span className="text-sm font-bold text-primary">{initials}</span>
+            )}
           </div>
           <div className="flex-grow">
             <div className="flex items-start justify-between gap-2">
