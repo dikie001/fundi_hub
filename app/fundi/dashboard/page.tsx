@@ -33,7 +33,12 @@ import {
   Info,
   Sun,
   Moon,
-  Download
+  Download,
+  Plus,
+  Trash2,
+  Camera,
+  CheckCircle2,
+  FileCheck
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -184,6 +189,19 @@ function DashboardInner() {
   const [newPortfolioCategory, setNewPortfolioCategory] = useState("General")
   const [isAddPortfolioOpen, setIsAddPortfolioOpen] = useState(false)
 
+  // Profile Wizard / Completions States
+  const [wizardStep, setWizardStep] = useState(1)
+  const [skills, setSkills] = useState<string[]>(["Emergency Repair", "Leak Detection", "Pipe Installation"])
+  const [newSkillInput, setNewSkillInput] = useState("")
+  const [avatarUrl, setAvatarUrl] = useState("")
+  const [avatarProgress, setAvatarProgress] = useState(0)
+  const [isAvatarUploading, setIsAvatarUploading] = useState(false)
+  const [portfolioProgress, setPortfolioProgress] = useState(0)
+  const [isPortfolioUploading, setIsPortfolioUploading] = useState(false)
+  const [uploadFileName, setUploadFileName] = useState("")
+  const [uploadFileSize, setUploadFileSize] = useState("")
+  const [preferredContact, setPreferredContact] = useState("whatsapp")
+
   // Theme helper
   const { setTheme, resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -210,6 +228,10 @@ function DashboardInner() {
         setEditYearsExp(data.user.fundiProfile?.yearsExperience || "")
         setEditArea(data.user.fundiProfile?.serviceArea || "")
         setEditDesc(data.user.fundiProfile?.description || "")
+        setPreferredContact(data.user.fundiProfile?.preferredContact || "whatsapp")
+        if (data.user.fundiProfile?.image) {
+          setAvatarUrl(data.user.fundiProfile.image)
+        }
       } else {
         window.location.href = "/"
       }
@@ -256,14 +278,19 @@ function DashboardInner() {
           trade: editTrade,
           yearsExperience: editYearsExp,
           serviceArea: editArea,
-          description: editDesc
+          description: editDesc,
+          preferredContact: preferredContact
         })
       })
 
       if (response.ok) {
-        setUpdateSuccess("Profile updated successfully!")
+        setUpdateSuccess("Profile details saved successfully!")
         fetchProfile()
         setTimeout(() => setUpdateSuccess(""), 4000)
+        // Transition to next wizard step on success
+        if (wizardStep === 1) {
+          setWizardStep(2)
+        }
       } else {
         const data = await response.json()
         alert(data.error || "Failed to update profile details.")
@@ -273,6 +300,81 @@ function DashboardInner() {
     } finally {
       setIsUpdating(false)
     }
+  }
+
+  // Specialty skills tag deletion helper
+  const handleRemoveSkill = (tag: string) => {
+    setSkills((prev) => prev.filter((s) => s !== tag))
+  }
+
+  // Avatar upload simulation helper
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setIsAvatarUploading(true)
+      setAvatarProgress(0)
+      
+      let progress = 0
+      const interval = setInterval(() => {
+        progress += 10
+        setAvatarProgress(progress)
+        if (progress >= 100) {
+          clearInterval(interval)
+          // Set simulated user avatar URL
+          const newAvatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80"
+          setAvatarUrl(newAvatar)
+          setIsAvatarUploading(false)
+          
+          // Call API to save avatar url
+          fetch("/api/fundi/profile", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: newAvatar })
+          }).then(() => {
+            fetchProfile()
+          })
+        }
+      }, 150)
+    }
+  }
+
+  // Portfolio simulated upload
+  const handlePortfolioUpload = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newPortfolioTitle.trim()) return
+
+    setIsPortfolioUploading(true)
+    setPortfolioProgress(0)
+    setUploadFileName(`${newPortfolioTitle.toLowerCase().replace(/\s+/g, "_")}.jpg`)
+    setUploadFileSize("1.8 MB")
+
+    let progress = 0
+    const interval = setInterval(() => {
+      progress += 5
+      setPortfolioProgress(progress)
+      if (progress >= 100) {
+        clearInterval(interval)
+        
+        const galleryImages = [
+          "https://images.unsplash.com/photo-1581092921461-eab62e97a780?w=600&auto=format&fit=crop&q=60",
+          "https://images.unsplash.com/photo-1621905252507-b354bc25edac?w=600&auto=format&fit=crop&q=60",
+          "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&auto=format&fit=crop&q=60",
+          "https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=600&auto=format&fit=crop&q=60"
+        ]
+        const randomImg = galleryImages[portfolioItems.length % galleryImages.length]
+
+        const newItem = {
+          id: `port-${Date.now()}`,
+          title: newPortfolioTitle,
+          category: newPortfolioCategory,
+          image: randomImg
+        }
+
+        setPortfolioItems((prev) => [newItem, ...prev])
+        setNewPortfolioTitle("")
+        setIsPortfolioUploading(false)
+        setIsAddPortfolioOpen(false)
+      }
+    }, 80)
   }
 
   // Handle Badge Activation Payment Flow
@@ -990,272 +1092,605 @@ function DashboardInner() {
           )}
 
           {/* PROFILE & PORTFOLIO TAB CONTENT */}
-          {activeTab === "profile" && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-              
-              <div className="border-b border-border/40 pb-4">
-                <h1 className="text-xl font-extrabold text-foreground">Profile & Works Portfolio</h1>
-                <p className="text-xs text-muted-foreground mt-0.5">Configure your public identity cards and showcase photos of completed jobs to potential clients.</p>
-              </div>
+          {activeTab === "profile" && (() => {
+            const basicInfoDone = !!(editName && editTitle && editTrade)
+            const serviceAreaDone = !!(editYearsExp && editArea)
+            const bioDone = !!(editDesc && editDesc.length > 10)
+            const preferredContactDone = !!preferredContact
+            const avatarDone = !!(avatarUrl || profile?.image)
+            const portfolioDone = portfolioItems.length > 0
 
-              <div className="grid gap-6 lg:grid-cols-5">
+            const calculateCompletionScore = () => {
+              let score = 0
+              if (basicInfoDone) score += 20
+              if (serviceAreaDone) score += 20
+              if (bioDone) score += 20
+              if (preferredContactDone) score += 15
+              if (avatarDone) score += 15
+              if (portfolioDone) score += 10
+              return score
+            }
+            const completionScore = calculateCompletionScore()
+
+            return (
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 
-                {/* Form column */}
-                <div className="lg:col-span-3 space-y-5">
-                  <Card className="border border-border/40 bg-card">
-                    <CardHeader className="py-4">
-                      <CardTitle className="text-sm font-bold text-foreground">Professional Information</CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <form onSubmit={handleUpdateProfile} className="space-y-4">
-                        {updateSuccess && (
-                          <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3.5 py-2.5 text-xs text-emerald-500 flex items-center gap-2">
-                            <Check className="h-4 w-4" /> <span>{updateSuccess}</span>
+                <div className="border-b border-border/40 pb-4">
+                  <h1 className="text-xl font-extrabold text-foreground">Profile & Works Portfolio</h1>
+                  <p className="text-xs text-muted-foreground mt-0.5">Configure your public identity cards and showcase photos of completed jobs to potential clients.</p>
+                </div>
+
+                {/* Dynamic Stepper Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between border border-border/40 bg-muted/10 p-4 rounded-xl gap-4">
+                  <div className="flex items-center gap-4 flex-wrap">
+                    <div className="flex items-center gap-2 cursor-pointer" onClick={() => setWizardStep(1)}>
+                      <span className={cn(
+                        "flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold border transition-colors",
+                        wizardStep === 1 ? "bg-primary text-white border-primary" : "bg-card text-muted-foreground border-border"
+                      )}>1</span>
+                      <span className={cn("text-xs font-medium", wizardStep === 1 ? "text-foreground" : "text-muted-foreground")}>Identity & Contact</span>
+                    </div>
+                    <div className="hidden sm:block h-px w-6 bg-border" />
+                    <div className="flex items-center gap-2 cursor-pointer" onClick={() => setWizardStep(2)}>
+                      <span className={cn(
+                        "flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold border transition-colors",
+                        wizardStep === 2 ? "bg-primary text-white border-primary" : "bg-card text-muted-foreground border-border"
+                      )}>2</span>
+                      <span className={cn("text-xs font-medium", wizardStep === 2 ? "text-foreground" : "text-muted-foreground")}>Bio & Skills</span>
+                    </div>
+                    <div className="hidden sm:block h-px w-6 bg-border" />
+                    <div className="flex items-center gap-2 cursor-pointer" onClick={() => setWizardStep(3)}>
+                      <span className={cn(
+                        "flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold border transition-colors",
+                        wizardStep === 3 ? "bg-primary text-white border-primary" : "bg-card text-muted-foreground border-border"
+                      )}>3</span>
+                      <span className={cn("text-xs font-medium", wizardStep === 3 ? "text-foreground" : "text-muted-foreground")}>Media & Showcase</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-lg px-2.5 py-1">
+                    <span className="text-xs font-medium text-primary">Completion:</span>
+                    <span className="text-xs font-bold text-primary">{completionScore}%</span>
+                  </div>
+                </div>
+
+                <div className="grid gap-6 lg:grid-cols-5">
+                  
+                  {/* Form column (Identity, Bio & Skills, or Media & Gallery) */}
+                  <div className="lg:col-span-3 space-y-5">
+                    <Card className="border border-border/40 bg-card">
+                      <CardHeader className="py-4">
+                        <CardTitle className="text-sm font-semibold text-foreground">
+                          {wizardStep === 1 && "Step 1: Professional Information"}
+                          {wizardStep === 2 && "Step 2: About & Skills Tags"}
+                          {wizardStep === 3 && "Step 3: Photos & Gallery Showcase"}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        
+                        {/* Step 1: Basic professional information */}
+                        {wizardStep === 1 && (
+                          <form onSubmit={handleUpdateProfile} className="space-y-4">
+                            {updateSuccess && (
+                              <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3.5 py-2.5 text-xs text-emerald-500 flex items-center gap-2">
+                                <Check className="h-4 w-4" /> <span>{updateSuccess}</span>
+                              </div>
+                            )}
+
+                            <div className="space-y-1.5">
+                              <Label htmlFor="edit-name" className="text-xs font-medium text-foreground">Full Name</Label>
+                              <Input
+                                id="edit-name"
+                                value={editName}
+                                onChange={(e) => setEditName(e.target.value)}
+                                placeholder="e.g. John Doe"
+                                className="w-full text-xs h-9 rounded-lg"
+                                required
+                              />
+                            </div>
+
+                            <div className="space-y-1.5">
+                              <Label htmlFor="edit-title" className="text-xs font-medium text-foreground">Professional Tagline / Title</Label>
+                              <Input
+                                id="edit-title"
+                                value={editTitle}
+                                onChange={(e) => setEditTitle(e.target.value)}
+                                placeholder="e.g. Master Plumber & Piping Expert"
+                                className="w-full text-xs h-9 rounded-lg"
+                                required
+                              />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-1.5">
+                                <Label htmlFor="edit-trade" className="text-xs font-medium text-foreground">Primary Trade</Label>
+                                <Input
+                                  id="edit-trade"
+                                  value={editTrade}
+                                  disabled
+                                  className="w-full text-xs h-9 rounded-lg bg-muted text-muted-foreground cursor-not-allowed"
+                                />
+                              </div>
+                              <div className="space-y-1.5">
+                                <Label htmlFor="edit-exp" className="text-xs font-medium text-foreground">Experience (Years)</Label>
+                                <Input
+                                  id="edit-exp"
+                                  value={editYearsExp}
+                                  onChange={(e) => setEditYearsExp(e.target.value)}
+                                  placeholder="e.g. 5 Years"
+                                  className="w-full text-xs h-9 rounded-lg"
+                                  required
+                                />
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-1.5">
+                                <Label htmlFor="edit-area" className="text-xs font-medium text-foreground">Service Area Coverage</Label>
+                                <Input
+                                  id="edit-area"
+                                  value={editArea}
+                                  onChange={(e) => setEditArea(e.target.value)}
+                                  placeholder="e.g. Nairobi, Kilimani & Westlands"
+                                  className="w-full text-xs h-9 rounded-lg"
+                                  required
+                                />
+                              </div>
+                              <div className="space-y-1.5">
+                                <Label htmlFor="preferred-contact" className="text-xs font-medium text-foreground">Contact Preference</Label>
+                                <select
+                                  id="preferred-contact"
+                                  value={preferredContact}
+                                  onChange={(e) => setPreferredContact(e.target.value)}
+                                  className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-xs focus-visible:outline-hidden dark:bg-card"
+                                >
+                                  <option value="whatsapp">WhatsApp Texting</option>
+                                  <option value="phone">Direct Phone Call</option>
+                                  <option value="email">Email Inquiry</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            <Button
+                              type="submit"
+                              disabled={isUpdating}
+                              className="w-full font-medium h-9 text-xs rounded-lg cursor-pointer mt-1"
+                            >
+                              {isUpdating ? (
+                                <>
+                                  <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> Saving Details...
+                                </>
+                              ) : (
+                                "Save & Continue"
+                              )}
+                            </Button>
+                          </form>
+                        )}
+
+                        {/* Step 2: About bio description and skills tag manager */}
+                        {wizardStep === 2 && (
+                          <div className="space-y-5">
+                            <div className="space-y-1.5">
+                              <Label htmlFor="edit-desc" className="text-xs font-medium text-foreground">Professional Description / Bio</Label>
+                              <textarea
+                                id="edit-desc"
+                                value={editDesc}
+                                onChange={(e) => setEditDesc(e.target.value)}
+                                placeholder="Describe your expertise, typical jobs you take..."
+                                className="flex min-h-24 w-full rounded-lg border border-input bg-transparent px-3 py-2 text-xs shadow-xs placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/10"
+                                required
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label className="text-xs font-medium text-foreground">Skills / Specialty Badges</Label>
+                              <div className="flex flex-wrap gap-1.5 p-3 rounded-lg border border-border/40 bg-muted/10 min-h-12">
+                                {skills.map((tag) => (
+                                  <span key={tag} className="inline-flex items-center gap-1 rounded bg-secondary px-2 py-0.5 text-xs text-secondary-foreground font-medium">
+                                    {tag}
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRemoveSkill(tag)}
+                                      className="text-muted-foreground hover:text-destructive cursor-pointer"
+                                    >
+                                      <Trash2 className="h-3 w-3" />
+                                    </button>
+                                  </span>
+                                ))}
+                                {skills.length === 0 && (
+                                  <span className="text-xs text-muted-foreground">No specialty badges added yet.</span>
+                                )}
+                              </div>
+                              
+                              <div className="flex gap-2">
+                                <Input
+                                  value={newSkillInput}
+                                  onChange={(e) => setNewSkillInput(e.target.value)}
+                                  placeholder="e.g. Toilet Repair, Leak Tracing"
+                                  className="text-xs h-9"
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                      e.preventDefault();
+                                      if (newSkillInput.trim() && !skills.includes(newSkillInput.trim())) {
+                                        setSkills(prev => [...prev, newSkillInput.trim()]);
+                                        setNewSkillInput("");
+                                      }
+                                    }
+                                  }}
+                                />
+                                <Button
+                                  type="button"
+                                  onClick={() => {
+                                    if (newSkillInput.trim() && !skills.includes(newSkillInput.trim())) {
+                                      setSkills(prev => [...prev, newSkillInput.trim()]);
+                                      setNewSkillInput("");
+                                    }
+                                  }}
+                                  size="sm"
+                                  className="h-9 px-3.5 rounded-lg text-xs"
+                                >
+                                  Add
+                                </Button>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center justify-between gap-4 pt-2 border-t border-border/30">
+                              <Button type="button" variant="outline" onClick={() => setWizardStep(1)} className="text-xs h-9 rounded-lg">
+                                Back
+                              </Button>
+                              <Button
+                                type="button"
+                                onClick={async () => {
+                                  setIsUpdating(true)
+                                  try {
+                                    await fetch("/api/fundi/profile", {
+                                      method: "PUT",
+                                      headers: { "Content-Type": "application/json" },
+                                      body: JSON.stringify({ description: editDesc })
+                                    })
+                                    setWizardStep(3)
+                                  } catch(e) {
+                                    console.error(e)
+                                  } finally {
+                                    setIsUpdating(false)
+                                  }
+                                }}
+                                className="text-xs h-9 rounded-lg px-6"
+                              >
+                                Continue to Showcase
+                              </Button>
+                            </div>
                           </div>
                         )}
 
-                        <div className="space-y-1.5">
-                          <Label htmlFor="edit-name" className="text-xs font-bold text-foreground">Full Name</Label>
-                          <Input
-                            id="edit-name"
-                            value={editName}
-                            onChange={(e) => setEditName(e.target.value)}
-                            placeholder="e.g. John Doe"
-                            className="w-full text-xs h-9 rounded-lg"
-                            required
-                          />
-                        </div>
+                        {/* Step 3: Media upload controls */}
+                        {wizardStep === 3 && (
+                          <div className="space-y-5">
+                            
+                            {/* 1. Avatar upload with progress bar */}
+                            <div className="rounded-lg border border-border p-4 bg-muted/10 space-y-3">
+                              <div className="flex items-center justify-between">
+                                <h4 className="text-xs font-semibold text-foreground">1. Face Avatar Photo</h4>
+                                {avatarDone && <span className="text-[10px] text-emerald-500 font-medium">Completed</span>}
+                              </div>
+                              <div className="flex items-center gap-4">
+                                <div className="relative h-14 w-14 rounded-full border border-border/40 overflow-hidden flex items-center justify-center bg-muted flex-shrink-0">
+                                  {avatarUrl ? (
+                                    <img src={avatarUrl} alt="Avatar Preview" className="h-full w-full object-cover" />
+                                  ) : (
+                                    <span className="text-lg font-black text-muted-foreground">{user?.name?.[0]?.toUpperCase()}</span>
+                                  )}
+                                  {isAvatarUploading && (
+                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-[10px] text-white font-bold">
+                                      {avatarProgress}%
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="flex-1 space-y-1">
+                                  <p className="text-[11px] text-muted-foreground leading-normal">Configure a high quality face picture for your public search listings.</p>
+                                  <div className="relative">
+                                    <input
+                                      type="file"
+                                      id="avatar-upload-file"
+                                      accept="image/*"
+                                      className="hidden"
+                                      onChange={handleAvatarChange}
+                                      disabled={isAvatarUploading}
+                                    />
+                                    <Button
+                                      type="button"
+                                      variant="outline"
+                                      size="sm"
+                                      className="h-8 text-xs cursor-pointer"
+                                      asChild
+                                    >
+                                      <label htmlFor="avatar-upload-file" className="cursor-pointer flex items-center gap-1.5">
+                                        <Camera className="h-3.5 w-3.5" />
+                                        {isAvatarUploading ? "Uploading..." : "Upload Avatar"}
+                                      </label>
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                              {isAvatarUploading && (
+                                <div className="space-y-1">
+                                  <div className="flex items-center justify-between text-[9px] text-muted-foreground font-mono">
+                                    <span>Transferring picture...</span>
+                                    <span>{avatarProgress}%</span>
+                                  </div>
+                                  <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
+                                    <div className="h-full bg-primary rounded-full transition-all duration-150" style={{ width: `${avatarProgress}%` }} />
+                                  </div>
+                                </div>
+                              )}
+                            </div>
 
-                        <div className="space-y-1.5">
-                          <Label htmlFor="edit-title" className="text-xs font-bold text-foreground">Professional Tagline / Title</Label>
-                          <Input
-                            id="edit-title"
-                            value={editTitle}
-                            onChange={(e) => setEditTitle(e.target.value)}
-                            placeholder="e.g. Master Plumber & Piping Expert"
-                            className="w-full text-xs h-9 rounded-lg"
-                            required
-                          />
-                        </div>
+                            {/* 2. Portfolio manager */}
+                            <div className="rounded-lg border border-border p-4 bg-muted/10 space-y-4">
+                              <div className="flex items-center justify-between">
+                                <h4 className="text-xs font-semibold text-foreground">2. Project Showcase Photos</h4>
+                                <Button
+                                  type="button"
+                                  size="xs"
+                                  variant="outline"
+                                  onClick={() => setIsAddPortfolioOpen(true)}
+                                  className="h-7 text-[10px] font-medium rounded-lg cursor-pointer"
+                                >
+                                  + Add Project
+                                </Button>
+                              </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-1.5">
-                            <Label htmlFor="edit-trade" className="text-xs font-bold text-foreground">Primary Trade</Label>
-                            <Input
-                              id="edit-trade"
-                              value={editTrade}
-                              disabled
-                              className="w-full text-xs h-9 rounded-lg bg-muted text-muted-foreground cursor-not-allowed"
-                            />
+                              {isPortfolioUploading && (
+                                <div className="rounded-lg border border-border/40 bg-card p-3.5 space-y-2">
+                                  <div className="flex items-start justify-between gap-3">
+                                    <div className="flex items-center gap-2">
+                                      <FileCheck className="h-5 w-5 text-primary flex-shrink-0 animate-bounce" />
+                                      <div className="min-w-0">
+                                        <p className="text-xs font-medium text-foreground truncate">{uploadFileName}</p>
+                                        <p className="text-[10px] text-muted-foreground">{uploadFileSize}</p>
+                                      </div>
+                                    </div>
+                                    <span className="text-xs font-semibold text-primary">{portfolioProgress}%</span>
+                                  </div>
+                                  <div className="space-y-1">
+                                    <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                                      <div className="h-full bg-primary rounded-full transition-all duration-75" style={{ width: `${portfolioProgress}%` }} />
+                                    </div>
+                                    <p className="text-[9px] text-muted-foreground">Uploading project work mockup photo...</p>
+                                  </div>
+                                </div>
+                              )}
+
+                              {portfolioItems.length > 0 ? (
+                                <div className="grid grid-cols-2 gap-3 pt-1">
+                                  {portfolioItems.map((item) => (
+                                    <div key={item.id} className="group relative rounded-lg overflow-hidden border border-border/30 bg-muted/20 aspect-video">
+                                      <img
+                                        src={item.image}
+                                        alt={item.title}
+                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                      />
+                                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent p-2.5 flex flex-col justify-end">
+                                        <span className="text-[9px] font-medium uppercase text-primary tracking-wider">{item.category}</span>
+                                        <h5 className="text-[11px] font-medium text-white truncate">{item.title}</h5>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="text-center p-6 bg-card rounded-lg border border-dashed border-border/40">
+                                  <ImageIcon className="h-6 w-6 text-muted-foreground mx-auto mb-1.5" />
+                                  <p className="text-xs text-muted-foreground">No portfolio photos uploaded.</p>
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="flex items-center justify-between gap-4 pt-2 border-t border-border/30">
+                              <Button type="button" variant="outline" onClick={() => setWizardStep(2)} className="text-xs h-9 rounded-lg">
+                                Back
+                              </Button>
+                              <Button
+                                type="button"
+                                onClick={() => {
+                                  setUpdateSuccess("All wizard profile configurations saved successfully!");
+                                  setTimeout(() => setUpdateSuccess(""), 4000);
+                                }}
+                                className="text-xs h-9 rounded-lg px-6"
+                              >
+                                Finish Profile
+                              </Button>
+                            </div>
                           </div>
-                          <div className="space-y-1.5">
-                            <Label htmlFor="edit-exp" className="text-xs font-bold text-foreground">Experience (Years)</Label>
-                            <Input
-                              id="edit-exp"
-                              value={editYearsExp}
-                              onChange={(e) => setEditYearsExp(e.target.value)}
-                              placeholder="e.g. 5 Years"
-                              className="w-full text-xs h-9 rounded-lg"
-                              required
-                            />
+                        )}
+                        
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Preview and Gallery column */}
+                  <div className="lg:col-span-2 space-y-5">
+                    
+                    {/* Completion Checklist */}
+                    <Card className="border border-border/60 bg-card">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-xs font-semibold text-foreground">
+                          Profile Task Checklist
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-5 pt-1 space-y-3">
+                        <div className="flex items-center justify-between text-xs border-b border-border/25 pb-2 mb-2">
+                          <span className="text-muted-foreground">Completeness Score:</span>
+                          <span className="font-bold text-primary">{completionScore}%</span>
+                        </div>
+                        
+                        <div className="space-y-2.5">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className={cn("flex items-center gap-2", basicInfoDone ? "text-foreground" : "text-muted-foreground")}>
+                              <CheckCircle2 className={cn("h-4 w-4 transition-all duration-300", basicInfoDone ? "text-emerald-500 fill-emerald-500/10" : "text-muted-foreground/40")} />
+                              Basic Identity Details
+                            </span>
+                            <span className="text-[10px] text-muted-foreground font-mono">20%</span>
+                          </div>
+                          
+                          <div className="flex items-center justify-between text-xs">
+                            <span className={cn("flex items-center gap-2", serviceAreaDone ? "text-foreground" : "text-muted-foreground")}>
+                              <CheckCircle2 className={cn("h-4 w-4 transition-all duration-300", serviceAreaDone ? "text-emerald-500 fill-emerald-500/10" : "text-muted-foreground/40")} />
+                              Service scope & exp
+                            </span>
+                            <span className="text-[10px] text-muted-foreground font-mono">20%</span>
+                          </div>
+
+                          <div className="flex items-center justify-between text-xs">
+                            <span className={cn("flex items-center gap-2", bioDone ? "text-foreground" : "text-muted-foreground")}>
+                              <CheckCircle2 className={cn("h-4 w-4 transition-all duration-300", bioDone ? "text-emerald-500 fill-emerald-500/10" : "text-muted-foreground/40")} />
+                              Detailed Bio Story
+                            </span>
+                            <span className="text-[10px] text-muted-foreground font-mono">20%</span>
+                          </div>
+
+                          <div className="flex items-center justify-between text-xs">
+                            <span className={cn("flex items-center gap-2", preferredContactDone ? "text-foreground" : "text-muted-foreground")}>
+                              <CheckCircle2 className={cn("h-4 w-4 transition-all duration-300", preferredContactDone ? "text-emerald-500 fill-emerald-500/10" : "text-muted-foreground/40")} />
+                              Contact Preference
+                            </span>
+                            <span className="text-[10px] text-muted-foreground font-mono">15%</span>
+                          </div>
+
+                          <div className="flex items-center justify-between text-xs">
+                            <span className={cn("flex items-center gap-2", avatarDone ? "text-foreground" : "text-muted-foreground")}>
+                              <CheckCircle2 className={cn("h-4 w-4 transition-all duration-300", avatarDone ? "text-emerald-500 fill-emerald-500/10" : "text-muted-foreground/40")} />
+                              Avatar Photo uploaded
+                            </span>
+                            <span className="text-[10px] text-muted-foreground font-mono">15%</span>
+                          </div>
+
+                          <div className="flex items-center justify-between text-xs">
+                            <span className={cn("flex items-center gap-2", portfolioDone ? "text-foreground animate-in" : "text-muted-foreground")}>
+                              <CheckCircle2 className={cn("h-4 w-4 transition-all duration-300", portfolioDone ? "text-emerald-500 fill-emerald-500/10" : "text-muted-foreground/40")} />
+                              Portfolio Showcase photo
+                            </span>
+                            <span className="text-[10px] text-muted-foreground font-mono">10%</span>
                           </div>
                         </div>
+                      </CardContent>
+                    </Card>
 
-                        <div className="space-y-1.5">
-                          <Label htmlFor="edit-area" className="text-xs font-bold text-foreground">Service Area Coverage</Label>
-                          <Input
-                            id="edit-area"
-                            value={editArea}
-                            onChange={(e) => setEditArea(e.target.value)}
-                            placeholder="e.g. Nairobi, Kilimani & Westlands"
-                            className="w-full text-xs h-9 rounded-lg"
-                            required
-                          />
+                    {/* Public Card Preview */}
+                    <Card className="border border-border/40 bg-gradient-to-b from-card to-muted/15 relative overflow-hidden">
+                      <CardHeader className="py-3.5 border-b border-border/25">
+                        <div className="flex items-center justify-between">
+                          <CardTitle className="text-xs font-semibold text-foreground">Public Card Preview</CardTitle>
+                          <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[9px] font-semibold text-emerald-500 uppercase tracking-wide">
+                            Active Listing
+                          </span>
                         </div>
-
-                        <div className="space-y-1.5">
-                          <Label htmlFor="edit-desc" className="text-xs font-bold text-foreground">Professional Description / Bio</Label>
-                          <textarea
-                            id="edit-desc"
-                            value={editDesc}
-                            onChange={(e) => setEditDesc(e.target.value)}
-                            placeholder="Describe your expertise, typical jobs you take..."
-                            className="flex min-h-24 w-full rounded-lg border border-input bg-transparent px-3 py-2 text-xs shadow-xs placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/10"
-                            required
-                          />
-                        </div>
-
-                        <Button
-                          type="submit"
-                          disabled={isUpdating}
-                          className="w-full font-bold h-9 text-xs rounded-lg cursor-pointer mt-1"
-                        >
-                          {isUpdating ? (
-                            <>
-                              <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> Saving Details...
-                            </>
-                          ) : (
-                            "Save Profile Details"
-                          )}
-                        </Button>
-                      </form>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Preview and Gallery column */}
-                <div className="lg:col-span-2 space-y-5">
-                  
-                  {/* Public Card Preview */}
-                  <Card className="border border-border/40 bg-gradient-to-b from-card to-muted/15 relative overflow-hidden">
-                    <CardHeader className="py-3.5 border-b border-border/25">
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-xs font-black tracking-wider uppercase text-foreground">Public Card Preview</CardTitle>
-                        <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[9px] font-black text-emerald-500 uppercase tracking-wide">
-                          Active Search Listing
-                        </span>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pt-4 space-y-3">
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-extrabold text-sm">
-                          {user?.name?.[0]?.toUpperCase()}
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <h4 className="font-extrabold text-sm text-foreground">{user?.name}</h4>
-                            {profile?.premiumLevel !== "none" && (
-                              <ShieldCheck className="h-4 w-4 text-blue-500" />
+                      </CardHeader>
+                      <CardContent className="pt-4 space-y-3">
+                        <div className="flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-full border border-border/40 overflow-hidden bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-extrabold text-sm flex-shrink-0">
+                            {avatarUrl ? (
+                              <img src={avatarUrl} alt="Avatar" className="h-full w-full object-cover" />
+                            ) : (
+                              user?.name?.[0]?.toUpperCase()
                             )}
                           </div>
-                          <p className="text-xs text-muted-foreground font-semibold">{editTitle || `${editTrade} Specialist`}</p>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-2 pt-1">
-                        <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
-                          {editTrade}
-                        </span>
-                        <span className="text-xs text-muted-foreground flex items-center gap-1">
-                          <MapPin className="h-3 w-3 text-primary" /> {editArea || "Nairobi"}
-                        </span>
-                        <span className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Star className="h-3 w-3 text-amber-500 fill-amber-500" /> {profile?.rating.toFixed(1)} ({profile?.reviews || 0} reviews)
-                        </span>
-                      </div>
-
-                      <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed border-t border-border/20 pt-2.5">
-                        {editDesc || "No description set yet. Write a professional description to describe your skills."}
-                      </p>
-                    </CardContent>
-                  </Card>
-
-                  {/* Portfolio showcase photos */}
-                  <Card className="border border-border/40 bg-card">
-                    <CardHeader className="py-3 border-b border-border/25 flex flex-row items-center justify-between">
-                      <CardTitle className="text-xs font-black tracking-wider uppercase text-foreground">Work Portfolio ({portfolioItems.length})</CardTitle>
-                      <Button
-                        size="xs"
-                        variant="outline"
-                        onClick={() => setIsAddPortfolioOpen(true)}
-                        className="h-7 text-xs font-black rounded-lg cursor-pointer"
-                      >
-                        + Add Work
-                      </Button>
-                    </CardHeader>
-                    <CardContent className="pt-4">
-                      {portfolioItems.length > 0 ? (
-                        <div className="grid grid-cols-2 gap-3">
-                          {portfolioItems.map((item) => (
-                            <div key={item.id} className="group relative rounded-lg overflow-hidden border border-border/30 bg-muted/20 aspect-video">
-                              <img
-                                src={item.image}
-                                alt={item.title}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                              />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent p-2.5 flex flex-col justify-end">
-                                <span className="text-[9px] font-black uppercase text-primary tracking-wider">{item.category}</span>
-                                <h5 className="text-[11px] font-bold text-white truncate">{item.title}</h5>
-                              </div>
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <h4 className="font-bold text-sm text-foreground">{editName || user?.name}</h4>
+                              {profile?.premiumLevel !== "none" && (
+                                <ShieldCheck className="h-4 w-4 text-blue-500" />
+                              )}
                             </div>
-                          ))}
+                            <p className="text-xs text-muted-foreground font-semibold">{editTitle || `${editTrade} Specialist`}</p>
+                          </div>
                         </div>
-                      ) : (
-                        <div className="text-center p-6 bg-muted/15 rounded-lg border border-dashed border-border/40">
-                          <ImageIcon className="h-6 w-6 text-muted-foreground mx-auto mb-1.5" />
-                          <p className="text-xs text-muted-foreground">No portfolio photos uploaded.</p>
+
+                        <div className="flex flex-wrap items-center gap-2 pt-1">
+                          <span className="inline-flex items-center rounded bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
+                            {editTrade}
+                          </span>
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <MapPin className="h-3 w-3 text-primary" /> {editArea || "Nairobi"}
+                          </span>
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Star className="h-3 w-3 text-amber-500 fill-amber-500" /> {profile?.rating.toFixed(1)} ({profile?.reviews || 0} reviews)
+                          </span>
                         </div>
-                      )}
-                    </CardContent>
-                  </Card>
+
+                        <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed border-t border-border/20 pt-2.5">
+                          {editDesc || "No description set yet. Write a professional description in Step 2 to describe your skills."}
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                  </div>
 
                 </div>
 
+                {/* Add Portfolio Dialog */}
+                <Dialog open={isAddPortfolioOpen} onOpenChange={setIsAddPortfolioOpen}>
+                  <DialogContent className="border border-border bg-card p-5 rounded-lg shadow-lg w-full max-w-sm">
+                    <DialogHeader>
+                      <DialogTitle className="text-sm font-bold text-foreground">Add Portfolio Work</DialogTitle>
+                      <DialogDescription className="text-xs text-muted-foreground">Showcase pictures of jobs you did recently to attract clients.</DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handlePortfolioUpload} className="space-y-4 mt-2">
+                      <div className="space-y-1">
+                        <Label htmlFor="port-title" className="text-xs font-semibold text-foreground">Project Title</Label>
+                        <Input
+                          id="port-title"
+                          value={newPortfolioTitle}
+                          onChange={(e) => setNewPortfolioTitle(e.target.value)}
+                          placeholder="e.g. Master kitchen plumbing"
+                          required
+                          className="text-xs h-9 rounded-lg"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label htmlFor="port-cat" className="text-xs font-semibold text-foreground">Work Category</Label>
+                        <select
+                          id="port-cat"
+                          value={newPortfolioCategory}
+                          onChange={(e) => setNewPortfolioCategory(e.target.value)}
+                          className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-xs focus-visible:outline-hidden dark:bg-card"
+                        >
+                          <option value="Wiring">Electrical Wiring</option>
+                          <option value="Installation">Equipment Installation</option>
+                          <option value="Repair">Trouble Repair</option>
+                          <option value="Piping">Plumbing Piping</option>
+                          <option value="General">Other Works</option>
+                        </select>
+                      </div>
+                      
+                      <div className="rounded-lg border border-dashed border-border/40 p-5 text-center bg-muted/15">
+                        <ImageIcon className="h-6 w-6 text-primary mx-auto mb-1.5" />
+                        <p className="text-[10px] font-bold text-foreground">Select photos of your work</p>
+                        <p className="text-[8px] text-muted-foreground mt-0.5">PNG, JPG up to 5MB (Simulated upload)</p>
+                      </div>
+
+                      <DialogFooter className="flex items-center justify-end gap-2 pt-2 border-t border-border/30">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() => setIsAddPortfolioOpen(false)}
+                          className="text-xs h-9 px-4 rounded-lg cursor-pointer"
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          type="submit"
+                          className="text-xs h-9 px-4 rounded-lg font-medium cursor-pointer"
+                        >
+                          Save Work
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+
               </div>
-
-              {/* Add Portfolio Dialog */}
-              <Dialog open={isAddPortfolioOpen} onOpenChange={setIsAddPortfolioOpen}>
-                <DialogContent className="border border-border bg-card p-5 rounded-lg shadow-lg w-full max-w-sm">
-                  <DialogHeader>
-                    <DialogTitle className="text-sm font-bold text-foreground">Add Portfolio Work</DialogTitle>
-                    <DialogDescription className="text-xs text-muted-foreground">Showcase pictures of jobs you did recently to attract clients.</DialogDescription>
-                  </DialogHeader>
-                  <form onSubmit={handleAddPortfolioItem} className="space-y-4 mt-2">
-                    <div className="space-y-1">
-                      <Label htmlFor="port-title" className="text-xs font-bold text-foreground">Project Title</Label>
-                      <Input
-                        id="port-title"
-                        value={newPortfolioTitle}
-                        onChange={(e) => setNewPortfolioTitle(e.target.value)}
-                        placeholder="e.g. Master kitchen plumbing"
-                        required
-                        className="text-xs h-9 rounded-lg"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label htmlFor="port-cat" className="text-xs font-bold text-foreground">Work Category</Label>
-                      <select
-                        id="port-cat"
-                        value={newPortfolioCategory}
-                        onChange={(e) => setNewPortfolioCategory(e.target.value)}
-                        className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-xs focus-visible:outline-hidden"
-                      >
-                        <option value="Wiring">Electrical Wiring</option>
-                        <option value="Installation">Equipment Installation</option>
-                        <option value="Repair">Trouble Repair</option>
-                        <option value="Piping">Plumbing Piping</option>
-                        <option value="General">Other Works</option>
-                      </select>
-                    </div>
-                    
-                    <div className="rounded-lg border border-dashed border-border/40 p-5 text-center bg-muted/15">
-                      <ImageIcon className="h-6 w-6 text-primary mx-auto mb-1.5" />
-                      <p className="text-[10px] font-bold text-foreground">Select photos of your work</p>
-                      <p className="text-[8px] text-muted-foreground mt-0.5">PNG, JPG up to 5MB (Simulated upload)</p>
-                    </div>
-
-                    <DialogFooter className="flex items-center justify-end gap-2 pt-2 border-t border-border/30">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={() => setIsAddPortfolioOpen(false)}
-                        className="text-xs h-9 px-4 rounded-lg cursor-pointer"
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        type="submit"
-                        className="text-xs h-9 px-4 rounded-lg font-bold cursor-pointer"
-                      >
-                        Save Work
-                      </Button>
-                    </DialogFooter>
-                  </form>
-                </DialogContent>
-              </Dialog>
-
-            </div>
-          )}
+            )
+          })()}
 
           {/* REFERRALS & REWARDS TAB CONTENT */}
           {activeTab === "referrals" && (
