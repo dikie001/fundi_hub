@@ -313,33 +313,49 @@ export default async function FundiProfilePage({ params }: PageProps) {
               </CardHeader>
               <CardContent>
                 {fundiData.portfolio && fundiData.portfolio.length > 0 ? (
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    {fundiData.portfolio.map((item: any, index: number) => (
-                      <div 
-                        key={item.id || index}
-                        className="group overflow-hidden rounded-xl border border-border/50 bg-muted/20 transition-all hover:border-primary/30"
-                      >
-                        <div className="relative aspect-video w-full overflow-hidden bg-muted/60">
-                          {item.image ? (
-                            <Image
-                              src={item.image}
-                              alt={item.title}
-                              fill
-                              unoptimized
-                              className="object-cover transition-transform duration-300 group-hover:scale-105"
-                            />
-                          ) : (
-                            <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-                              <Sparkles className="h-8 w-8 opacity-40" />
-                            </div>
-                          )}
+                  <div className="space-y-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      {fundiData.portfolio.slice(0, 1).map((item: any, index: number) => (
+                        <div 
+                          key={item.id || index}
+                          className="group overflow-hidden rounded-xl border border-border/50 bg-muted/20 transition-all hover:border-primary/30"
+                        >
+                          <div className="relative aspect-video w-full overflow-hidden bg-muted/60">
+                            {item.image ? (
+                              <Image
+                                src={item.image}
+                                alt={item.title}
+                                fill
+                                unoptimized
+                                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                              />
+                            ) : (
+                              <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                                <Sparkles className="h-8 w-8 opacity-40" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="p-3">
+                            <h4 className="font-bold text-xs truncate text-foreground">{item.title}</h4>
+                            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{item.category}</span>
+                          </div>
                         </div>
-                        <div className="p-3">
-                          <h4 className="font-bold text-xs truncate text-foreground">{item.title}</h4>
-                          <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{item.category}</span>
-                        </div>
+                      ))}
+                    </div>
+                    {fundiData.portfolio.length > 1 && (
+                      <div className="pt-2 border-t border-border/15">
+                        <Button 
+                          variant="outline" 
+                          className="w-full h-10 font-bold rounded-xl flex items-center justify-center gap-1.5 cursor-pointer hover:bg-muted text-xs" 
+                          asChild
+                        >
+                          <Link href={`/fundis/${resolvedParams.name}/portfolio`}>
+                            See More Projects ({fundiData.portfolio.length})
+                            <ExternalLink className="h-3.5 w-3.5 text-primary" />
+                          </Link>
+                        </Button>
                       </div>
-                    ))}
+                    )}
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-12 text-center border-2 border-dashed border-border/50 rounded-xl bg-muted/10">
