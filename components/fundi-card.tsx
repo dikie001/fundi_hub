@@ -44,7 +44,8 @@ export function FundiCard({ fundi }: FundiCardProps) {
               <Image
                 src={fundi.image}
                 alt={fundi.name}
-                fill
+                  fill
+                  unoptimized
                 className="rounded-full object-cover"
               />
             ) : (

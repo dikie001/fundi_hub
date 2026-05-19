@@ -23,21 +23,15 @@ export async function POST(request: Request) {
       referrerId,
     } = body
 
-    if (!email || !password || !name || !phone || !userType) {
+    if (!password || !name || !phone || !userType) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
       )
     }
-
-    // Check if phone or email already exists
+    // Check if phone already exists
     const existingUser = await db.user.findFirst({
-      where: {
-        OR: [
-          { email: email.toLowerCase() },
-          { phone: phone }
-        ]
-      },
+      where: { phone: phone },
     })
 
     if (existingUser) {
@@ -52,10 +46,10 @@ export async function POST(request: Request) {
     // Create user and associated profile
     const user = await db.user.create({
       data: {
-        name,
-        email: email.toLowerCase(),
-        phone,
-        password: hashedPassword,
+      name,
+      ...(email ? { email: String(email).toLowerCase() } : {}),
+      phone,
+      password: hashedPassword,
         role: userType === "fundi" ? "fundi" : "client",
         ...(userType === "fundi"
           ? {
