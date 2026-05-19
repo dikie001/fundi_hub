@@ -30,6 +30,21 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog"
 
 type UserType = "client" | "fundi"
 
@@ -52,6 +67,45 @@ type SignupFormData = {
 
 const totalSteps = 5
 
+const TRADES_LIST = [
+  "Electrician",
+  "Plumber",
+  "Carpenter",
+  "Painter",
+  "Mason",
+  "Tiler",
+  "Welder",
+  "Landscaper",
+  "Cleaner",
+  "Mechanic",
+  "Locksmith",
+  "HVAC Tech"
+]
+
+const EXPERIENCE_LEVELS = [
+  { value: "1", label: "1 Year" },
+  { value: "2", label: "2 Years" },
+  { value: "3", label: "3 Years" },
+  { value: "4", label: "4 Years" },
+  { value: "5", label: "5 - 9 Years" },
+  { value: "10", label: "10+ Years" }
+]
+
+const BUDGET_RANGES = [
+  "Below KES 5,000",
+  "KES 5,000 - 10,000",
+  "KES 10,000 - 20,000",
+  "KES 20,000 - 50,000",
+  "Over KES 50,000"
+]
+
+const URGENCY_LEVELS = [
+  "Today / Immediate",
+  "Within 3 Days",
+  "Within a Week",
+  "Flexible / Planning"
+]
+
 const steps = [
   { id: 1, label: "Account Type" },
   { id: 2, label: "Basics" },
@@ -68,6 +122,9 @@ export default function SignupPage() {
   const [currentStep, setCurrentStep] = useState(1)
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [stepError, setStepError] = useState("")
+  const [isOtherModalOpen, setIsOtherModalOpen] = useState(false)
+  const [otherFieldType, setOtherFieldType] = useState<"trade" | "projectCategory" | null>(null)
+  const [otherInputValue, setOtherInputValue] = useState("")
   const [formData, setFormData] = useState<SignupFormData>({
     name: "",
     email: "",
@@ -84,6 +141,21 @@ export default function SignupPage() {
     nationalId: "",
     preferredContact: "whatsapp",
   })
+
+  // Memoized trade options containing custom inputs if they are set
+  const clientTrades = useMemo(() => {
+    if (formData.projectCategory && !TRADES_LIST.includes(formData.projectCategory)) {
+      return [...TRADES_LIST, formData.projectCategory]
+    }
+    return TRADES_LIST
+  }, [formData.projectCategory])
+
+  const fundiTrades = useMemo(() => {
+    if (formData.trade && !TRADES_LIST.includes(formData.trade)) {
+      return [...TRADES_LIST, formData.trade]
+    }
+    return TRADES_LIST
+  }, [formData.trade])
 
   // Dynamic header icon based on current step
   const StepIcon = useMemo(() => {
@@ -112,7 +184,11 @@ export default function SignupPage() {
         ? "Describe your expert trade and experience level."
         : "Describe the specific service details you are looking for."
     }
-    if (currentStep === 4) return "How should clients or fundis reach you?"
+    if (currentStep === 4) {
+      return userType === "fundi"
+        ? "How should clients reach you?"
+        : "How should fundis reach you?"
+    }
     return "Choose a strong password to protect your account."
   }, [currentStep, userType])
 
@@ -121,6 +197,26 @@ export default function SignupPage() {
     value: SignupFormData[K]
   ) => {
     setFormData((prev) => ({ ...prev, [key]: value }))
+  }
+
+  const handleSelectProjectCategory = (val: string) => {
+    if (val === "Other") {
+      setOtherFieldType("projectCategory")
+      setOtherInputValue("")
+      setIsOtherModalOpen(true)
+    } else {
+      updateField("projectCategory", val)
+    }
+  }
+
+  const handleSelectTrade = (val: string) => {
+    if (val === "Other") {
+      setOtherFieldType("trade")
+      setOtherInputValue("")
+      setIsOtherModalOpen(true)
+    } else {
+      updateField("trade", val)
+    }
   }
 
   const validateStep = () => {
@@ -137,10 +233,6 @@ export default function SignupPage() {
     if (currentStep === 2) {
       if (!formData.name.trim()) {
         setStepError("Please enter your full name.")
-        return false
-      }
-      if (!formData.email.trim() || !formData.email.includes("@")) {
-        setStepError("Please enter a valid email address.")
         return false
       }
       if (!formData.phone.trim()) {
@@ -250,6 +342,7 @@ export default function SignupPage() {
         body: JSON.stringify({
           userType,
           ...formData,
+          email: `${formData.phone.replace(/[^0-9]/g, "")}@fundihub.com`,
         }),
       })
 
@@ -269,27 +362,8 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen bg-background text-foreground px-4 py-8 sm:px-6 sm:py-12 flex flex-col justify-center items-center font-sans select-none">
       <div className="w-full max-w-md space-y-6">
-        {/* Header containing brand, step progress, and descriptions */}
+        {/* Header containing step progress, and descriptions */}
         <div className="flex flex-col items-center text-center space-y-4">
-          <Link href="/" className="flex items-center gap-2 group mb-2 transition-transform duration-300 hover:scale-102">
-            <Image
-              src="/logo.png"
-              alt="Fundi Hub Logo"
-              width={32}
-              height={32}
-              className="h-8 w-auto object-contain"
-              priority
-            />
-            <span className="text-lg font-bold tracking-tight text-foreground">
-              FundiHub
-            </span>
-          </Link>
-
-          {/* Standard Icon Container utilizing standard primary color variables */}
-          <div className="p-3 bg-primary/10 border border-primary/20 rounded-xl text-primary flex items-center justify-center">
-            <StepIcon className="h-6 w-6 stroke-[1.8]" />
-          </div>
-
           <div className="space-y-1.5">
             <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               {stepTitle}
@@ -412,149 +486,172 @@ export default function SignupPage() {
                       required
                     />
                   </div>
-
-                  <div className="space-y-1.5">
-                    <Label htmlFor="email" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                      <Mail className="h-3.5 w-3.5 text-primary" /> Email Address
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => updateField("email", e.target.value)}
-                      placeholder="e.g. johndoe@example.com"
-                      disabled={isLoading}
-                      required
-                    />
-                  </div>
                 </div>
               )}
 
               {/* STEP 3: Dynamic Category / Trade Details */}
               {currentStep === 3 && userType === "client" && (
-                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="projectCategory" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <Briefcase className="h-3.5 w-3.5 text-primary" /> Service Needed
-                      </Label>
-                      <Input
-                        id="projectCategory"
-                        value={formData.projectCategory}
-                        onChange={(e) => updateField("projectCategory", e.target.value)}
-                        placeholder="e.g. Plumbing, Wiring"
-                        disabled={isLoading}
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <Label htmlFor="projectLocation" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <MapPin className="h-3.5 w-3.5 text-primary" /> Project Location
-                      </Label>
-                      <Input
-                        id="projectLocation"
-                        value={formData.projectLocation}
-                        onChange={(e) => updateField("projectLocation", e.target.value)}
-                        placeholder="e.g. Nairobi, Kilimani"
-                        disabled={isLoading}
-                        required
-                      />
-                    </div>
+                <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="projectCategory" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <Briefcase className="h-3.5 w-3.5 text-primary" /> Service Needed
+                    </Label>
+                    <Select
+                      value={formData.projectCategory}
+                      onValueChange={handleSelectProjectCategory}
+                      disabled={isLoading}
+                    >
+                      <SelectTrigger id="projectCategory" className="w-full">
+                        <SelectValue placeholder="Select the service you need..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {clientTrades.map((t) => (
+                          <SelectItem key={t} value={t}>
+                            {t}
+                          </SelectItem>
+                        ))}
+                        <SelectItem value="Other" className="text-primary font-bold">
+                          Other...
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="budgetRange" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <DollarSign className="h-3.5 w-3.5 text-primary" /> Budget (KES)
-                      </Label>
-                      <Input
-                        id="budgetRange"
-                        value={formData.budgetRange}
-                        onChange={(e) => updateField("budgetRange", e.target.value)}
-                        placeholder="e.g. 10,000 - 20,000"
-                        disabled={isLoading}
-                        required
-                      />
-                    </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="projectLocation" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <MapPin className="h-3.5 w-3.5 text-primary" /> Project Location
+                    </Label>
+                    <Input
+                      id="projectLocation"
+                      value={formData.projectLocation}
+                      onChange={(e) => updateField("projectLocation", e.target.value)}
+                      placeholder="e.g. Nairobi, Kilimani"
+                      disabled={isLoading}
+                      required
+                    />
+                  </div>
 
-                    <div className="space-y-1.5">
-                      <Label htmlFor="urgency" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <Calendar className="h-3.5 w-3.5 text-primary" /> Urgency
-                      </Label>
-                      <Input
-                        id="urgency"
-                        value={formData.urgency}
-                        onChange={(e) => updateField("urgency", e.target.value)}
-                        placeholder="e.g. Today, Within a week"
-                        disabled={isLoading}
-                        required
-                      />
-                    </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="budgetRange" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <DollarSign className="h-3.5 w-3.5 text-primary" /> Budget Range (KES)
+                    </Label>
+                    <Select
+                      value={formData.budgetRange}
+                      onValueChange={(val) => updateField("budgetRange", val)}
+                      disabled={isLoading}
+                    >
+                      <SelectTrigger id="budgetRange" className="w-full">
+                        <SelectValue placeholder="Select a budget range..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {BUDGET_RANGES.map((b) => (
+                          <SelectItem key={b} value={b}>
+                            {b}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="urgency" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <Calendar className="h-3.5 w-3.5 text-primary" /> Urgency / Timeline
+                    </Label>
+                    <Select
+                      value={formData.urgency}
+                      onValueChange={(val) => updateField("urgency", val)}
+                      disabled={isLoading}
+                    >
+                      <SelectTrigger id="urgency" className="w-full">
+                        <SelectValue placeholder="Select urgency timeline..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {URGENCY_LEVELS.map((u) => (
+                          <SelectItem key={u} value={u}>
+                            {u}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               )}
 
               {currentStep === 3 && userType === "fundi" && (
-                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="trade" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <Wrench className="h-3.5 w-3.5 text-primary" /> Primary Skill / Trade
-                      </Label>
-                      <Input
-                        id="trade"
-                        value={formData.trade}
-                        onChange={(e) => updateField("trade", e.target.value)}
-                        placeholder="e.g. Plumber, Electrician"
-                        disabled={isLoading}
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <Label htmlFor="yearsExperience" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <Award className="h-3.5 w-3.5 text-primary" /> Experience (Years)
-                      </Label>
-                      <Input
-                        id="yearsExperience"
-                        value={formData.yearsExperience}
-                        onChange={(e) => updateField("yearsExperience", e.target.value)}
-                        placeholder="e.g. 5"
-                        disabled={isLoading}
-                        required
-                      />
-                    </div>
+                <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="trade" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <Wrench className="h-3.5 w-3.5 text-primary" /> Primary Skill / Trade
+                    </Label>
+                    <Select
+                      value={formData.trade}
+                      onValueChange={handleSelectTrade}
+                      disabled={isLoading}
+                    >
+                      <SelectTrigger id="trade" className="w-full">
+                        <SelectValue placeholder="Select your primary trade..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {fundiTrades.map((t) => (
+                          <SelectItem key={t} value={t}>
+                            {t}
+                          </SelectItem>
+                        ))}
+                        <SelectItem value="Other" className="text-primary font-bold">
+                          Other...
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="serviceArea" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <MapPin className="h-3.5 w-3.5 text-primary" /> Service Area Coverage
-                      </Label>
-                      <Input
-                        id="serviceArea"
-                        value={formData.serviceArea}
-                        onChange={(e) => updateField("serviceArea", e.target.value)}
-                        placeholder="e.g. Nairobi, Langata"
-                        disabled={isLoading}
-                        required
-                      />
-                    </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="yearsExperience" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <Award className="h-3.5 w-3.5 text-primary" /> Experience (Years)
+                    </Label>
+                    <Select
+                      value={formData.yearsExperience}
+                      onValueChange={(val) => updateField("yearsExperience", val)}
+                      disabled={isLoading}
+                    >
+                      <SelectTrigger id="yearsExperience" className="w-full">
+                        <SelectValue placeholder="Select years of experience..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {EXPERIENCE_LEVELS.map((exp) => (
+                          <SelectItem key={exp.value} value={exp.value}>
+                            {exp.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                    <div className="space-y-1.5">
-                      <Label htmlFor="nationalId" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <CreditCard className="h-3.5 w-3.5 text-primary" /> National ID Number
-                      </Label>
-                      <Input
-                        id="nationalId"
-                        value={formData.nationalId}
-                        onChange={(e) => updateField("nationalId", e.target.value)}
-                        placeholder="For background safety"
-                        disabled={isLoading}
-                        required
-                      />
-                    </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="serviceArea" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <MapPin className="h-3.5 w-3.5 text-primary" /> Service Area Coverage
+                    </Label>
+                    <Input
+                      id="serviceArea"
+                      value={formData.serviceArea}
+                      onChange={(e) => updateField("serviceArea", e.target.value)}
+                      placeholder="e.g. Nairobi, Langata"
+                      disabled={isLoading}
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="nationalId" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <CreditCard className="h-3.5 w-3.5 text-primary" /> National ID Number
+                    </Label>
+                    <Input
+                      id="nationalId"
+                      value={formData.nationalId}
+                      onChange={(e) => updateField("nationalId", e.target.value)}
+                      placeholder="For background safety"
+                      disabled={isLoading}
+                      required
+                    />
                   </div>
                 </div>
               )}
@@ -605,35 +702,13 @@ export default function SignupPage() {
                       {formData.preferredContact === "call" && <Check className="h-2.5 w-2.5 text-primary-foreground stroke-[4]" />}
                     </div>
                   </div>
-
-                  <div
-                    onClick={() => updateField("preferredContact", "email")}
-                    className={`group flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
-                      formData.preferredContact === "email"
-                        ? "border-primary bg-primary/5"
-                        : "border-border bg-card hover:border-primary/50 hover:bg-muted/50"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3.5">
-                      <span className="text-lg">✉️</span>
-                      <div className="text-left">
-                        <h4 className="font-semibold text-xs text-card-foreground group-hover:text-primary transition-colors">Email Dispatch</h4>
-                        <p className="text-[9px] text-muted-foreground mt-0.5">Prefer formal mail updates and communications.</p>
-                      </div>
-                    </div>
-                    <div className={`w-4 h-4 rounded-full border-2 transition-all flex items-center justify-center ${
-                      formData.preferredContact === "email" ? "border-primary bg-primary" : "border-muted-foreground/30"
-                    }`}>
-                      {formData.preferredContact === "email" && <Check className="h-2.5 w-2.5 text-primary-foreground stroke-[4]" />}
-                    </div>
-                  </div>
                 </div>
               )}
 
               {/* STEP 5: Security Credentials */}
               {currentStep === 5 && (
                 <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-4">
                     <div className="space-y-1.5">
                       <Label htmlFor="password" className="text-xs font-bold text-foreground flex items-center gap-1.5">
                         <Lock className="h-3.5 w-3.5 text-primary" /> Password
@@ -686,17 +761,17 @@ export default function SignupPage() {
                   </div>
 
                   {/* Terms & Conditions Box */}
-                  <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-muted/40 border border-border transition-all duration-300">
+                  <div className="flex items-start gap-2.5 pt-2 select-none w-full">
                     <Checkbox
                       id="terms"
                       checked={agreedToTerms}
                       onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
                       disabled={isLoading}
-                      className="mt-0.5 border-input data-[state=checked]:bg-primary data-[state=checked]:border-primary rounded"
+                      className="mt-0.5 border-input data-[state=checked]:bg-primary data-[state=checked]:border-primary rounded flex-shrink-0"
                     />
-                    <Label
+                    <label
                       htmlFor="terms"
-                      className="text-[9.5px] leading-relaxed text-muted-foreground select-none cursor-pointer"
+                      className="flex-1 text-xs leading-relaxed text-muted-foreground cursor-pointer font-normal block"
                     >
                       I agree to the{" "}
                       <Link href="/terms" className="text-primary hover:underline font-bold">
@@ -706,15 +781,18 @@ export default function SignupPage() {
                       <Link href="/privacy" className="text-primary hover:underline font-bold">
                         Privacy Policy
                       </Link>
-                      . I understand my trade identity will be verified before matching jobs.
-                    </Label>
+                      .{" "}
+                      {userType === "fundi"
+                        ? "I understand my trade identity will be verified before matching jobs."
+                        : "I understand my project and contact details will be shared with matched fundis."}
+                    </label>
                   </div>
                 </div>
               )}
 
               {/* Step Validation Error */}
               {stepError && (
-                <div className="rounded-xl border border-destructive/20 bg-destructive/10 px-3.5 py-2 text-[11px] text-destructive flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                <div className="rounded-lg border border-destructive/20 bg-destructive/10 px-3.5 py-2 text-[11px] text-destructive flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
                   <ShieldCheck className="h-4 w-4 flex-shrink-0 rotate-180" />
                   <span>{stepError}</span>
                 </div>
@@ -726,10 +804,9 @@ export default function SignupPage() {
                   <Button
                     type="button"
                     variant="ghost"
-                    size="sm"
                     onClick={goBack}
                     disabled={isLoading}
-                    className="text-muted-foreground hover:text-foreground font-medium text-xs transition-colors cursor-pointer"
+                    className="text-muted-foreground hover:text-foreground font-medium text-xs transition-colors cursor-pointer h-9.5 px-4 rounded-lg"
                   >
                     Back
                   </Button>
@@ -740,19 +817,17 @@ export default function SignupPage() {
                 {currentStep < totalSteps ? (
                   <Button
                     type="button"
-                    size="sm"
                     onClick={goNext}
                     disabled={isLoading}
-                    className="font-bold flex items-center gap-1.5 cursor-pointer"
+                    className="font-bold flex items-center gap-1.5 cursor-pointer h-9.5 px-5 rounded-lg text-xs"
                   >
                     Continue <ChevronRight className="h-3.5 w-3.5 stroke-[2.5]" />
                   </Button>
                 ) : (
                   <Button
                     type="submit"
-                    size="sm"
                     disabled={isLoading || !userType}
-                    className="font-extrabold flex items-center gap-1.5 cursor-pointer"
+                    className="font-extrabold flex items-center gap-1.5 cursor-pointer h-9.5 px-6 rounded-lg text-xs"
                   >
                     {isLoading ? (
                       <>
@@ -773,7 +848,7 @@ export default function SignupPage() {
         {/* Step X of 5 Sub-footer */}
         <div className="text-center space-y-3.5">
           <p className="text-[10px] text-muted-foreground font-semibold tracking-wider uppercase">
-            Step {currentStep} of {totalSteps} · Secure & Encrypted
+            Step {currentStep} of {totalSteps}
           </p>
 
           <div className="text-xs text-muted-foreground">
@@ -784,6 +859,72 @@ export default function SignupPage() {
           </div>
         </div>
       </div>
+
+      {/* Dynamic Modal Dialog for "Other..." custom trade/service entry */}
+      <Dialog open={isOtherModalOpen} onOpenChange={setIsOtherModalOpen}>
+        <DialogContent className="border border-border bg-card p-5 rounded-lg shadow-lg w-full max-w-sm animate-in fade-in zoom-in-95 duration-150">
+          <DialogHeader>
+            <DialogTitle className="text-sm font-bold text-foreground">
+              {otherFieldType === "trade" ? "Custom Skill / Trade" : "Custom Service Needed"}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              {otherFieldType === "trade"
+                ? "Enter your specific trade or skill name below."
+                : "Enter the custom service type you are looking for."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            <Input
+              value={otherInputValue}
+              onChange={(e) => setOtherInputValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && otherInputValue.trim()) {
+                  e.preventDefault()
+                  if (otherFieldType) {
+                    updateField(otherFieldType, otherInputValue.trim())
+                  }
+                  setIsOtherModalOpen(false)
+                }
+              }}
+              placeholder="e.g. Glass Cleaner, Solar Tech"
+              className="w-full text-xs rounded-lg"
+              autoFocus
+            />
+          </div>
+
+          <DialogFooter className="flex items-center justify-end gap-2 pt-2 border-t border-border mt-2">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                setIsOtherModalOpen(false)
+                if (otherFieldType) {
+                  updateField(otherFieldType, "")
+                }
+              }}
+              className="text-xs h-9.5 px-4 rounded-lg cursor-pointer text-muted-foreground"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                if (otherInputValue.trim()) {
+                  if (otherFieldType) {
+                    updateField(otherFieldType, otherInputValue.trim())
+                  }
+                  setIsOtherModalOpen(false)
+                }
+              }}
+              disabled={!otherInputValue.trim()}
+              className="text-xs h-9.5 px-4 rounded-lg font-bold cursor-pointer"
+            >
+              Confirm
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
