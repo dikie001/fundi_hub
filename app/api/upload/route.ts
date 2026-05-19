@@ -1,4 +1,4 @@
-import { ImageKit } from "imagekit"
+import ImageKit from "@imagekit/next"
 import { NextResponse } from "next/server"
 
 // Initialize ImageKit
