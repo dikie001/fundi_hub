@@ -33,7 +33,10 @@ export async function PUT(request: Request) {
     })
 
     if (!user || user.role !== "fundi") {
-      return NextResponse.json({ error: "Fundi profile not found" }, { status: 404 })
+      return NextResponse.json(
+        { error: "Fundi profile not found" },
+        { status: 404 }
+      )
     }
 
     if (name) {
@@ -48,15 +51,34 @@ export async function PUT(request: Request) {
       data: {
         title: title !== undefined ? title : user.fundiProfile?.title,
         trade: trade !== undefined ? trade : user.fundiProfile?.trade,
-        yearsExperience: yearsExperience !== undefined ? yearsExperience : user.fundiProfile?.yearsExperience,
-        serviceArea: serviceArea !== undefined ? serviceArea : user.fundiProfile?.serviceArea,
-        description: description !== undefined ? description : user.fundiProfile?.description,
-        isEmergency: isEmergency !== undefined ? isEmergency : user.fundiProfile?.isEmergency,
-        preferredContact: preferredContact !== undefined ? preferredContact : user.fundiProfile?.preferredContact,
-        premiumLevel: premiumLevel !== undefined ? premiumLevel : user.fundiProfile?.premiumLevel,
+        yearsExperience:
+          yearsExperience !== undefined
+            ? yearsExperience
+            : user.fundiProfile?.yearsExperience,
+        serviceArea:
+          serviceArea !== undefined
+            ? serviceArea
+            : user.fundiProfile?.serviceArea,
+        description:
+          description !== undefined
+            ? description
+            : user.fundiProfile?.description,
+        isEmergency:
+          isEmergency !== undefined
+            ? isEmergency
+            : user.fundiProfile?.isEmergency,
+        preferredContact:
+          preferredContact !== undefined
+            ? preferredContact
+            : user.fundiProfile?.preferredContact,
+        premiumLevel:
+          premiumLevel !== undefined
+            ? premiumLevel
+            : user.fundiProfile?.premiumLevel,
         image: image !== undefined ? image : user.fundiProfile?.image,
         skills: skills !== undefined ? skills : user.fundiProfile?.skills,
-        portfolio: portfolio !== undefined ? portfolio : user.fundiProfile?.portfolio,
+        portfolio:
+          portfolio !== undefined ? portfolio : user.fundiProfile?.portfolio,
       },
     })
 
@@ -66,6 +88,9 @@ export async function PUT(request: Request) {
     })
   } catch (error) {
     console.error("Profile update error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
   }
 }

@@ -28,7 +28,10 @@ export async function GET() {
     })
 
     if (!user || !user.fundiProfile) {
-      return NextResponse.json({ error: "Fundi profile not found" }, { status: 404 })
+      return NextResponse.json(
+        { error: "Fundi profile not found" },
+        { status: 404 }
+      )
     }
 
     const trade = user.fundiProfile.trade || ""
@@ -69,6 +72,9 @@ export async function GET() {
     return NextResponse.json(dbLeads)
   } catch (error) {
     console.error("Leads fetch error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
   }
 }

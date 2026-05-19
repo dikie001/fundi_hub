@@ -244,7 +244,9 @@ function DashboardInner() {
               .filter(Boolean)
           )
         }
-        setPortfolioItems(parsePortfolioItems(data.user.fundiProfile?.portfolio))
+        setPortfolioItems(
+          parsePortfolioItems(data.user.fundiProfile?.portfolio)
+        )
         fetchLeads()
       } else {
         window.location.href = "/"
