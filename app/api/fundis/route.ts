@@ -10,6 +10,9 @@ export async function GET() {
     return NextResponse.json(fundis)
   } catch (error) {
     console.error("API error fetching fundis:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
   }
 }
