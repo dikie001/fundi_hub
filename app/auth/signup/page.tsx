@@ -758,17 +758,18 @@ export default function SignupPage() {
                   />
                   <div className="flex flex-col gap-4">
                     <div className="space-y-1.5">
-                      <Label htmlFor="password" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <Lock className="h-3.5 w-3.5 text-primary" /> Password
+                      <Label htmlFor="password" className="text-xs font-bold text-foreground">
+                        Password
                       </Label>
                       <div className="relative">
+                        <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/45 pointer-events-none" />
                         <Input
                           id="password"
                           type={showPassword ? "text" : "password"}
                           value={formData.password}
                           onChange={(e) => updateField("password", e.target.value)}
                           placeholder="Min 6 characters"
-                          className="pl-3.5 pr-10 w-full"
+                          className="pl-10 pr-10 w-full"
                           disabled={isLoading}
                           required
                         />
@@ -783,17 +784,18 @@ export default function SignupPage() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label htmlFor="confirmPassword" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <Lock className="h-3.5 w-3.5 text-primary" /> Confirm Password
+                      <Label htmlFor="confirmPassword" className="text-xs font-bold text-foreground">
+                        Confirm Password
                       </Label>
                       <div className="relative">
+                        <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/45 pointer-events-none" />
                         <Input
                           id="confirmPassword"
                           type={showConfirmPassword ? "text" : "password"}
                           value={formData.confirmPassword}
                           onChange={(e) => updateField("confirmPassword", e.target.value)}
                           placeholder="Repeat password"
-                          className="pl-3.5 pr-10 w-full"
+                          className="pl-10 pr-10 w-full"
                           disabled={isLoading}
                           required
                         />
