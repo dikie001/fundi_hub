@@ -338,8 +338,8 @@ function DashboardInner() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-radial from-background to-muted text-foreground gap-3.5 animate-pulse">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-xs font-semibold text-muted-foreground tracking-widest uppercase">
-          Loading your FundiHub Profile...
+        <p className="text-xs font-medium text-muted-foreground">
+          Loading your profile...
         </p>
       </div>
     )
@@ -379,7 +379,7 @@ function DashboardInner() {
               <span className="text-lg font-black bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent tracking-tight">
                 FundiHub
               </span>
-              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-black text-primary uppercase">
+              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
                 Partner
               </span>
             </div>
@@ -391,7 +391,7 @@ function DashboardInner() {
           
           {/* Section 1: Main Actions */}
           <SidebarGroup className="p-0">
-            <SidebarGroupLabel className="px-3 text-[10px] font-black tracking-wider uppercase text-muted-foreground/60">
+            <SidebarGroupLabel className="px-3 text-[10px] font-medium text-muted-foreground/60">
               Core Operations
             </SidebarGroupLabel>
             <SidebarMenu className="space-y-2 mt-2">
@@ -404,12 +404,12 @@ function DashboardInner() {
                       isActive={isActive}
                       onClick={() => setActiveTab(item.id as any)}
                       tooltip={item.label}
-                      className="w-full text-sm font-bold rounded-lg cursor-pointer h-10.5 px-3.5 hover:bg-sidebar-accent"
+                      className="w-full text-sm font-medium rounded-lg cursor-pointer h-10.5 px-3.5 hover:bg-sidebar-accent"
                     >
                       <Icon className="h-4.5 w-4.5" />
                       <span>{item.label}</span>
                       {item.badge !== undefined && item.badge > 0 && (
-                        <span className="ml-auto rounded-full bg-primary/20 text-primary px-2 py-0.5 text-xs font-black">
+                        <span className="ml-auto rounded-full bg-primary/20 text-primary px-2 py-0.5 text-xs font-medium">
                           {item.badge}
                         </span>
                       )}
@@ -422,7 +422,7 @@ function DashboardInner() {
 
           {/* Section 2: Marketing & Growth */}
           <SidebarGroup className="p-0">
-            <SidebarGroupLabel className="px-3 text-[10px] font-black tracking-wider uppercase text-muted-foreground/60">
+            <SidebarGroupLabel className="px-3 text-[10px] font-medium text-muted-foreground/60">
               Grow & Benefits
             </SidebarGroupLabel>
             <SidebarMenu className="space-y-2 mt-2">
@@ -435,12 +435,12 @@ function DashboardInner() {
                       isActive={isActive}
                       onClick={() => setActiveTab(item.id as any)}
                       tooltip={item.label}
-                      className="w-full text-sm font-bold rounded-lg cursor-pointer h-10.5 px-3.5 hover:bg-sidebar-accent"
+                      className="w-full text-sm font-medium rounded-lg cursor-pointer h-10.5 px-3.5 hover:bg-sidebar-accent"
                     >
                       <Icon className="h-4.5 w-4.5" />
                       <span>{item.label}</span>
                       {item.badge !== undefined && item.badge > 0 && (
-                        <span className="ml-auto rounded-full bg-primary/20 text-primary px-2 py-0.5 text-xs font-black">
+                        <span className="ml-auto rounded-full bg-primary/20 text-primary px-2 py-0.5 text-xs font-medium">
                           {item.badge}
                         </span>
                       )}
@@ -470,7 +470,7 @@ function DashboardInner() {
                     />
                   </div>
                 </TooltipTrigger>
-                <TooltipContent side="right" className="font-bold">
+                <TooltipContent side="right" className="font-medium">
                   On-Call Status: {profile?.isEmergency ? "Online" : "Offline"}
                 </TooltipContent>
               </Tooltip>
@@ -478,10 +478,10 @@ function DashboardInner() {
           ) : (
             <div className="flex items-center justify-between rounded-lg border border-border bg-card p-3.5 shadow-2xs">
               <div className="space-y-0.5">
-                <Label htmlFor="emergency-toggle" className="text-xs font-bold text-foreground cursor-pointer">
+                <Label htmlFor="emergency-toggle" className="text-xs font-medium text-foreground cursor-pointer">
                   On-Call Status
                 </Label>
-                <p className="text-[10px] text-muted-foreground font-semibold">
+                <p className="text-[10px] text-muted-foreground font-normal">
                   {profile?.isEmergency ? "Online" : "Offline"}
                 </p>
               </div>
@@ -510,7 +510,7 @@ function DashboardInner() {
                     {resolvedTheme === "dark" ? <Sun className="h-4.5 w-4.5 text-amber-500" /> : <Moon className="h-4.5 w-4.5 text-zinc-700" />}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="right" className="font-bold">
+                <TooltipContent side="right" className="font-medium">
                   {resolvedTheme === "dark" ? "Light Mode" : "Dark Mode"}
                 </TooltipContent>
               </Tooltip>
@@ -524,7 +524,7 @@ function DashboardInner() {
                   onClick={handleLogout}
                   className={cn(
                     "text-muted-foreground hover:text-destructive cursor-pointer rounded-lg h-9",
-                    isCollapsed ? "w-9" : "text-xs font-bold gap-1.5 px-3"
+                    isCollapsed ? "w-9" : "text-xs font-medium gap-1.5 px-3"
                   )}
                 >
                   <LogOut className="h-4 w-4" />
@@ -532,7 +532,7 @@ function DashboardInner() {
                 </Button>
               </TooltipTrigger>
               {isCollapsed && (
-                <TooltipContent side="right" className="font-bold">
+                <TooltipContent side="right" className="font-medium">
                   Sign Out
                 </TooltipContent>
               )}
@@ -550,7 +550,7 @@ function DashboardInner() {
           <div className="flex items-center gap-3">
             <SidebarTrigger />
             <Separator orientation="vertical" className="h-4" />
-            <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider capitalize">
+            <h2 className="text-sm font-medium text-muted-foreground capitalize">
               {activeTab}
             </h2>
           </div>
