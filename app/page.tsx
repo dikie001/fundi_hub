@@ -129,8 +129,7 @@ export default function Home() {
               Book Skilled Experts <span className="text-primary">Anytime</span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
-              Find trusted fundis - plumbers, electricians, carpenters, and
-              more. Direct WhatsApp and call buttons for instant communication.
+              Connect with verified, background-checked technical experts across Africa. Direct, transparent hiring with zero booking commissions.
             </p>
 
             {/* Integrated Search Bar */}

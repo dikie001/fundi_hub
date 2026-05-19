@@ -3,7 +3,7 @@
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { MessageCircle, Phone, Star } from "lucide-react"
+import { MessageCircle, Phone, Star, MapPin } from "lucide-react"
 import type { Fundi } from "@/lib/data"
 import Image from "next/image"
 import Link from "next/link"
@@ -78,6 +78,12 @@ export function FundiCard({ fundi }: FundiCardProps) {
             <p className="truncate text-xs font-semibold text-muted-foreground mt-0.5">
               {fundi.title}
             </p>
+            {fundi.serviceArea && (
+              <p className="flex items-center gap-1 text-[11px] font-bold text-muted-foreground/80 mt-1">
+                <MapPin className="h-3 w-3 text-primary shrink-0" />
+                <span className="truncate">{fundi.serviceArea}</span>
+              </p>
+            )}
           </div>
         </div>
 
