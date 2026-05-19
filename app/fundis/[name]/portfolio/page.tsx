@@ -75,12 +75,15 @@ export default async function FundiPortfolioPage({ params, searchParams }: PageP
       <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Back Link Row */}
         <div className="mb-6 flex items-center justify-between">
-          <Button variant="ghost" size="sm" className="gap-1.5 font-bold rounded-xl cursor-pointer hover:bg-muted" asChild>
-            <Link href={profileUrl}>
-              <ArrowLeft className="h-4 w-4 text-primary" />
-              Back to Profile
-            </Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="gap-1.5 font-bold rounded-xl cursor-pointer hover:bg-muted" asChild>
+              <Link href={profileUrl}>
+                <ArrowLeft className="h-4 w-4 text-primary" />
+                Back to Profile
+              </Link>
+            </Button>
+            <ShareButton />
+          </div>
           <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Project Gallery ({totalItems})
           </div>
