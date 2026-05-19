@@ -50,8 +50,8 @@ export function FundiCard({ fundi }: FundiCardProps) {
               </Badge>
             )}
           </div>
-          <span className="text-[11px] font-bold text-muted-foreground whitespace-nowrap">
-            {fundi.reviews}+ jobs
+          <span className="text-[11px] font-black text-primary hover:underline md:hidden whitespace-nowrap">
+            View Profile →
           </span>
         </div>
 
