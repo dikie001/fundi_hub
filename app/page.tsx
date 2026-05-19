@@ -22,6 +22,8 @@ import {
   BarChart3,
   Heart,
   Search,
+  Sparkles,
+  Star,
 } from "lucide-react"
 import Link from "next/link"
 
@@ -404,7 +406,7 @@ export default function Home() {
           <p className="mb-12 text-center text-muted-foreground">
             Flexible pricing for every fundi
           </p>
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto">
             <Card>
               <CardHeader>
                 <CardTitle>One-Time Registration</CardTitle>
@@ -454,30 +456,6 @@ export default function Home() {
                   </li>
                 </ul>
                 <Button className="w-full">Subscribe Now</Button>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Premium Badges</CardTitle>
-                <CardDescription className="text-sm">
-                  Additional visibility options
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3 text-sm">
-                  <div>
-                    <p className="font-medium">✅ Verified Badge</p>
-                    <p className="text-muted-foreground">Ksh 300/month</p>
-                  </div>
-                  <div>
-                    <p className="font-medium">⭐ Top & Verified Badge</p>
-                    <p className="text-muted-foreground">Ksh 500/month</p>
-                  </div>
-                </div>
-                <Button className="w-full" variant="outline">
-                  Learn More
-                </Button>
               </CardContent>
             </Card>
           </div>

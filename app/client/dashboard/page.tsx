@@ -309,14 +309,9 @@ export default function ClientDashboard() {
                               <span className="font-bold text-sm text-foreground">
                                 {fundi.user?.name}
                               </span>
-                              {fundi.premiumLevel === "top" && (
-                                <span className="rounded bg-amber-500/10 border border-amber-500/20 px-1 py-0.2 text-[8px] font-extrabold text-amber-500 uppercase tracking-wide">
-                                  Top Rated ⭐
-                                </span>
-                              )}
-                              {fundi.premiumLevel === "verified" && (
-                                <span className="rounded bg-blue-500/10 border border-blue-500/20 px-1 py-0.2 text-[8px] font-extrabold text-blue-500 uppercase tracking-wide">
-                                  Verified ✓
+                              {(fundi.premiumLevel === "top" || fundi.premiumLevel === "verified") && (
+                                <span className="rounded bg-gradient-to-r from-amber-500 to-orange-500 px-1.5 py-0.5 text-[8px] font-extrabold text-white uppercase tracking-wide flex items-center gap-0.5 shadow-xs">
+                                  ★ Premium
                                 </span>
                               )}
                               {fundi.isEmergency && (
