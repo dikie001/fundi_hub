@@ -92,8 +92,15 @@ export function FundiCard({ fundi }: FundiCardProps) {
           <div className="flex items-center gap-1 font-bold text-foreground">
             <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
             <span>{fundi.rating}</span>
-            <span className="font-medium text-muted-foreground">({fundi.reviews} reviews)</span>
+            <span className="font-medium text-muted-foreground">({fundi.reviews} {fundi.reviews === 1 ? "review" : "reviews"})</span>
           </div>
+
+          <Link
+            href={`${profileLink}#reviews-section`}
+            className="text-[11px] font-bold text-primary hover:underline ml-1"
+          >
+            • Leave Review
+          </Link>
 
           {fundi.isEmergency && (
             <span className="ml-auto rounded-full bg-red-500/10 border border-red-500/20 px-2 py-0.5 text-[9px] font-bold text-red-500">

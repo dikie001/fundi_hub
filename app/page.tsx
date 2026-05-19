@@ -160,14 +160,14 @@ export default function Home() {
                 <Search className="absolute top-1/2 right-5 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               )}
             </div>
-
+{/* 
             {!hasSearch && (
               <div className="mt-6 flex justify-center gap-4">
                 <Button variant="outline" asChild>
                   <Link href="/auth/signup">Get Started as Fundi</Link>
                 </Button>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </section>

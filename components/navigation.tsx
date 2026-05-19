@@ -2,19 +2,36 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { Menu, X } from "lucide-react"
+import { Menu, X, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { usePathname, useRouter } from "next/navigation"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname()
+  const router = useRouter()
+  const isNotHome = pathname !== "/"
 
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <Link href="/#home" className="flex items-center gap-2">
-            <div className="text-2xl font-bold text-primary">FundiHub</div>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link href="/#home" className="flex items-center gap-2">
+              <div className="text-2xl font-bold text-primary">FundiHub</div>
+            </Link>
+            {isNotHome && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hidden md:flex h-8 w-8 rounded-full border border-border/50 hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer"
+                onClick={() => router.back()}
+                aria-label="Go back"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden items-center gap-8 md:flex">
