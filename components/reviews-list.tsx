@@ -17,17 +17,23 @@ interface Review {
 interface ReviewsListProps {
   fundiUserId: string
   initialReviews: Review[]
+  clientReview?: {
+    reviewerName: string
+    rating: number
+    comment: string
+  } | null
 }
 
-export function ReviewsList({ fundiUserId, initialReviews }: ReviewsListProps) {
+export function ReviewsList({ fundiUserId, initialReviews, clientReview }: ReviewsListProps) {
   const [reviews, setReviews] = useState<Review[]>(initialReviews)
-  const [reviewerName, setReviewerName] = useState("")
-  const [rating, setRating] = useState(5)
-  const [comment, setComment] = useState("")
+  const [reviewerName, setReviewerName] = useState(clientReview?.reviewerName || "")
+  const [rating, setRating] = useState(clientReview?.rating || 5)
+  const [comment, setComment] = useState(clientReview?.comment || "")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [hoverRating, setHoverRating] = useState<number | null>(null)
+  const [isNameLocked, setIsNameLocked] = useState(!!clientReview)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -38,7 +44,6 @@ export function ReviewsList({ fundiUserId, initialReviews }: ReviewsListProps) {
 
     setIsSubmitting(true)
     setError(null)
-    setSuccess(false)
 
     try {
       const res = await fetch(`/api/fundis/${fundiUserId}/reviews`, {
@@ -53,6 +58,8 @@ export function ReviewsList({ fundiUserId, initialReviews }: ReviewsListProps) {
       }
 
       const newReview = await res.json()
+      const isUpdate = reviews.some((r) => r.id === newReview.id) || isNameLocked
+
       setReviews((prevReviews) => {
         const exists = prevReviews.some((r) => r.id === newReview.id)
         if (exists) {
@@ -61,11 +68,10 @@ export function ReviewsList({ fundiUserId, initialReviews }: ReviewsListProps) {
         }
         return [newReview, ...prevReviews]
       })
-      setReviewerName("")
-      setRating(5)
-      setComment("")
-      setSuccess(true)
-      setTimeout(() => setSuccess(false), 5000)
+
+      setIsNameLocked(true)
+      setSuccessMessage(isUpdate ? "Your review was updated successfully!" : "Review submitted successfully! Thank you.")
+      setTimeout(() => setSuccessMessage(null), 5000)
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred.")
     } finally {
@@ -105,12 +111,17 @@ export function ReviewsList({ fundiUserId, initialReviews }: ReviewsListProps) {
                     id="reviewer-name"
                     type="text"
                     required
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isNameLocked}
                     value={reviewerName}
                     onChange={(e) => setReviewerName(e.target.value)}
                     placeholder="Enter your name"
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden"
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden disabled:opacity-70 disabled:cursor-not-allowed"
                   />
+                  {isNameLocked && (
+                    <span className="text-[10px] text-muted-foreground font-medium mt-0.5 block">
+                      Name is locked to your previous review
+                    </span>
+                  )}
                 </div>
 
                 {/* Rating Stars Select */}
@@ -167,18 +178,18 @@ export function ReviewsList({ fundiUserId, initialReviews }: ReviewsListProps) {
                   </div>
                 )}
 
-                {success && (
+                {successMessage && (
                   <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-3 text-xs font-medium text-emerald-500">
-                    Review submitted successfully! Thank you.
+                    {successMessage}
                   </div>
                 )}
 
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full font-bold transition-all"
+                  className="w-full h-11 bg-primary text-primary-foreground font-bold hover:bg-primary/90 flex items-center justify-center gap-2 rounded-xl transition-all"
                 >
-                  {isSubmitting ? "Submitting..." : "Submit Review"}
+                  {isSubmitting ? "Submitting..." : isNameLocked ? "Update Review" : "Submit Review"}
                 </Button>
               </form>
             </CardContent>

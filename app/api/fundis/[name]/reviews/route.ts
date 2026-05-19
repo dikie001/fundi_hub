@@ -105,10 +105,16 @@ export async function POST(
 
     let review
     if (existingReview) {
+      if (existingReview.reviewerName.trim().toLowerCase() !== reviewerName.trim().toLowerCase()) {
+        return NextResponse.json(
+          { error: "You cannot change your reviewer name once a review has been submitted." },
+          { status: 400 }
+        )
+      }
       review = await db.review.update({
         where: { id: existingReview.id },
         data: {
-          reviewerName,
+          reviewerName, // Keep name field consistent
           rating: ratingVal,
           comment,
           createdAt: new Date(),

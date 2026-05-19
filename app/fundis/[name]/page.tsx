@@ -405,7 +405,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
                   </p>
                 </div>
 
-                <div className="space-y-2.5 pt-2 text-xs">
+                {/* <div className="space-y-2.5 pt-2 text-xs">
                   <div className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-emerald-500 shrink-0" />
                     <span className="text-muted-foreground font-medium">Verified credentials & background checks</span>
@@ -418,7 +418,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
                     <CheckCircle className="h-4 w-4 text-emerald-500 shrink-0" />
                     <span className="text-muted-foreground font-medium">Direct WhatsApp response</span>
                   </div>
-                </div>
+                </div> */}
 
               </CardContent>
             </Card>
