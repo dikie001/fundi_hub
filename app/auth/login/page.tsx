@@ -83,25 +83,28 @@ export default function LoginPage() {
               )}
               
               <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                  <Phone className="h-3.5 w-3.5 text-primary" /> Phone number
+                <Label htmlFor="email" className="text-xs font-bold text-foreground">
+                  Phone number
                 </Label>
-                <Input
-                  id="email"
-                  type="text"
-                  placeholder="e.g. +254 700 000 000"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isLoading}
-                  required
-                  className="h-11 rounded-xl bg-muted/10 border-border/60 focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary/50 transition-all duration-200"
-                />
+                <div className="relative">
+                  <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/45 pointer-events-none" />
+                  <Input
+                    id="email"
+                    type="text"
+                    placeholder="e.g. +254 700 000 000"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={isLoading}
+                    required
+                    className="pl-10"
+                  />
+                </div>
               </div>
 
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                    <Lock className="h-3.5 w-3.5 text-primary" /> Password
+                  <Label htmlFor="password" className="text-xs font-bold text-foreground">
+                    Password
                   </Label>
                   <Link
                     href="/auth/forgot-password"
@@ -111,13 +114,14 @@ export default function LoginPage() {
                   </Link>
                 </div>
                 <div className="relative">
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/45 pointer-events-none" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pr-10 h-11 rounded-xl bg-muted/10 border-border/60 focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary/50 transition-all duration-200"
+                    className="pl-10 pr-10"
                     disabled={isLoading}
                     required
                   />
