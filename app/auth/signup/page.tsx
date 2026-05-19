@@ -727,6 +727,15 @@ export default function SignupPage() {
               {/* STEP 5: Security Credentials */}
               {currentStep === 5 && (
                 <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <input
+                    type="text"
+                    name="username"
+                    value={formData.phone}
+                    autoComplete="username"
+                    className="sr-only"
+                    tabIndex={-1}
+                    readOnly
+                  />
                   <div className="flex flex-col gap-4">
                     <div className="space-y-1.5">
                       <Label htmlFor="password" className="text-xs font-bold text-foreground flex items-center gap-1.5">
