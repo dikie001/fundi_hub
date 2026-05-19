@@ -46,10 +46,10 @@ export async function POST(request: Request) {
     // Create user and associated profile
     const user = await db.user.create({
       data: {
-      name,
-      ...(email ? { email: String(email).toLowerCase() } : {}),
-      phone,
-      password: hashedPassword,
+        name,
+        ...(email ? { email: String(email).toLowerCase() } : {}),
+        phone,
+        password: hashedPassword,
         role: userType === "fundi" ? "fundi" : "client",
         ...(userType === "fundi"
           ? {
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
     if (userType === "fundi" && referrerId) {
       try {
         const referrer = await db.user.findUnique({
-          where: { id: referrerId }
+          where: { id: referrerId },
         })
         if (referrer) {
           await db.referral.create({
@@ -92,8 +92,8 @@ export async function POST(request: Request) {
               refereePhone: phone,
               refereeTrade: trade || "General",
               status: "registered",
-              commission: 100.0
-            }
+              commission: 100.0,
+            },
           })
         }
       } catch (err) {
