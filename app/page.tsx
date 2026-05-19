@@ -21,6 +21,7 @@ import {
   Clock,
   BarChart3,
   Heart,
+  Search,
 } from "lucide-react"
 import Link from "next/link"
 
@@ -124,7 +125,7 @@ export default function Home() {
       {/* Hero Section with Integrated Search */}
       <section
         id="home"
-        className="relative scroll-mt-24 overflow-hidden bg-linear-to-b from-primary/10 to-transparent px-4 py-20 sm:px-6 lg:px-8"
+        className="relative scroll-mt-24 overflow-hidden bg-linear-to-b from-primary/10 to-transparent px-4 pt-20 pb-8 sm:px-6 lg:px-8"
       >
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
@@ -139,14 +140,14 @@ export default function Home() {
             {/* Integrated Search Bar */}
             <div
               id="categories"
-              className="relative mx-auto mt-10 max-w-xl scroll-mt-28"
+              className="relative mx-auto mt-8 max-w-xl scroll-mt-28"
             >
               <input
                 type="text"
-                placeholder="Search by category, task, name, or area (e.g. Plumber, Nairobi)..."
+                placeholder="Search for plumbers, electricians, painters..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-14 w-full rounded-2xl border border-border bg-card/90 px-6 pr-12 text-sm font-semibold text-foreground shadow-lg transition-all focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden"
+                className="h-14 w-full rounded-2xl border border-border bg-card/90 px-6 pr-12 text-sm text-foreground shadow-lg transition-all focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden"
               />
               {hasSearch ? (
                 <button
@@ -156,9 +157,7 @@ export default function Home() {
                   Clear
                 </button>
               ) : (
-                <span className="absolute top-1/2 right-5 -translate-y-1/2 text-muted-foreground">
-                  🔍
-                </span>
+                <Search className="absolute top-1/2 right-5 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               )}
             </div>
 
@@ -175,7 +174,7 @@ export default function Home() {
 
       {/* Dynamic Search Results Section */}
       {hasSearch && (
-        <section className="animate-in border-b border-border bg-muted/10 px-4 py-16 duration-300 fade-in slide-in-from-top-4 sm:px-6 lg:px-8">
+        <section className="animate-in border-b border-border bg-muted/10 px-4 pt-8 pb-16 duration-300 fade-in slide-in-from-top-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl space-y-6">
             <div className="flex items-center justify-between border-b border-border/40 pb-4">
               <h3 className="text-lg font-bold text-foreground">
@@ -215,7 +214,7 @@ export default function Home() {
       {!hasSearch && (
         <section
           id="featured"
-          className="scroll-mt-24 border-b border-border px-4 py-16 sm:px-6 lg:px-8"
+          className="scroll-mt-24 border-b border-border px-4 pt-8 pb-16 sm:px-6 lg:px-8"
         >
           <div className="mx-auto max-w-7xl">
             <div className="mb-8 flex items-center justify-between">
@@ -239,7 +238,7 @@ export default function Home() {
 
       {/* Top Rated Experts - Hidden when searching */}
       {!hasSearch && (
-        <section className="border-b border-border px-4 py-16 sm:px-6 lg:px-8">
+        <section className="border-b border-border px-4 pt-8 pb-16 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <div className="mb-8">
               <h2 className="text-3xl font-bold">Top Rated Experts</h2>
@@ -260,7 +259,7 @@ export default function Home() {
 
       {/* Nearby Fundis - Hidden when searching */}
       {!hasSearch && (
-        <section className="border-b border-border px-4 py-16 sm:px-6 lg:px-8">
+        <section className="border-b border-border px-4 pt-8 pb-16 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <div className="mb-8 flex items-center justify-between">
               <div>
@@ -286,7 +285,7 @@ export default function Home() {
 
       {/* Emergency Services - Hidden when searching */}
       {!hasSearch && (
-        <section className="border-b border-border px-4 py-16 sm:px-6 lg:px-8">
+        <section className="border-b border-border px-4 pt-8 pb-16 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <div className="mb-8 flex items-center justify-between">
               <div>
