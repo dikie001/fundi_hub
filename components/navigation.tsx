@@ -17,7 +17,9 @@ export function Navigation() {
   useEffect(() => {
     fetch("/api/auth/me")
       .then((r) => (r.ok ? r.json() : null))
-      .then((d) => { if (d?.user) setAuthUser(d.user) })
+      .then((d) => {
+        if (d?.user) setAuthUser(d.user)
+      })
       .catch(() => {})
   }, [])
 
@@ -39,7 +41,7 @@ export function Navigation() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="hidden md:flex h-8 w-8 rounded-full border border-border/50 hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer"
+                className="hidden h-8 w-8 cursor-pointer rounded-full border border-border/50 text-muted-foreground hover:bg-accent hover:text-foreground md:flex"
                 onClick={() => router.back()}
                 aria-label="Go back"
               >
@@ -50,24 +52,27 @@ export function Navigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden items-center gap-8 md:flex">
-            <Link href="/#home" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link
+              href="/#home"
+              className="text-sm font-medium transition-colors hover:text-primary"
+            >
               Home
             </Link>
             <Link
               href="/#categories"
-              className="text-sm font-medium hover:text-primary transition-colors"
+              className="text-sm font-medium transition-colors hover:text-primary"
             >
               Search
             </Link>
             <Link
               href="/#refer-earn"
-              className="text-sm font-medium hover:text-primary transition-colors"
+              className="text-sm font-medium transition-colors hover:text-primary"
             >
               Refer & Earn
             </Link>
             <Link
               href="/#for-fundis"
-              className="text-sm font-medium hover:text-primary transition-colors"
+              className="text-sm font-medium transition-colors hover:text-primary"
             >
               For Fundis
             </Link>
@@ -76,7 +81,10 @@ export function Navigation() {
                 <UserMenu
                   name={authUser.name}
                   phone={authUser.phone}
-                  image={authUser.fundiProfile?.image || authUser.clientProfile?.image}
+                  image={
+                    authUser.fundiProfile?.image ||
+                    authUser.clientProfile?.image
+                  }
                   role={authUser.role}
                   onLogout={handleLogout}
                 />
@@ -105,7 +113,7 @@ export function Navigation() {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="border-t border-border md:hidden animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="animate-in border-t border-border duration-200 fade-in slide-in-from-top-2 md:hidden">
             <div className="space-y-2 px-2 py-4">
               <Link
                 href="/#home"
@@ -135,7 +143,7 @@ export function Navigation() {
               >
                 For Fundis
               </Link>
-              <div className="border-t border-border pt-2 space-y-2">
+              <div className="space-y-2 border-t border-border pt-2">
                 {authUser ? (
                   <Button
                     variant="outline"
@@ -147,7 +155,12 @@ export function Navigation() {
                   </Button>
                 ) : (
                   <>
-                    <Button variant="outline" size="sm" asChild className="w-full">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
+                      className="w-full"
+                    >
                       <Link href="/auth/login">Sign In</Link>
                     </Button>
                     <Button size="sm" asChild className="w-full">

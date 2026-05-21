@@ -181,7 +181,10 @@ export function MultiSelect({
                 value={customInput}
                 onChange={(e) => setCustomInput(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") { e.preventDefault(); addCustom() }
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    addCustom()
+                  }
                 }}
                 onClick={(e) => e.stopPropagation()}
               />

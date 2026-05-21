@@ -12,7 +12,9 @@ export async function GET(request: Request) {
     const error = searchParams.get("error")
 
     if (error || !code) {
-      return NextResponse.redirect(`${baseUrl}/auth/login?error=google_cancelled`)
+      return NextResponse.redirect(
+        `${baseUrl}/auth/login?error=google_cancelled`
+      )
     }
 
     const clientId = process.env.GOOGLE_CLIENT_ID!
@@ -38,13 +40,18 @@ export async function GET(request: Request) {
     }
 
     // Get user info from Google
-    const userInfoRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
-      headers: { Authorization: `Bearer ${tokenData.access_token}` },
-    })
+    const userInfoRes = await fetch(
+      "https://www.googleapis.com/oauth2/v3/userinfo",
+      {
+        headers: { Authorization: `Bearer ${tokenData.access_token}` },
+      }
+    )
     const googleUser = await userInfoRes.json()
 
     if (!googleUser.email) {
-      return NextResponse.redirect(`${baseUrl}/auth/login?error=google_no_email`)
+      return NextResponse.redirect(
+        `${baseUrl}/auth/login?error=google_no_email`
+      )
     }
 
     // Find or create user

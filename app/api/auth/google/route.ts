@@ -5,7 +5,10 @@ export async function GET() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
 
   if (!clientId) {
-    return NextResponse.json({ error: "Google OAuth not configured" }, { status: 503 })
+    return NextResponse.json(
+      { error: "Google OAuth not configured" },
+      { status: 503 }
+    )
   }
 
   const redirectUri = `${baseUrl}/api/auth/google/callback`

@@ -38,7 +38,11 @@ export function UserMenu({
     : "?"
 
   const roleLabel =
-    role === "fundi" ? "Partner Account" : role === "admin" ? "Admin" : "Client Account"
+    role === "fundi"
+      ? "Partner Account"
+      : role === "admin"
+        ? "Admin"
+        : "Client Account"
 
   return (
     <PopoverPrimitive.Root>
@@ -84,13 +88,13 @@ export function UserMenu({
           sideOffset={8}
           className={cn(
             "z-50 w-56 rounded-xl border border-border bg-card p-1.5 text-card-foreground shadow-lg outline-none",
-            "data-[state=open]:animate-in data-[state=closed]:animate-out",
+            "data-[state=closed]:animate-out data-[state=open]:animate-in",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
             "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
           )}
         >
           {/* Identity */}
-          <div className="flex items-center gap-2.5 rounded-lg bg-muted/40 px-3 py-2.5 mb-1">
+          <div className="mb-1 flex items-center gap-2.5 rounded-lg bg-muted/40 px-3 py-2.5">
             {image ? (
               <img
                 src={image}
@@ -103,8 +107,12 @@ export function UserMenu({
               </div>
             )}
             <div className="min-w-0">
-              <div className="truncate text-xs font-bold text-foreground">{name}</div>
-              <div className="truncate text-[10px] text-muted-foreground">{phone || roleLabel}</div>
+              <div className="truncate text-xs font-bold text-foreground">
+                {name}
+              </div>
+              <div className="truncate text-[10px] text-muted-foreground">
+                {phone || roleLabel}
+              </div>
             </div>
           </div>
 
@@ -112,7 +120,9 @@ export function UserMenu({
           {mounted && (
             <button
               type="button"
-              onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+              onClick={() =>
+                setTheme(resolvedTheme === "dark" ? "light" : "dark")
+              }
               className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-foreground transition-colors hover:bg-accent"
             >
               {resolvedTheme === "dark" ? (

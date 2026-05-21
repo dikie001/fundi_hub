@@ -1,13 +1,31 @@
 "use client"
 
 import { DashboardProvider, useDashboard } from "./context/DashboardContext"
-import { SidebarInset, SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar"
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+  useSidebar,
+} from "@/components/ui/sidebar"
 import { DashboardSidebar } from "./components/dashboard-sidebar"
 import { Separator } from "@/components/ui/separator"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Check, Loader2, Zap } from "lucide-react"
-import { LayoutDashboard, Wrench, FolderKanban, DollarSign, ShieldCheck } from "lucide-react"
+import {
+  LayoutDashboard,
+  Wrench,
+  FolderKanban,
+  DollarSign,
+  ShieldCheck,
+} from "lucide-react"
 import { usePathname } from "next/navigation"
 import { UserMenu } from "@/components/user-menu"
 
@@ -32,21 +50,51 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   } = useDashboard()
 
   const menuItems = [
-    { id: "overview", label: "Overview", icon: LayoutDashboard, badge: matchingLeads.length, href: "/fundi/dashboard" },
-    { id: "leads", label: "Client Leads", icon: Wrench, badge: matchingLeads.length, href: "/fundi/dashboard/leads" },
-    { id: "profile", label: "Profile & Portfolio", icon: FolderKanban, href: "/fundi/dashboard/profile" },
-    { id: "referrals", label: "Referrals & Rewards", icon: DollarSign, href: "/fundi/dashboard/referrals" },
-    { id: "membership", label: "Membership Benefits", icon: ShieldCheck, href: "/fundi/dashboard/membership" },
+    {
+      id: "overview",
+      label: "Overview",
+      icon: LayoutDashboard,
+      badge: matchingLeads.length,
+      href: "/fundi/dashboard",
+    },
+    {
+      id: "leads",
+      label: "Client Leads",
+      icon: Wrench,
+      badge: matchingLeads.length,
+      href: "/fundi/dashboard/leads",
+    },
+    {
+      id: "profile",
+      label: "Profile & Portfolio",
+      icon: FolderKanban,
+      href: "/fundi/dashboard/profile",
+    },
+    {
+      id: "referrals",
+      label: "Referrals & Rewards",
+      icon: DollarSign,
+      href: "/fundi/dashboard/referrals",
+    },
+    {
+      id: "membership",
+      label: "Membership Benefits",
+      icon: ShieldCheck,
+      href: "/fundi/dashboard/membership",
+    },
   ]
 
   // Determine active tab label from pathname matching
-  const activeItem = menuItems.find((item) => item.href === pathname) || menuItems[0]
+  const activeItem =
+    menuItems.find((item) => item.href === pathname) || menuItems[0]
 
   if (isLoading) {
     return (
       <div className="flex min-h-screen animate-pulse flex-col items-center justify-center gap-3.5 bg-radial from-background to-muted text-foreground">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-xs font-medium text-muted-foreground">Loading your profile...</p>
+        <p className="text-xs font-medium text-muted-foreground">
+          Loading your profile...
+        </p>
       </div>
     )
   }
@@ -69,7 +117,9 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-3">
             <SidebarTrigger />
             <Separator orientation="vertical" className="h-4" />
-            <h2 className="text-sm font-medium text-muted-foreground capitalize">{activeItem.label}</h2>
+            <h2 className="text-sm font-medium text-muted-foreground capitalize">
+              {activeItem.label}
+            </h2>
           </div>
           <UserMenu
             name={user?.name}
@@ -90,7 +140,8 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
         <DialogContent className="w-full max-w-sm rounded-xl border border-border bg-card p-5 shadow-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-1.5 text-sm font-bold text-foreground">
-              <ShieldCheck className="h-4 w-4 text-primary" /> Activate Premium Badge
+              <ShieldCheck className="h-4 w-4 text-primary" /> Activate Premium
+              Badge
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
               Boost your profile discovery rating and gain customer trust.
@@ -105,7 +156,8 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
                 Ksh 500 once
               </div>
               <p className="text-xs leading-normal text-muted-foreground">
-                Verified trust tick, top search rankings, and 5x priority queue dispatch for customer leads.
+                Verified trust tick, top search rankings, and 5x priority queue
+                dispatch for customer leads.
               </p>
             </div>
             <div className="space-y-2 rounded-lg border border-primary/10 bg-primary/5 p-3 text-xs leading-normal text-muted-foreground">
@@ -132,11 +184,12 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
               type="button"
               onClick={handleActivateBadge}
               disabled={isProcessingPayment}
-              className="h-9.5 cursor-pointer rounded-lg px-4 text-xs font-bold bg-primary text-primary-foreground"
+              className="h-9.5 cursor-pointer rounded-lg bg-primary px-4 text-xs font-bold text-primary-foreground"
             >
               {isProcessingPayment ? (
                 <>
-                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> Activating...
+                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />{" "}
+                  Activating...
                 </>
               ) : (
                 "Pay & Activate"
@@ -149,7 +202,11 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   )
 }
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <DashboardProvider>
       <SidebarProvider defaultOpen={true}>
