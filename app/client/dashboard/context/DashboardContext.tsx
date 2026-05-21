@@ -68,12 +68,19 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     window.location.href = "/auth/login"
   }
 
-  const matchedFundis = allFundis.filter(
-    (f) =>
-      profile?.projectCategory &&
-      (f.trade || f.category || "").toLowerCase() ===
-        (profile.projectCategory || "").toLowerCase()
-  )
+  const clientCats = (profile?.projectCategory || "")
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean)
+
+  const matchedFundis = allFundis.filter((f) => {
+    if (clientCats.length === 0) return false
+    const fundiTrades = (f.trade || f.category || "")
+      .split(",")
+      .map((s: string) => s.trim().toLowerCase())
+      .filter(Boolean)
+    return clientCats.some((cat) => fundiTrades.includes(cat))
+  })
 
   return (
     <DashboardContext.Provider

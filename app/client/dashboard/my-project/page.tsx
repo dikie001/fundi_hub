@@ -25,18 +25,26 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { MultiSelect, type MultiSelectOption } from "@/components/ui/multi-select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
-const TRADES_LIST = [
-  "Plumber",
-  "Electrician",
-  "Carpenter",
-  "Painter",
-  "Mason",
-  "Welder",
-  "Appliance Repair",
-  "HVAC Tech",
-  "Cleaner",
-  "Gardener",
+const TRADES_LIST: MultiSelectOption[] = [
+  { value: "Plumber", label: "Plumber" },
+  { value: "Electrician", label: "Electrician" },
+  { value: "Carpenter", label: "Carpenter" },
+  { value: "Painter", label: "Painter" },
+  { value: "Mason", label: "Mason" },
+  { value: "Welder", label: "Welder" },
+  { value: "Appliance Repair", label: "Appliance Repair" },
+  { value: "HVAC Tech", label: "HVAC Tech" },
+  { value: "Cleaner", label: "Cleaner" },
+  { value: "Gardener", label: "Gardener" },
 ]
 
 export default function MyProjectPage() {
@@ -44,14 +52,18 @@ export default function MyProjectPage() {
 
   const [isUpdating, setIsUpdating] = useState(false)
   const [updateSuccess, setUpdateSuccess] = useState("")
-  const [editCategory, setEditCategory] = useState("")
+  const [editCategories, setEditCategories] = useState<string[]>([])
   const [editLocation, setEditLocation] = useState("")
   const [editBudget, setEditBudget] = useState("")
   const [editUrgency, setEditUrgency] = useState("")
 
   useEffect(() => {
     if (profile) {
-      setEditCategory(profile.projectCategory || "")
+      const cats = (profile.projectCategory || "")
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
+      setEditCategories(cats)
       setEditLocation(profile.projectLocation || "")
       setEditBudget(profile.budgetRange || "")
       setEditUrgency(profile.urgency || "")
@@ -67,7 +79,7 @@ export default function MyProjectPage() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          projectCategory: editCategory,
+          projectCategory: editCategories.join(","),
           projectLocation: editLocation,
           budgetRange: editBudget,
           urgency: editUrgency,
@@ -119,22 +131,18 @@ export default function MyProjectPage() {
                 )}
 
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-bold">
-                    Service Category Needed
-                  </Label>
-                  <select
-                    value={editCategory}
-                    onChange={(e) => setEditCategory(e.target.value)}
-                    className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-xs shadow-xs transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none dark:bg-input/30"
-                    required
-                  >
-                    <option value="">Select category...</option>
-                    {TRADES_LIST.map((t) => (
-                      <option key={t} value={t}>
-                        {t}
-                      </option>
-                    ))}
-                  </select>
+                  <Label className="text-xs font-bold">Services Needed</Label>
+                  <MultiSelect
+                    options={TRADES_LIST}
+                    value={editCategories}
+                    onChange={setEditCategories}
+                    placeholder="Select services needed..."
+                  />
+                  {editCategories.length === 0 && (
+                    <p className="text-[10px] text-muted-foreground">
+                      Select at least one service to find matches.
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-1.5">
@@ -150,46 +158,38 @@ export default function MyProjectPage() {
 
                 <div className="space-y-1.5">
                   <Label className="text-xs font-bold">Target Budget</Label>
-                  <select
-                    value={editBudget}
-                    onChange={(e) => setEditBudget(e.target.value)}
-                    className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-xs shadow-xs transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none dark:bg-input/30"
-                    required
-                  >
-                    <option value="">Select budget...</option>
-                    <option value="Under KES 2,000">Under KES 2,000</option>
-                    <option value="KES 2,000 - 5,000">KES 2,000 - 5,000</option>
-                    <option value="KES 5,000 - 10,000">
-                      KES 5,000 - 10,000
-                    </option>
-                    <option value="KES 10,000 - 20,000">
-                      KES 10,000 - 20,000
-                    </option>
-                    <option value="Over KES 20,000">Over KES 20,000</option>
-                  </select>
+                  <Select value={editBudget} onValueChange={setEditBudget}>
+                    <SelectTrigger className="h-9 text-xs">
+                      <SelectValue placeholder="Select budget..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Under KES 2,000">Under KES 2,000</SelectItem>
+                      <SelectItem value="KES 2,000 - 5,000">KES 2,000 - 5,000</SelectItem>
+                      <SelectItem value="KES 5,000 - 10,000">KES 5,000 - 10,000</SelectItem>
+                      <SelectItem value="KES 10,000 - 20,000">KES 10,000 - 20,000</SelectItem>
+                      <SelectItem value="Over KES 20,000">Over KES 20,000</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-1.5">
                   <Label className="text-xs font-bold">Urgency</Label>
-                  <select
-                    value={editUrgency}
-                    onChange={(e) => setEditUrgency(e.target.value)}
-                    className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-xs shadow-xs transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none dark:bg-input/30"
-                    required
-                  >
-                    <option value="">Select urgency...</option>
-                    <option value="Today / Immediate">Today / Immediate</option>
-                    <option value="Within 3 Days">Within 3 Days</option>
-                    <option value="Within a Week">Within a Week</option>
-                    <option value="Flexible / Planning">
-                      Flexible / Planning
-                    </option>
-                  </select>
+                  <Select value={editUrgency} onValueChange={setEditUrgency}>
+                    <SelectTrigger className="h-9 text-xs">
+                      <SelectValue placeholder="Select urgency..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Today / Immediate">Today / Immediate</SelectItem>
+                      <SelectItem value="Within 3 Days">Within 3 Days</SelectItem>
+                      <SelectItem value="Within a Week">Within a Week</SelectItem>
+                      <SelectItem value="Flexible / Planning">Flexible / Planning</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <Button
                   type="submit"
-                  disabled={isUpdating}
+                  disabled={isUpdating || editCategories.length === 0}
                   className="h-9 w-full text-xs font-bold"
                 >
                   {isUpdating ? (
@@ -216,8 +216,10 @@ export default function MyProjectPage() {
               {[
                 {
                   icon: Briefcase,
-                  label: "Category",
-                  value: profile?.projectCategory,
+                  label: "Services",
+                  value: profile?.projectCategory
+                    ? profile.projectCategory.split(",").map((s: string) => s.trim()).join(" · ")
+                    : undefined,
                 },
                 {
                   icon: MapPin,
@@ -314,7 +316,7 @@ export default function MyProjectPage() {
                             </Button>
                             <Button size="sm" asChild className="h-8 text-xs">
                               <a
-                                href={`https://wa.me/${fundi.phone.replace(/[^0-9]/g, "")}?text=Hello%20${encodeURIComponent(fundi.name)},%20I%20found%20you%20on%20FundiHub.%20I%20need%20a%20${encodeURIComponent(profile?.projectCategory || "service")}%20in%20${encodeURIComponent(profile?.projectLocation || "my area")}.`}
+                                href={`https://wa.me/${fundi.phone.replace(/[^0-9]/g, "")}?text=Hello%20${encodeURIComponent(fundi.name)},%20I%20found%20you%20on%20FundiHub.%20I%20need%20help%20with%20${encodeURIComponent((profile?.projectCategory || "").split(",").map((s: string) => s.trim()).filter(Boolean).join(" & ") || "a service")}%20in%20${encodeURIComponent(profile?.projectLocation || "my area")}.`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >

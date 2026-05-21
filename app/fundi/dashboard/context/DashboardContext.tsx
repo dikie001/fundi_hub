@@ -43,8 +43,8 @@ type DashboardContextType = {
   setEditName: (name: string) => void
   editTitle: string
   setEditTitle: (title: string) => void
-  editTrade: string
-  setEditTrade: (trade: string) => void
+  editTrades: string[]
+  setEditTrades: React.Dispatch<React.SetStateAction<string[]>>
   editYearsExp: string
   setEditYearsExp: (exp: string) => void
   editArea: string
@@ -129,7 +129,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
 
   const [editName, setEditName] = useState("")
   const [editTitle, setEditTitle] = useState("")
-  const [editTrade, setEditTrade] = useState("")
+  const [editTrades, setEditTrades] = useState<string[]>([])
   const [editYearsExp, setEditYearsExp] = useState("")
   const [editArea, setEditArea] = useState("")
   const [editDesc, setEditDesc] = useState("")
@@ -170,7 +170,12 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
       setProfile(data.user.fundiProfile)
       setEditName(data.user.name || "")
       setEditTitle(data.user.fundiProfile?.title || "")
-      setEditTrade(data.user.fundiProfile?.trade || "")
+      setEditTrades(
+        (data.user.fundiProfile?.trade || "")
+          .split(",")
+          .map((s: string) => s.trim())
+          .filter(Boolean)
+      )
       setEditYearsExp(data.user.fundiProfile?.yearsExperience || "")
       setEditArea(data.user.fundiProfile?.serviceArea || "")
       setEditDesc(data.user.fundiProfile?.description || "")
@@ -232,7 +237,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify({
           name: editName,
           title: editTitle,
-          trade: editTrade,
+          trade: editTrades.join(","),
           yearsExperience: editYearsExp,
           serviceArea: editArea,
           description: editDesc,
@@ -422,7 +427,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
   const jobEarnings = profile?.jobEarnings || 0
   const totalEarnings = referralEarnings + jobEarnings
 
-  const completionScore = [editName, editTitle, editTrade, editYearsExp, editArea, editDesc, preferredContact, avatarUrl, portfolioItems.length > 0]
+  const completionScore = [editName, editTitle, editTrades.length > 0, editYearsExp, editArea, editDesc, preferredContact, avatarUrl, portfolioItems.length > 0]
     .filter(Boolean).length * 10
 
   return (
@@ -448,8 +453,8 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         setEditName,
         editTitle,
         setEditTitle,
-        editTrade,
-        setEditTrade,
+        editTrades,
+        setEditTrades,
         editYearsExp,
         setEditYearsExp,
         editArea,

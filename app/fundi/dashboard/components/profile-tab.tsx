@@ -18,6 +18,20 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { MultiSelect, type MultiSelectOption } from "@/components/ui/multi-select"
+
+const FUNDI_TRADES: MultiSelectOption[] = [
+  { value: "Plumber", label: "Plumber" },
+  { value: "Electrician", label: "Electrician" },
+  { value: "Carpenter", label: "Carpenter" },
+  { value: "Painter", label: "Painter" },
+  { value: "Mason", label: "Mason" },
+  { value: "Welder", label: "Welder" },
+  { value: "Appliance Repair", label: "Appliance Repair" },
+  { value: "HVAC Tech", label: "HVAC Tech" },
+  { value: "Cleaner", label: "Cleaner" },
+  { value: "Gardener", label: "Gardener" },
+]
 
 type PortfolioItem = {
   id: string
@@ -33,8 +47,8 @@ type ProfileTabProps = {
   setEditName: (val: string) => void
   editTitle: string
   setEditTitle: (val: string) => void
-  editTrade: string
-  setEditTrade: (val: string) => void
+  editTrades: string[]
+  setEditTrades: React.Dispatch<React.SetStateAction<string[]>>
   editYearsExp: string
   setEditYearsExp: (val: string) => void
   editArea: string
@@ -73,8 +87,8 @@ export function ProfileTab({
   setEditName,
   editTitle,
   setEditTitle,
-  editTrade,
-  setEditTrade,
+  editTrades,
+  setEditTrades,
   editYearsExp,
   setEditYearsExp,
   editArea,
@@ -156,9 +170,11 @@ export function ProfileTab({
               </div>
               <p className="text-sm font-semibold text-foreground">{editTitle || `${editTrade || "General"} Specialist`}</p>
               <div className="flex flex-wrap items-center justify-center gap-2 pt-1 sm:justify-start">
-                <span className="inline-flex items-center rounded-lg border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
-                  {editTrade || "General"}
-                </span>
+                {(editTrades.length > 0 ? editTrades : ["General"]).map((t) => (
+                  <span key={t} className="inline-flex items-center rounded-lg border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
+                    {t}
+                  </span>
+                ))}
                 <span className="inline-flex items-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-500">
                   {editYearsExp || "0"} Years Experience
                 </span>
@@ -351,14 +367,12 @@ export function ProfileTab({
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label htmlFor="edit-trade" className="text-sm font-semibold text-foreground">Trade Category</Label>
-                <Input
-                  id="edit-trade"
-                  value={editTrade}
-                  onChange={(e) => setEditTrade(e.target.value)}
-                  placeholder="e.g. Plumbing, Electrical, Masonry"
-                  required
-                  className="h-10 rounded-lg text-sm"
+                <Label htmlFor="edit-trade" className="text-sm font-semibold text-foreground">Trade Categories</Label>
+                <MultiSelect
+                  options={FUNDI_TRADES}
+                  value={editTrades}
+                  onChange={setEditTrades}
+                  placeholder="Select your trades..."
                 />
               </div>
               <div className="space-y-1.5">

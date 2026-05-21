@@ -45,6 +45,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog"
+import { MultiSelect, type MultiSelectOption } from "@/components/ui/multi-select"
 
 type UserType = "client" | "fundi"
 
@@ -67,12 +68,17 @@ type SignupFormData = {
 
 const totalSteps = 5
 
-const TRADES_LIST = [
-  "Plumber",
-  "Electrician",
-  "Carpenter",
-  "Painter",
-  "Mason"
+const TRADES_LIST: MultiSelectOption[] = [
+  { value: "Plumber", label: "Plumber" },
+  { value: "Electrician", label: "Electrician" },
+  { value: "Carpenter", label: "Carpenter" },
+  { value: "Painter", label: "Painter" },
+  { value: "Mason", label: "Mason" },
+  { value: "Welder", label: "Welder" },
+  { value: "Appliance Repair", label: "Appliance Repair" },
+  { value: "HVAC Tech", label: "HVAC Tech" },
+  { value: "Cleaner", label: "Cleaner" },
+  { value: "Gardener", label: "Gardener" },
 ]
 
 const EXPERIENCE_LEVELS = [
@@ -129,6 +135,9 @@ export default function SignupPage() {
   const [isOtherModalOpen, setIsOtherModalOpen] = useState(false)
   const [otherFieldType, setOtherFieldType] = useState<"trade" | "projectCategory" | null>(null)
   const [otherInputValue, setOtherInputValue] = useState("")
+  // Multi-select states (joined to comma-separated string on submit)
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [selectedTrades, setSelectedTrades] = useState<string[]>([])
   const [formData, setFormData] = useState<SignupFormData>({
     name: "",
     email: "",
@@ -254,8 +263,8 @@ export default function SignupPage() {
 
     if (currentStep === 3) {
       if (userType === "fundi") {
-        if (!formData.trade.trim() || formData.trade === "Other") {
-          setStepError("Please enter your primary trade.")
+        if (selectedTrades.length === 0) {
+          setStepError("Please select at least one trade / expertise.")
           return false
         }
         if (!formData.yearsExperience.trim()) {
@@ -271,8 +280,8 @@ export default function SignupPage() {
           return false
         }
       } else {
-        if (!formData.projectCategory.trim() || formData.projectCategory === "Other") {
-          setStepError("Please specify the service needed.")
+        if (selectedCategories.length === 0) {
+          setStepError("Please select at least one service needed.")
           return false
         }
         if (!formData.projectLocation.trim()) {
@@ -352,6 +361,9 @@ export default function SignupPage() {
         body: JSON.stringify({
           userType,
           ...formData,
+          // Override with multi-select values joined as comma-separated strings
+          projectCategory: selectedCategories.join(",") || formData.projectCategory,
+          trade: selectedTrades.join(",") || formData.trade,
           referrerId,
           email: `${formData.phone.replace(/[^0-9]/g, "")}@fundihub.com`,
         }),
@@ -513,31 +525,18 @@ export default function SignupPage() {
                 <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
                   <div className="space-y-1.5">
                     <Label htmlFor="projectCategory" className="text-xs font-bold text-foreground">
-                      Service Needed
+                      Services Needed
                     </Label>
-                    <Select
-                      value={formData.projectCategory && !TRADES_LIST.includes(formData.projectCategory) ? "Other" : formData.projectCategory}
-                      onValueChange={handleSelectProjectCategory}
+                    <MultiSelect
+                      options={TRADES_LIST}
+                      value={selectedCategories}
+                      onChange={setSelectedCategories}
+                      placeholder="Select services you need..."
                       disabled={isLoading}
-                    >
-                      <SelectTrigger id="projectCategory" className="w-full">
-                        {formData.projectCategory && formData.projectCategory !== "Other" ? (
-                          <span className="text-sm text-foreground">{formData.projectCategory}</span>
-                        ) : (
-                          <SelectValue placeholder="Select the service you need..." />
-                        )}
-                      </SelectTrigger>
-                      <SelectContent>
-                        {clientTrades.map((t) => (
-                          <SelectItem key={t} value={t}>
-                            {t}
-                          </SelectItem>
-                        ))}
-                        <SelectItem value="Other" className="text-primary font-bold">
-                          Other...
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                    />
+                    {selectedCategories.length === 0 && (
+                      <p className="text-[10px] text-muted-foreground">Select at least one service.</p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -608,31 +607,18 @@ export default function SignupPage() {
                 <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
                   <div className="space-y-1.5">
                     <Label htmlFor="trade" className="text-xs font-bold text-foreground">
-                      Primary Skill / Trade
+                      Trades / Expertise
                     </Label>
-                    <Select
-                      value={formData.trade && !TRADES_LIST.includes(formData.trade) ? "Other" : formData.trade}
-                      onValueChange={handleSelectTrade}
+                    <MultiSelect
+                      options={TRADES_LIST}
+                      value={selectedTrades}
+                      onChange={setSelectedTrades}
+                      placeholder="Select your trades & expertise..."
                       disabled={isLoading}
-                    >
-                      <SelectTrigger id="trade" className="w-full">
-                        {formData.trade && formData.trade !== "Other" ? (
-                          <span className="text-sm text-foreground">{formData.trade}</span>
-                        ) : (
-                          <SelectValue placeholder="Select your primary trade..." />
-                        )}
-                      </SelectTrigger>
-                      <SelectContent>
-                        {fundiTrades.map((t) => (
-                          <SelectItem key={t} value={t}>
-                            {t}
-                          </SelectItem>
-                        ))}
-                        <SelectItem value="Other" className="text-primary font-bold">
-                          Other...
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                    />
+                    {selectedTrades.length === 0 && (
+                      <p className="text-[10px] text-muted-foreground">Select at least one trade.</p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">

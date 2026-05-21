@@ -11,8 +11,8 @@ export default function ProfilePage() {
     setEditName,
     editTitle,
     setEditTitle,
-    editTrade,
-    setEditTrade,
+    editTrades,
+    setEditTrades,
     editYearsExp,
     setEditYearsExp,
     editArea,
@@ -53,8 +53,8 @@ export default function ProfilePage() {
       setEditName={setEditName}
       editTitle={editTitle}
       setEditTitle={setEditTitle}
-      editTrade={editTrade}
-      setEditTrade={setEditTrade}
+      editTrades={editTrades}
+      setEditTrades={setEditTrades}
       editYearsExp={editYearsExp}
       setEditYearsExp={setEditYearsExp}
       editArea={editArea}
