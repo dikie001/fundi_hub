@@ -34,79 +34,11 @@ export function OverviewTab(props: any) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
-        <Card className="border border-border/60 bg-card transition-all hover:border-primary/20 hover:shadow-md">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs font-black tracking-wider text-muted-foreground uppercase">
-              <Star className="h-4 w-4 fill-primary/10 text-primary" /> Satisfaction Rating
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="mt-1 flex items-baseline gap-1.5">
-              <span className="text-2xl font-bold text-foreground">{profile?.rating.toFixed(1) || "5.0"}</span>
-              <span className="text-xs text-muted-foreground">/ 5.0</span>
-            </div>
-            <div className="mt-1.5 flex items-center gap-1 text-xs text-muted-foreground">
-              <span className="text-amber-500">★</span>
-              <span>({profile?.reviews || 0} client reviews)</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border border-border/60 bg-card transition-all hover:border-primary/20 hover:shadow-md">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs font-black tracking-wider text-muted-foreground uppercase">
-              <Shield className="h-4 w-4 text-primary" /> Verification Badge
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="mt-1 truncate text-sm font-bold text-foreground capitalize">
-              {profile?.premiumLevel === "none" ? "Standard Plan" : profile?.premiumLevel + " Partner"}
-            </div>
-            <div className="mt-2 flex gap-1.5">
-              <span className={`cursor-pointer rounded-md border px-2 py-0.5 text-[10px] font-black uppercase ${profile?.premiumLevel === "verified" || profile?.premiumLevel === "top" ? "border-blue-500/20 bg-blue-500/10 text-blue-500" : "border-transparent bg-muted text-muted-foreground hover:bg-muted/70"}`}
-                onClick={() => profile?.premiumLevel === "none" && openPremiumModal("verified")}
-              >Verified</span>
-              <span className={`cursor-pointer rounded-md border px-2 py-0.5 text-[10px] font-black uppercase ${profile?.premiumLevel === "top" ? "border-amber-500/20 bg-amber-500/10 text-amber-500" : "border-transparent bg-muted text-muted-foreground hover:bg-muted/70"}`}
-                onClick={() => profile?.premiumLevel !== "top" && openPremiumModal("top")}
-              >Top Rank</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border border-border/60 bg-card transition-all hover:border-primary/20 hover:shadow-md">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs font-black tracking-wider text-muted-foreground uppercase">
-              <Briefcase className="h-4 w-4 text-primary" /> Jobs Completed
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="mt-1 flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-foreground">{profile?.jobsCompleted ?? 0}</span>
-              {(profile?.jobsCompleted ?? 0) > 0 && (
-                <span className="text-xs font-bold text-emerald-500">
-                  +{Math.ceil((profile?.jobsCompleted || 0) * 0.15)} recent
-                </span>
-              )}
-            </div>
-            <p className="mt-1.5 text-xs text-muted-foreground">{profile?.successRate ?? 100}% success rating</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border border-border/60 bg-card transition-all hover:border-primary/20 hover:shadow-md">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs font-black tracking-wider text-muted-foreground uppercase">
-              <DollarSign className="h-4 w-4 text-primary" /> Payout Earnings
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="mt-1 text-2xl font-bold text-foreground">KES {totalEarnings.toLocaleString()}</div>
-            <div className="mt-1.5 flex justify-between text-[10px] text-muted-foreground">
-              <span>Referrals: KES {referralEarnings}</span>
-              <span>Jobs: KES {jobEarnings}</span>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Top summary: compact, non-distracting */}
+      <div className="mb-2">
+        <p className="text-sm text-muted-foreground">
+          Welcome to your Partner Suite. You have <span className="font-bold text-primary">{matchingLeads.length} matching job opportunities</span> in {profile?.trade || "your trade"} today.
+        </p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">

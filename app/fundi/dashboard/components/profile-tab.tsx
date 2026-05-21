@@ -208,7 +208,7 @@ export function ProfileTab({
                 )}
               </div>
               <p className="text-sm font-semibold text-foreground">
-                {editTitle || `${editTrade || "General"} Specialist`}
+                {editTitle || `${(editTrades && editTrades[0]) || "General"} Specialist`}
               </p>
               <div className="flex flex-wrap items-center justify-center gap-2 pt-1 sm:justify-start">
                 {(editTrades.length > 0 ? editTrades : ["General"]).map((t) => (
@@ -404,7 +404,7 @@ export function ProfileTab({
 
       {/* Edit Profile Dialog */}
       <Dialog open={isEditProfileOpen} onOpenChange={setIsEditProfileOpen}>
-        <DialogContent className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg border border-border bg-card p-6 shadow-lg">
+        <DialogContent className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-lg border border-border bg-card p-6 shadow-lg">
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-foreground">
               Edit Profile Details
@@ -413,7 +413,7 @@ export function ProfileTab({
               Provide information about your business, experience and trade.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={onEditProfileSubmit} className="mt-4 space-y-4">
+          <form onSubmit={onEditProfileSubmit} className="mt-4 space-y-6">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label
@@ -457,12 +457,15 @@ export function ProfileTab({
                 >
                   Trade Categories
                 </Label>
-                <MultiSelect
-                  options={FUNDI_TRADES}
-                  value={editTrades}
-                  onChange={setEditTrades}
-                  placeholder="Select your trades..."
-                />
+                <div className="rounded-lg border border-border/20 bg-muted/5 p-2">
+                  <MultiSelect
+                    options={FUNDI_TRADES}
+                    value={editTrades}
+                    onChange={setEditTrades}
+                    placeholder="Select your trades..."
+                  />
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">Select one or more trades. These appear on your public profile.</p>
               </div>
               <div className="space-y-1.5">
                 <Label
