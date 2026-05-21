@@ -7,13 +7,17 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const cookieStore = cookies()
-  let userId = typeof cookieStore.get === "function" ? cookieStore.get("user_session")?.value : undefined
+  const cookieStore = await cookies()
+  let userId = cookieStore.get("user_session")?.value
 
   // Fallback: parse cookie header if cookies().get is not available
   if (!userId) {
-    const cookieHeader = headers().get("cookie") || ""
-    const match = cookieHeader.split(";").map(s => s.trim()).find((c) => c.startsWith("user_session="))
+    const headerStore = await headers()
+    const cookieHeader = headerStore.get("cookie") || ""
+    const match = cookieHeader
+      .split(";")
+      .map((s) => s.trim())
+      .find((c) => c.startsWith("user_session="))
     if (match) {
       userId = decodeURIComponent(match.split("=")[1] || "")
     }
