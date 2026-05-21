@@ -106,7 +106,9 @@ export default function MyProjectPage() {
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-4 md:p-6">
       <div className="space-y-1">
-        <h1 className="text-lg font-bold text-foreground md:text-xl">My Project</h1>
+        <h1 className="text-lg font-bold text-foreground md:text-xl">
+          My Project
+        </h1>
         <p className="text-sm text-muted-foreground">
           Define your requirements to get matched with the right fundis
         </p>
@@ -118,7 +120,8 @@ export default function MyProjectPage() {
           <Card className="border-border bg-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base font-bold">
-                <Briefcase className="h-4 w-4 text-primary" /> Project Requirements
+                <Briefcase className="h-4 w-4 text-primary" /> Project
+                Requirements
               </CardTitle>
               <CardDescription className="text-xs">
                 Update your project details to find the best matches
