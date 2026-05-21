@@ -73,13 +73,20 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean)
 
+  // Strict matching: a fundi must provide ALL services the client requested.
+  // We consider `trade`, `category`, and `skills` fields on the fundi as sources.
   const matchedFundis = allFundis.filter((f) => {
     if (clientCats.length === 0) return false
-    const fundiTrades = (f.trade || f.category || "")
+
+    const fundiSources = [f.trade, f.category, f.skills]
+      .filter(Boolean)
+      .join(",")
       .split(",")
       .map((s: string) => s.trim().toLowerCase())
       .filter(Boolean)
-    return clientCats.some((cat) => fundiTrades.includes(cat))
+
+    // require every requested category to be present in fundi's sources
+    return clientCats.every((cat) => fundiSources.includes(cat))
   })
 
   return (
