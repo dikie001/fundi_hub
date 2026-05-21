@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { hashPassword } from "@/lib/auth"
+import { logAudit } from "@/lib/audit"
 
 export async function POST(request: Request) {
   try {
@@ -100,6 +101,14 @@ export async function POST(request: Request) {
         console.error("Error creating referral record:", err)
       }
     }
+
+    // Audit the registration
+    await logAudit({
+      action: "USER_REGISTRATION",
+      details: `User ${name} registered as ${userType}`,
+      req: request,
+      userId: user.id,
+    })
 
     return NextResponse.json(
       { message: "Registration successful", userId: user.id },
