@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Check, Loader2, Zap } from "lucide-react"
 import { LayoutDashboard, Wrench, FolderKanban, DollarSign, ShieldCheck } from "lucide-react"
 import { usePathname } from "next/navigation"
+import { UserMenu } from "@/components/user-menu"
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
   const { state } = useSidebar()
@@ -61,22 +62,23 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
         resolvedTheme="light"
         setTheme={() => {}}
         handleToggleEmergency={handleToggleEmergency}
-        handleLogout={handleLogout}
       />
 
       <SidebarInset className="flex min-h-screen flex-1 flex-col">
-        <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border/40 bg-card/85 px-6 backdrop-blur-md">
+        <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-border/40 bg-card/85 px-6 backdrop-blur-md">
           <div className="flex items-center gap-3">
             <SidebarTrigger />
             <Separator orientation="vertical" className="h-4" />
             <h2 className="text-sm font-medium text-muted-foreground capitalize">{activeItem.label}</h2>
           </div>
-          <div className="flex items-center gap-2.5 rounded-xl border border-border/10 bg-muted/40 p-1.5 px-2.5">
-            <div className="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-linear-to-br from-primary to-orange-500 text-xs font-black text-white shadow-xs">
-              {user?.name?.[0]?.toUpperCase()}
-            </div>
-            <span className="hidden text-xs font-bold text-foreground sm:inline">{user?.name}</span>
-          </div>
+          <UserMenu
+            name={user?.name}
+            phone={user?.phone}
+            image={profile?.image}
+            role="fundi"
+            onLogout={handleLogout}
+            variant="topbar"
+          />
         </header>
 
         <div className="mx-auto w-full max-w-7xl grow px-6 py-8">

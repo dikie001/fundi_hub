@@ -20,7 +20,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
-import { LogOut, Moon, Sun } from "lucide-react"
+import { Moon, Sun } from "lucide-react"
 import Link from "next/link"
 
 export function DashboardSidebar(props: any) {
@@ -33,7 +33,6 @@ export function DashboardSidebar(props: any) {
     resolvedTheme,
     setTheme,
     handleToggleEmergency,
-    handleLogout,
   } = props
 
   return (
@@ -41,7 +40,7 @@ export function DashboardSidebar(props: any) {
       collapsible="icon"
       className="border-r border-border/40 bg-card/45 backdrop-blur-lg"
     >
-      <SidebarHeader className="flex flex-row items-center justify-between border-b border-border/25 px-6 py-4">
+      <SidebarHeader className="flex h-16 flex-row items-center border-b border-border/25 px-6">
         {isCollapsed ? (
           <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-primary to-orange-500 text-xs font-black text-white shadow-xs select-none">
             FH
@@ -169,15 +168,8 @@ export function DashboardSidebar(props: any) {
           </div>
         )}
 
-        <div
-          className={cn(
-            "flex border-t border-border/30 pt-3",
-            isCollapsed
-              ? "flex-col items-center gap-2.5"
-              : "items-center justify-between"
-          )}
-        >
-          {mounted && (
+        {mounted && (
+          <div className="flex justify-center border-t border-border/30 pt-3">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -199,30 +191,8 @@ export function DashboardSidebar(props: any) {
                 {resolvedTheme === "dark" ? "Light Mode" : "Dark Mode"}
               </TooltipContent>
             </Tooltip>
-          )}
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size={isCollapsed ? "icon" : "sm"}
-                onClick={handleLogout}
-                className={cn(
-                  "h-9 cursor-pointer rounded-lg text-muted-foreground hover:text-destructive",
-                  isCollapsed ? "w-9" : "gap-1.5 px-3 text-xs font-medium"
-                )}
-              >
-                <LogOut className="h-4 w-4" />
-                {!isCollapsed && <span>Sign Out</span>}
-              </Button>
-            </TooltipTrigger>
-            {isCollapsed && (
-              <TooltipContent side="right" className="font-medium">
-                Sign Out
-              </TooltipContent>
-            )}
-          </Tooltip>
-        </div>
+          </div>
+        )}
       </SidebarFooter>
     </Sidebar>
   )
