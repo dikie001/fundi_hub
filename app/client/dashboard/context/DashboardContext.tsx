@@ -73,14 +73,32 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean)
 
-  const matchedFundis = allFundis.filter((f) => {
-    if (clientCats.length === 0) return false
-    const fundiTrades = (f.trade || f.category || "")
-      .split(",")
-      .map((s: string) => s.trim().toLowerCase())
-      .filter(Boolean)
-    return clientCats.some((cat) => fundiTrades.includes(cat))
-  })
+  // Match fundis that provide any of the requested services (union),
+  // and sort by how many requested services they match (relevance).
+  const matchedFundis = (() => {
+    if (clientCats.length === 0) return []
+
+    const scored = allFundis
+      .map((f) => {
+        const fundiSources = [f.trade, f.category, f.skills]
+          .filter(Boolean)
+          .join(",")
+          .split(",")
+          .map((s: string) => s.trim().toLowerCase())
+          .filter(Boolean)
+
+        const matchedCount = clientCats.reduce(
+          (acc, cat) => acc + (fundiSources.includes(cat) ? 1 : 0),
+          0
+        )
+
+        return { fundi: f, matchedCount }
+      })
+      .filter((s) => s.matchedCount > 0)
+      .sort((a, b) => b.matchedCount - a.matchedCount)
+
+    return scored.map((s) => s.fundi)
+  })()
 
   return (
     <DashboardContext.Provider

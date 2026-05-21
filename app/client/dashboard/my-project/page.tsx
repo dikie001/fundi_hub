@@ -104,25 +104,27 @@ export default function MyProjectPage() {
   }
 
   return (
-    <div className="space-y-6 p-6">
-      <div>
-        <h1 className="text-xl font-bold text-foreground">My Project</h1>
+    <div className="mx-auto max-w-6xl space-y-6 p-4 md:p-6">
+      <div className="space-y-1">
+        <h1 className="text-lg font-bold text-foreground md:text-xl">
+          My Project
+        </h1>
         <p className="text-sm text-muted-foreground">
-          Define your requirements to get matched with the right fundis.
+          Define your requirements to get matched with the right fundis
         </p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-5">
+      <div className="grid gap-6 lg:grid-cols-5 xl:grid-cols-2">
         {/* Form + Current Summary */}
-        <div className="space-y-4 lg:col-span-2">
+        <div className="space-y-4 lg:col-span-2 xl:col-span-1">
           <Card className="border-border bg-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-sm font-bold">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base font-bold">
                 <Briefcase className="h-4 w-4 text-primary" /> Project
                 Requirements
               </CardTitle>
               <CardDescription className="text-xs">
-                Update your project details to find the best matches.
+                Update your project details to find the best matches
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -270,7 +272,7 @@ export default function MyProjectPage() {
         </div>
 
         {/* Matched Fundis */}
-        <div className="space-y-4 lg:col-span-3">
+        <div className="space-y-4 lg:col-span-3 xl:col-span-1">
           <div className="flex items-center gap-2">
             <h2 className="flex items-center gap-2 text-sm font-bold text-foreground">
               <Wrench className="h-4 w-4 text-primary" /> Matched Experts
@@ -281,14 +283,14 @@ export default function MyProjectPage() {
           </div>
 
           {matchedFundis.length > 0 ? (
-            <div className="space-y-3">
+            <div className="grid gap-3 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-1">
               {matchedFundis.map((fundi) => (
                 <Card
                   key={fundi.id}
                   className="border-border/80 bg-card transition-colors hover:border-primary/40"
                 >
                   <CardContent className="p-4">
-                    <div className="flex items-start justify-between gap-3">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                       <div className="flex min-w-0 items-start gap-3">
                         {fundi.image ? (
                           <img
@@ -325,7 +327,7 @@ export default function MyProjectPage() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex shrink-0 gap-2">
+                      <div className="flex shrink-0 gap-2 sm:flex-col md:flex-row">
                         {fundi.phone && (
                           <>
                             <Button
