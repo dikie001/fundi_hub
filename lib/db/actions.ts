@@ -36,6 +36,8 @@ export async function getFundis(): Promise<Fundi[]> {
         name: user.name,
         title: profile.title,
         category: profile.category,
+        trade: profile.trade,
+        yearsExperience: profile.yearsExperience,
         rating: profile.rating,
         reviews: profile.reviews,
         image: profile.image || "",

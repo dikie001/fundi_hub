@@ -34,22 +34,30 @@ export async function GET() {
       )
     }
 
-    const trade = user.fundiProfile.trade || ""
+    const fundiTrades = (user.fundiProfile.trade || "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)
 
-    // Fetch database client profiles that match the trade (projectCategory matches trade case-insensitively)
-    const dbClients = await db.user.findMany({
+    if (fundiTrades.length === 0) {
+      return NextResponse.json([])
+    }
+
+    // Fetch all clients, then filter in JS so we can handle comma-separated multi-categories
+    const allClients = await db.user.findMany({
       where: {
         role: "client",
-        clientProfile: {
-          projectCategory: {
-            equals: trade,
-            mode: "insensitive",
-          },
-        },
+        clientProfile: { isNot: null },
       },
-      include: {
-        clientProfile: true,
-      },
+      include: { clientProfile: true },
+    })
+
+    const dbClients = allClients.filter((client) => {
+      const clientCats = (client.clientProfile?.projectCategory || "")
+        .split(",")
+        .map((s) => s.trim().toLowerCase())
+        .filter(Boolean)
+      return fundiTrades.some((t) => clientCats.includes(t.toLowerCase()))
     })
 
     const dbLeads = dbClients.map((client) => {
@@ -58,12 +66,17 @@ export async function GET() {
       return {
         id: `db-lead-${profile.id}`,
         clientName: client.name,
-        trade: profile.projectCategory || trade,
-        title: `Need a Professional ${profile.projectCategory || trade} in ${location}`,
+        trade: profile.projectCategory || fundiTrades[0],
+        title: `Need a Professional ${profile.projectCategory?.split(",")[0] || fundiTrades[0]} in ${location}`,
         location,
         budget: profile.budgetRange || "Flexible",
         urgency: profile.urgency || "Flexible",
-        description: `Client is looking for a skilled ${profile.projectCategory || trade} for a project in ${location}. Budget range is ${profile.budgetRange || "flexible"} and required timing is ${profile.urgency || "flexible"}. Please contact for details.`,
+        description: `Client needs a skilled ${
+          profile.projectCategory
+            ?.split(",")
+            .map((s: string) => s.trim())
+            .join(", ") || fundiTrades.join(", ")
+        } for a project in ${location}. Budget: ${profile.budgetRange || "flexible"}. Timeline: ${profile.urgency || "flexible"}.`,
         phone: client.phone,
         createdAt: formatRelativeTime(profile.updatedAt),
       }

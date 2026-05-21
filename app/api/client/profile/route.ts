@@ -14,6 +14,8 @@ export async function PUT(request: Request) {
     const body = await request.json()
     const {
       name,
+      phone,
+      image,
       projectCategory,
       projectLocation,
       budgetRange,
@@ -26,24 +28,33 @@ export async function PUT(request: Request) {
     })
 
     if (!user || user.role !== "client") {
-      return NextResponse.json({ error: "Client profile not found" }, { status: 404 })
+      return NextResponse.json(
+        { error: "Client profile not found" },
+        { status: 404 }
+      )
     }
 
-    if (name) {
-      await db.user.update({
-        where: { id: userId },
-        data: { name },
-      })
+    // Update user-level fields (name, phone)
+    const userUpdateData: Record<string, string> = {}
+    if (name) userUpdateData.name = name
+    if (phone) userUpdateData.phone = phone
+    if (Object.keys(userUpdateData).length > 0) {
+      await db.user.update({ where: { id: userId }, data: userUpdateData })
     }
+
+    // Build profile update payload — only include keys that were provided
+    const profileData: Record<string, string | null> = {}
+    if (projectCategory !== undefined)
+      profileData.projectCategory = projectCategory
+    if (projectLocation !== undefined)
+      profileData.projectLocation = projectLocation
+    if (budgetRange !== undefined) profileData.budgetRange = budgetRange
+    if (urgency !== undefined) profileData.urgency = urgency
+    if (image !== undefined) profileData.image = image
 
     const updatedProfile = await db.clientProfile.update({
       where: { userId },
-      data: {
-        projectCategory: projectCategory !== undefined ? projectCategory : user.clientProfile?.projectCategory,
-        projectLocation: projectLocation !== undefined ? projectLocation : user.clientProfile?.projectLocation,
-        budgetRange: budgetRange !== undefined ? budgetRange : user.clientProfile?.budgetRange,
-        urgency: urgency !== undefined ? urgency : user.clientProfile?.urgency,
-      },
+      data: profileData,
     })
 
     return NextResponse.json({
@@ -52,6 +63,9 @@ export async function PUT(request: Request) {
     })
   } catch (error) {
     console.error("Client profile update error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
   }
 }
