@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import { LayoutDashboard, Search, FolderKanban, User } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { Loader2 } from "lucide-react"
+import { UserMenu } from "@/components/user-menu"
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
   const { state } = useSidebar()
@@ -69,15 +70,23 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
         pathname={pathname}
         user={user}
         profile={profile}
-        onLogout={handleLogout}
       />
       <SidebarInset>
-        <header className="sticky top-0 z-10 flex h-12 shrink-0 items-center gap-2 border-b border-border/40 bg-background/80 px-4 backdrop-blur-sm">
-          <SidebarTrigger className="-ml-1 cursor-pointer" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <span className="text-sm font-semibold text-foreground">
-            {activeItem.label}
-          </span>
+        <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center justify-between gap-2 border-b border-border/40 bg-background/80 px-4 backdrop-blur-sm">
+          <div className="flex items-center gap-2">
+            <SidebarTrigger className="-ml-1 cursor-pointer" />
+            <Separator orientation="vertical" className="mr-1 h-4" />
+            <span className="text-sm font-semibold text-foreground">
+              {activeItem.label}
+            </span>
+          </div>
+          <UserMenu
+            name={user?.name}
+            phone={user?.phone}
+            image={profile?.image}
+            role="client"
+            onLogout={handleLogout}
+          />
         </header>
         <main className="flex-1">{children}</main>
       </SidebarInset>

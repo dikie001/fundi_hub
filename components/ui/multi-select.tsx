@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Popover as PopoverPrimitive } from "radix-ui"
-import { Check, ChevronDown, X } from "lucide-react"
+import { Check, ChevronDown, X, Plus } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 
@@ -30,10 +30,26 @@ export function MultiSelect({
 }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false)
   const [search, setSearch] = React.useState("")
+  const [customInput, setCustomInput] = React.useState("")
 
-  const filtered = options.filter((opt) =>
+  const allOptions = React.useMemo(() => {
+    const customVals = value.filter((v) => !options.find((o) => o.value === v))
+    const customOpts = customVals.map((v) => ({ value: v, label: v }))
+    return [...options, ...customOpts]
+  }, [options, value])
+
+  const filtered = allOptions.filter((opt) =>
     opt.label.toLowerCase().includes(search.toLowerCase())
   )
+
+  const addCustom = () => {
+    const trimmed = customInput.trim()
+    if (!trimmed) return
+    if (!value.includes(trimmed)) {
+      onChange([...value, trimmed])
+    }
+    setCustomInput("")
+  }
 
   const toggle = (optValue: string) => {
     if (value.includes(optValue)) {
@@ -113,18 +129,16 @@ export function MultiSelect({
             "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
           )}
         >
-          {options.length > 6 && (
-            <div className="border-b border-border/40 px-2 pt-1.5 pb-2">
-              <input
-                autoFocus
-                className="w-full bg-transparent text-xs outline-none placeholder:text-muted-foreground"
-                placeholder="Search..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                onClick={(e) => e.stopPropagation()}
-              />
-            </div>
-          )}
+          <div className="border-b border-border/40 px-2 pt-1.5 pb-2">
+            <input
+              autoFocus
+              className="w-full bg-transparent text-xs outline-none placeholder:text-muted-foreground"
+              placeholder="Search or type custom..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
 
           <div className="max-h-60 overflow-y-auto py-1">
             {filtered.length === 0 ? (
@@ -156,6 +170,33 @@ export function MultiSelect({
                 )
               })
             )}
+          </div>
+
+          {/* Custom entry row */}
+          <div className="border-t border-border/40 px-2 pt-2 pb-1">
+            <div className="flex items-center gap-1">
+              <input
+                className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-muted-foreground"
+                placeholder="Add custom option..."
+                value={customInput}
+                onChange={(e) => setCustomInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    addCustom()
+                  }
+                }}
+                onClick={(e) => e.stopPropagation()}
+              />
+              <button
+                type="button"
+                onClick={addCustom}
+                disabled={!customInput.trim()}
+                className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-primary text-primary-foreground disabled:opacity-40"
+              >
+                <Plus className="h-3 w-3" />
+              </button>
+            </div>
           </div>
 
           {value.length > 0 && (

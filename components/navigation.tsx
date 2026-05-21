@@ -1,19 +1,36 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Menu, X, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { usePathname, useRouter } from "next/navigation"
+import { UserMenu } from "@/components/user-menu"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
+  const [authUser, setAuthUser] = useState<any>(null)
   const pathname = usePathname()
   const router = useRouter()
   const isNotHome = pathname !== "/"
 
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d?.user) setAuthUser(d.user)
+      })
+      .catch(() => {})
+  }, [])
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" })
+    setAuthUser(null)
+    window.location.href = "/"
+  }
+
   return (
-    <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-3">
@@ -24,7 +41,7 @@ export function Navigation() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="hidden md:flex h-8 w-8 rounded-full border border-border/50 hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer"
+                className="hidden h-8 w-8 cursor-pointer rounded-full border border-border/50 text-muted-foreground hover:bg-accent hover:text-foreground md:flex"
                 onClick={() => router.back()}
                 aria-label="Go back"
               >
@@ -35,34 +52,52 @@ export function Navigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden items-center gap-8 md:flex">
-            <Link href="/#home" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link
+              href="/#home"
+              className="text-sm font-medium transition-colors hover:text-primary"
+            >
               Home
             </Link>
             <Link
               href="/#categories"
-              className="text-sm font-medium hover:text-primary transition-colors"
+              className="text-sm font-medium transition-colors hover:text-primary"
             >
               Search
             </Link>
             <Link
               href="/#refer-earn"
-              className="text-sm font-medium hover:text-primary transition-colors"
+              className="text-sm font-medium transition-colors hover:text-primary"
             >
               Refer & Earn
             </Link>
             <Link
               href="/#for-fundis"
-              className="text-sm font-medium hover:text-primary transition-colors"
+              className="text-sm font-medium transition-colors hover:text-primary"
             >
               For Fundis
             </Link>
             <div className="flex items-center gap-3 border-l border-border pl-8">
-              <Button variant="outline" size="sm" asChild>
-                <Link href="/auth/login">Sign In</Link>
-              </Button>
-              <Button size="sm" asChild>
-                <Link href="/auth/signup">Sign Up</Link>
-              </Button>
+              {authUser ? (
+                <UserMenu
+                  name={authUser.name}
+                  phone={authUser.phone}
+                  image={
+                    authUser.fundiProfile?.image ||
+                    authUser.clientProfile?.image
+                  }
+                  role={authUser.role}
+                  onLogout={handleLogout}
+                />
+              ) : (
+                <>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/auth/login">Sign In</Link>
+                  </Button>
+                  <Button size="sm" asChild>
+                    <Link href="/auth/signup">Sign Up</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
 
@@ -78,7 +113,7 @@ export function Navigation() {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="border-t border-border md:hidden animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="animate-in border-t border-border duration-200 fade-in slide-in-from-top-2 md:hidden">
             <div className="space-y-2 px-2 py-4">
               <Link
                 href="/#home"
@@ -108,14 +143,32 @@ export function Navigation() {
               >
                 For Fundis
               </Link>
-              <div className="border-t border-border py-2">
-                <Button variant="outline" size="sm" asChild className="w-full">
-                  <Link href="/auth/login">Sign In</Link>
-                </Button>
+              <div className="space-y-2 border-t border-border pt-2">
+                {authUser ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    onClick={handleLogout}
+                  >
+                    Sign Out
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
+                      className="w-full"
+                    >
+                      <Link href="/auth/login">Sign In</Link>
+                    </Button>
+                    <Button size="sm" asChild className="w-full">
+                      <Link href="/auth/signup">Sign Up</Link>
+                    </Button>
+                  </>
+                )}
               </div>
-              <Button size="sm" asChild className="w-full">
-                <Link href="/auth/signup">Sign Up</Link>
-              </Button>
             </div>
           </div>
         )}
