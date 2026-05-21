@@ -73,21 +73,32 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean)
 
-  // Strict matching: a fundi must provide ALL services the client requested.
-  // We consider `trade`, `category`, and `skills` fields on the fundi as sources.
-  const matchedFundis = allFundis.filter((f) => {
-    if (clientCats.length === 0) return false
+  // Match fundis that provide any of the requested services (union),
+  // and sort by how many requested services they match (relevance).
+  const matchedFundis = (() => {
+    if (clientCats.length === 0) return []
 
-    const fundiSources = [f.trade, f.category, f.skills]
-      .filter(Boolean)
-      .join(",")
-      .split(",")
-      .map((s: string) => s.trim().toLowerCase())
-      .filter(Boolean)
+    const scored = allFundis
+      .map((f) => {
+        const fundiSources = [f.trade, f.category, f.skills]
+          .filter(Boolean)
+          .join(",")
+          .split(",")
+          .map((s: string) => s.trim().toLowerCase())
+          .filter(Boolean)
 
-    // require every requested category to be present in fundi's sources
-    return clientCats.every((cat) => fundiSources.includes(cat))
-  })
+        const matchedCount = clientCats.reduce(
+          (acc, cat) => acc + (fundiSources.includes(cat) ? 1 : 0),
+          0
+        )
+
+        return { fundi: f, matchedCount }
+      })
+      .filter((s) => s.matchedCount > 0)
+      .sort((a, b) => b.matchedCount - a.matchedCount)
+
+    return scored.map((s) => s.fundi)
+  })()
 
   return (
     <DashboardContext.Provider
