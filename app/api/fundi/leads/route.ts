@@ -71,7 +71,12 @@ export async function GET() {
         location,
         budget: profile.budgetRange || "Flexible",
         urgency: profile.urgency || "Flexible",
-        description: `Client needs a skilled ${profile.projectCategory?.split(",").map((s: string) => s.trim()).join(", ") || fundiTrades.join(", ")} for a project in ${location}. Budget: ${profile.budgetRange || "flexible"}. Timeline: ${profile.urgency || "flexible"}.`,
+        description: `Client needs a skilled ${
+          profile.projectCategory
+            ?.split(",")
+            .map((s: string) => s.trim())
+            .join(", ") || fundiTrades.join(", ")
+        } for a project in ${location}. Budget: ${profile.budgetRange || "flexible"}. Timeline: ${profile.urgency || "flexible"}.`,
         phone: client.phone,
         createdAt: formatRelativeTime(profile.updatedAt),
       }

@@ -89,7 +89,9 @@ type DashboardContextType = {
   handleLogout: () => Promise<void>
 }
 
-const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
+const DashboardContext = createContext<DashboardContextType | undefined>(
+  undefined
+)
 
 function parsePortfolioItems(portfolio: unknown): PortfolioItem[] {
   if (typeof portfolio !== "string" || !portfolio.trim()) return []
@@ -124,7 +126,9 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
   const [archivedLeadIds, setArchivedLeadIds] = useState<string[]>([])
 
   const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false)
-  const [premiumModalType, setPremiumModalType] = useState<"verified" | "top">("verified")
+  const [premiumModalType, setPremiumModalType] = useState<"verified" | "top">(
+    "verified"
+  )
   const [isProcessingPayment, setIsProcessingPayment] = useState(false)
 
   const [editName, setEditName] = useState("")
@@ -179,11 +183,16 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
       setEditYearsExp(data.user.fundiProfile?.yearsExperience || "")
       setEditArea(data.user.fundiProfile?.serviceArea || "")
       setEditDesc(data.user.fundiProfile?.description || "")
-      setPreferredContact(data.user.fundiProfile?.preferredContact || "whatsapp")
+      setPreferredContact(
+        data.user.fundiProfile?.preferredContact || "whatsapp"
+      )
       setAvatarUrl(data.user.fundiProfile?.image || "")
       setSkills(
         typeof data.user.fundiProfile?.skills === "string"
-          ? data.user.fundiProfile.skills.split(",").map((item: string) => item.trim()).filter(Boolean)
+          ? data.user.fundiProfile.skills
+              .split(",")
+              .map((item: string) => item.trim())
+              .filter(Boolean)
           : []
       )
       setPortfolioItems(parsePortfolioItems(data.user.fundiProfile?.portfolio))
@@ -199,8 +208,15 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
       const response = await fetch("/api/fundi/leads", { cache: "no-store" })
       if (!response.ok) return
       const data = await response.json()
-      const deletedList = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("deleted_leads") || "[]") : []
-      setLeads((Array.isArray(data) ? data : []).filter((lead: Lead) => !deletedList.includes(lead.id)))
+      const deletedList =
+        typeof window !== "undefined"
+          ? JSON.parse(localStorage.getItem("deleted_leads") || "[]")
+          : []
+      setLeads(
+        (Array.isArray(data) ? data : []).filter(
+          (lead: Lead) => !deletedList.includes(lead.id)
+        )
+      )
     } catch (error) {
       console.error("Failed to fetch matching leads:", error)
     }
@@ -272,7 +288,11 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         const uploadResponse = await fetch("/api/upload", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image: base64String, fileName: file.name, folder: "fundi_hub/profile_pics" }),
+          body: JSON.stringify({
+            image: base64String,
+            fileName: file.name,
+            folder: "fundi_hub/profile_pics",
+          }),
         })
         if (!uploadResponse.ok) throw new Error("Upload failed")
         const uploadData = await uploadResponse.json()
@@ -335,9 +355,14 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
               const uploadResponse = await fetch("/api/upload", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ image: base64String, fileName: portfolioFile.name, folder: "fundi_hub/portfolio" }),
+                body: JSON.stringify({
+                  image: base64String,
+                  fileName: portfolioFile.name,
+                  folder: "fundi_hub/portfolio",
+                }),
               })
-              if (!uploadResponse.ok) throw new Error("Portfolio image upload failed")
+              if (!uploadResponse.ok)
+                throw new Error("Portfolio image upload failed")
               const uploadData = await uploadResponse.json()
               await finalizeUpload(uploadData.url || "")
             } catch (error) {
@@ -381,8 +406,13 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
   }
 
   const handleDeleteLeadPermanently = (leadId: string) => {
-    const deletedList = JSON.parse(localStorage.getItem("deleted_leads") || "[]")
-    localStorage.setItem("deleted_leads", JSON.stringify([...deletedList, leadId]))
+    const deletedList = JSON.parse(
+      localStorage.getItem("deleted_leads") || "[]"
+    )
+    localStorage.setItem(
+      "deleted_leads",
+      JSON.stringify([...deletedList, leadId])
+    )
     setLeads((prev) => prev.filter((lead) => lead.id !== leadId))
   }
 
@@ -418,17 +448,32 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     window.location.href = "/auth/login"
   }
 
-  const matchingLeads = leads.filter((lead) => !appliedLeadIds.includes(lead.id) && !archivedLeadIds.includes(lead.id))
+  const matchingLeads = leads.filter(
+    (lead) =>
+      !appliedLeadIds.includes(lead.id) && !archivedLeadIds.includes(lead.id)
+  )
   const appliedLeads = leads.filter((lead) => appliedLeadIds.includes(lead.id))
-  const archivedLeads = leads.filter((lead) => archivedLeadIds.includes(lead.id))
+  const archivedLeads = leads.filter((lead) =>
+    archivedLeadIds.includes(lead.id)
+  )
 
   const referralCount = user?.referrals?.length || 0
   const referralEarnings = referralCount * 100
   const jobEarnings = profile?.jobEarnings || 0
   const totalEarnings = referralEarnings + jobEarnings
 
-  const completionScore = [editName, editTitle, editTrades.length > 0, editYearsExp, editArea, editDesc, preferredContact, avatarUrl, portfolioItems.length > 0]
-    .filter(Boolean).length * 10
+  const completionScore =
+    [
+      editName,
+      editTitle,
+      editTrades.length > 0,
+      editYearsExp,
+      editArea,
+      editDesc,
+      preferredContact,
+      avatarUrl,
+      portfolioItems.length > 0,
+    ].filter(Boolean).length * 10
 
   return (
     <DashboardContext.Provider

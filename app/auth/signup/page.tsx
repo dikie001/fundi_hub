@@ -45,7 +45,10 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog"
-import { MultiSelect, type MultiSelectOption } from "@/components/ui/multi-select"
+import {
+  MultiSelect,
+  type MultiSelectOption,
+} from "@/components/ui/multi-select"
 
 type UserType = "client" | "fundi"
 
@@ -87,7 +90,7 @@ const EXPERIENCE_LEVELS = [
   { value: "3", label: "3 Years" },
   { value: "4", label: "4 Years" },
   { value: "5", label: "5 - 9 Years" },
-  { value: "10", label: "10+ Years" }
+  { value: "10", label: "10+ Years" },
 ]
 
 const BUDGET_RANGES = [
@@ -95,14 +98,14 @@ const BUDGET_RANGES = [
   "KES 5,000 - 10,000",
   "KES 10,000 - 20,000",
   "KES 20,000 - 50,000",
-  "Over KES 50,000"
+  "Over KES 50,000",
 ]
 
 const URGENCY_LEVELS = [
   "Today / Immediate",
   "Within 3 Days",
   "Within a Week",
-  "Flexible / Planning"
+  "Flexible / Planning",
 ]
 
 const steps = [
@@ -133,7 +136,9 @@ export default function SignupPage() {
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [stepError, setStepError] = useState("")
   const [isOtherModalOpen, setIsOtherModalOpen] = useState(false)
-  const [otherFieldType, setOtherFieldType] = useState<"trade" | "projectCategory" | null>(null)
+  const [otherFieldType, setOtherFieldType] = useState<
+    "trade" | "projectCategory" | null
+  >(null)
   const [otherInputValue, setOtherInputValue] = useState("")
   // Multi-select states (joined to comma-separated string on submit)
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
@@ -157,14 +162,22 @@ export default function SignupPage() {
 
   // Memoized trade options containing custom inputs if they are set
   const clientTrades = useMemo(() => {
-    if (formData.projectCategory && formData.projectCategory !== "Other" && !TRADES_LIST.includes(formData.projectCategory)) {
+    if (
+      formData.projectCategory &&
+      formData.projectCategory !== "Other" &&
+      !TRADES_LIST.includes(formData.projectCategory)
+    ) {
       return [...TRADES_LIST, formData.projectCategory]
     }
     return TRADES_LIST
   }, [formData.projectCategory])
 
   const fundiTrades = useMemo(() => {
-    if (formData.trade && formData.trade !== "Other" && !TRADES_LIST.includes(formData.trade)) {
+    if (
+      formData.trade &&
+      formData.trade !== "Other" &&
+      !TRADES_LIST.includes(formData.trade)
+    ) {
       return [...TRADES_LIST, formData.trade]
     }
     return TRADES_LIST
@@ -190,7 +203,8 @@ export default function SignupPage() {
   }, [currentStep, userType])
 
   const stepDescription = useMemo(() => {
-    if (currentStep === 1) return "Select who you are to begin your personalized onboarding."
+    if (currentStep === 1)
+      return "Select who you are to begin your personalized onboarding."
     if (currentStep === 2) return "Let's start with your basic profile details."
     if (currentStep === 3) {
       return userType === "fundi"
@@ -362,7 +376,8 @@ export default function SignupPage() {
           userType,
           ...formData,
           // Override with multi-select values joined as comma-separated strings
-          projectCategory: selectedCategories.join(",") || formData.projectCategory,
+          projectCategory:
+            selectedCategories.join(",") || formData.projectCategory,
           trade: selectedTrades.join(",") || formData.trade,
           referrerId,
           email: `${formData.phone.replace(/[^0-9]/g, "")}@fundihub.com`,
@@ -383,21 +398,21 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground px-4 py-8 sm:px-6 sm:py-12 flex flex-col justify-center items-center font-sans select-none">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-8 font-sans text-foreground select-none sm:px-6 sm:py-12">
       <div className="w-full max-w-md space-y-6">
         {/* Header containing step progress, and descriptions */}
-        <div className="flex flex-col items-center text-center space-y-4">
+        <div className="flex flex-col items-center space-y-4 text-center">
           <div className="space-y-1.5">
             <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               {stepTitle}
             </h1>
-            <p className="text-xs text-muted-foreground max-w-xs mx-auto">
+            <p className="mx-auto max-w-xs text-xs text-muted-foreground">
               {stepDescription}
             </p>
           </div>
 
           {/* Segmented Flat Progress Bars (using primary and muted variables) */}
-          <div className="flex gap-1.5 w-full pt-2">
+          <div className="flex w-full gap-1.5 pt-2">
             {steps.map((s) => (
               <div
                 key={s.id}
@@ -410,70 +425,89 @@ export default function SignupPage() {
         </div>
 
         {/* Dynamic Registration Card (using standard shadcn Card borders and backgrounds) */}
-        <Card className="border-border bg-card text-card-foreground shadow-lg rounded-xl overflow-hidden p-6 sm:p-8">
+        <Card className="overflow-hidden rounded-xl border-border bg-card p-6 text-card-foreground shadow-lg sm:p-8">
           <CardContent className="p-0">
             <form onSubmit={handleEmailSignup} className="space-y-5">
-              
               {/* STEP 1: Account Type Selection (matching the reference styling using Shadcn theme) */}
               {currentStep === 1 && (
-                <div className="space-y-3.5 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div className="animate-in space-y-3.5 duration-300 fade-in slide-in-from-bottom-2">
                   <div
                     onClick={() => setUserType("client")}
-                    className={`group flex items-center justify-between p-4.5 rounded-xl border cursor-pointer transition-all duration-200 ${
+                    className={`group flex cursor-pointer items-center justify-between rounded-xl border p-4.5 transition-all duration-200 ${
                       userType === "client"
                         ? "border-primary bg-primary/5"
                         : "border-border bg-card hover:border-primary/50 hover:bg-muted/50"
                     }`}
                   >
                     <div className="flex items-center gap-4">
-                      <div className={`p-2.5 rounded-lg transition-colors ${
-                        userType === "client" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground group-hover:text-primary"
-                      }`}>
+                      <div
+                        className={`rounded-lg p-2.5 transition-colors ${
+                          userType === "client"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted text-muted-foreground group-hover:text-primary"
+                        }`}
+                      >
                         <User className="h-5 w-5" />
                       </div>
                       <div className="text-left">
-                        <h3 className="font-semibold text-sm text-card-foreground group-hover:text-primary transition-colors">
+                        <h3 className="text-sm font-semibold text-card-foreground transition-colors group-hover:text-primary">
                           I want to Hire
                         </h3>
-                        <p className="text-[10px] text-muted-foreground mt-0.5 max-w-[200px]">
+                        <p className="mt-0.5 max-w-[200px] text-[10px] text-muted-foreground">
                           Find and hire trusted expert fundis.
                         </p>
                       </div>
                     </div>
-                    <div className={`w-5 h-5 rounded-full border-2 transition-all flex items-center justify-center ${
-                      userType === "client" ? "border-primary bg-primary" : "border-muted-foreground/30"
-                    }`}>
-                      {userType === "client" && <Check className="h-3 w-3 text-primary-foreground stroke-[3.5]" />}
+                    <div
+                      className={`flex h-5 w-5 items-center justify-center rounded-full border-2 transition-all ${
+                        userType === "client"
+                          ? "border-primary bg-primary"
+                          : "border-muted-foreground/30"
+                      }`}
+                    >
+                      {userType === "client" && (
+                        <Check className="h-3 w-3 stroke-[3.5] text-primary-foreground" />
+                      )}
                     </div>
                   </div>
 
                   <div
                     onClick={() => setUserType("fundi")}
-                    className={`group flex items-center justify-between p-4.5 rounded-xl border cursor-pointer transition-all duration-200 ${
+                    className={`group flex cursor-pointer items-center justify-between rounded-xl border p-4.5 transition-all duration-200 ${
                       userType === "fundi"
                         ? "border-primary bg-primary/5"
                         : "border-border bg-card hover:border-primary/50 hover:bg-muted/50"
                     }`}
                   >
                     <div className="flex items-center gap-4">
-                      <div className={`p-2.5 rounded-lg transition-colors ${
-                        userType === "fundi" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground group-hover:text-primary"
-                      }`}>
+                      <div
+                        className={`rounded-lg p-2.5 transition-colors ${
+                          userType === "fundi"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted text-muted-foreground group-hover:text-primary"
+                        }`}
+                      >
                         <Wrench className="h-5 w-5" />
                       </div>
                       <div className="text-left">
-                        <h3 className="font-semibold text-sm text-card-foreground group-hover:text-primary transition-colors">
+                        <h3 className="text-sm font-semibold text-card-foreground transition-colors group-hover:text-primary">
                           I am a Fundi (Expert)
                         </h3>
-                        <p className="text-[10px] text-muted-foreground mt-0.5 max-w-[200px]">
+                        <p className="mt-0.5 max-w-[200px] text-[10px] text-muted-foreground">
                           Create a profile and find job opportunities.
                         </p>
                       </div>
                     </div>
-                    <div className={`w-5 h-5 rounded-full border-2 transition-all flex items-center justify-center ${
-                      userType === "fundi" ? "border-primary bg-primary" : "border-muted-foreground/30"
-                    }`}>
-                      {userType === "fundi" && <Check className="h-3 w-3 text-primary-foreground stroke-[3.5]" />}
+                    <div
+                      className={`flex h-5 w-5 items-center justify-center rounded-full border-2 transition-all ${
+                        userType === "fundi"
+                          ? "border-primary bg-primary"
+                          : "border-muted-foreground/30"
+                      }`}
+                    >
+                      {userType === "fundi" && (
+                        <Check className="h-3 w-3 stroke-[3.5] text-primary-foreground" />
+                      )}
                     </div>
                   </div>
                 </div>
@@ -481,13 +515,16 @@ export default function SignupPage() {
 
               {/* STEP 2: Basic Information */}
               {currentStep === 2 && (
-                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div className="animate-in space-y-4 duration-300 fade-in slide-in-from-bottom-2">
                   <div className="space-y-1.5">
-                    <Label htmlFor="name" className="text-xs font-bold text-foreground">
+                    <Label
+                      htmlFor="name"
+                      className="text-xs font-bold text-foreground"
+                    >
                       Full Name
                     </Label>
                     <div className="relative">
-                      <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/45 pointer-events-none" />
+                      <User className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground/45" />
                       <Input
                         id="name"
                         value={formData.name}
@@ -501,11 +538,14 @@ export default function SignupPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="phone" className="text-xs font-bold text-foreground">
+                    <Label
+                      htmlFor="phone"
+                      className="text-xs font-bold text-foreground"
+                    >
                       Phone Number
                     </Label>
                     <div className="relative">
-                      <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/45 pointer-events-none" />
+                      <Phone className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground/45" />
                       <Input
                         id="phone"
                         value={formData.phone}
@@ -522,9 +562,12 @@ export default function SignupPage() {
 
               {/* STEP 3: Dynamic Category / Trade Details */}
               {currentStep === 3 && userType === "client" && (
-                <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div className="flex animate-in flex-col gap-4 duration-300 fade-in slide-in-from-bottom-2">
                   <div className="space-y-1.5">
-                    <Label htmlFor="projectCategory" className="text-xs font-bold text-foreground">
+                    <Label
+                      htmlFor="projectCategory"
+                      className="text-xs font-bold text-foreground"
+                    >
                       Services Needed
                     </Label>
                     <MultiSelect
@@ -535,20 +578,27 @@ export default function SignupPage() {
                       disabled={isLoading}
                     />
                     {selectedCategories.length === 0 && (
-                      <p className="text-[10px] text-muted-foreground">Select at least one service.</p>
+                      <p className="text-[10px] text-muted-foreground">
+                        Select at least one service.
+                      </p>
                     )}
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="projectLocation" className="text-xs font-bold text-foreground">
+                    <Label
+                      htmlFor="projectLocation"
+                      className="text-xs font-bold text-foreground"
+                    >
                       Project Location
                     </Label>
                     <div className="relative">
-                      <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/45 pointer-events-none" />
+                      <MapPin className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground/45" />
                       <Input
                         id="projectLocation"
                         value={formData.projectLocation}
-                        onChange={(e) => updateField("projectLocation", e.target.value)}
+                        onChange={(e) =>
+                          updateField("projectLocation", e.target.value)
+                        }
                         placeholder="e.g. Nairobi, Kilimani"
                         disabled={isLoading}
                         required
@@ -558,7 +608,10 @@ export default function SignupPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="budgetRange" className="text-xs font-bold text-foreground">
+                    <Label
+                      htmlFor="budgetRange"
+                      className="text-xs font-bold text-foreground"
+                    >
                       Budget Range (KES)
                     </Label>
                     <Select
@@ -580,7 +633,10 @@ export default function SignupPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="urgency" className="text-xs font-bold text-foreground">
+                    <Label
+                      htmlFor="urgency"
+                      className="text-xs font-bold text-foreground"
+                    >
                       Urgency / Timeline
                     </Label>
                     <Select
@@ -604,9 +660,12 @@ export default function SignupPage() {
               )}
 
               {currentStep === 3 && userType === "fundi" && (
-                <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div className="flex animate-in flex-col gap-4 duration-300 fade-in slide-in-from-bottom-2">
                   <div className="space-y-1.5">
-                    <Label htmlFor="trade" className="text-xs font-bold text-foreground">
+                    <Label
+                      htmlFor="trade"
+                      className="text-xs font-bold text-foreground"
+                    >
                       Trades / Expertise
                     </Label>
                     <MultiSelect
@@ -617,17 +676,24 @@ export default function SignupPage() {
                       disabled={isLoading}
                     />
                     {selectedTrades.length === 0 && (
-                      <p className="text-[10px] text-muted-foreground">Select at least one trade.</p>
+                      <p className="text-[10px] text-muted-foreground">
+                        Select at least one trade.
+                      </p>
                     )}
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="yearsExperience" className="text-xs font-bold text-foreground">
+                    <Label
+                      htmlFor="yearsExperience"
+                      className="text-xs font-bold text-foreground"
+                    >
                       Experience (Years)
                     </Label>
                     <Select
                       value={formData.yearsExperience}
-                      onValueChange={(val) => updateField("yearsExperience", val)}
+                      onValueChange={(val) =>
+                        updateField("yearsExperience", val)
+                      }
                       disabled={isLoading}
                     >
                       <SelectTrigger id="yearsExperience" className="w-full">
@@ -644,15 +710,20 @@ export default function SignupPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="serviceArea" className="text-xs font-bold text-foreground">
+                    <Label
+                      htmlFor="serviceArea"
+                      className="text-xs font-bold text-foreground"
+                    >
                       Service Area Coverage
                     </Label>
                     <div className="relative">
-                      <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/45 pointer-events-none" />
+                      <MapPin className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground/45" />
                       <Input
                         id="serviceArea"
                         value={formData.serviceArea}
-                        onChange={(e) => updateField("serviceArea", e.target.value)}
+                        onChange={(e) =>
+                          updateField("serviceArea", e.target.value)
+                        }
                         placeholder="e.g. Nairobi, Langata"
                         disabled={isLoading}
                         required
@@ -662,15 +733,20 @@ export default function SignupPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="nationalId" className="text-xs font-bold text-foreground">
+                    <Label
+                      htmlFor="nationalId"
+                      className="text-xs font-bold text-foreground"
+                    >
                       National ID Number
                     </Label>
                     <div className="relative">
-                      <CreditCard className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/45 pointer-events-none" />
+                      <CreditCard className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground/45" />
                       <Input
                         id="nationalId"
                         value={formData.nationalId}
-                        onChange={(e) => updateField("nationalId", e.target.value)}
+                        onChange={(e) =>
+                          updateField("nationalId", e.target.value)
+                        }
                         placeholder="For background safety"
                         disabled={isLoading}
                         required
@@ -683,10 +759,10 @@ export default function SignupPage() {
 
               {/* STEP 4: Preferred Contact (Select Option Cards matching theme colors) */}
               {currentStep === 4 && (
-                <div className="space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div className="animate-in space-y-3 duration-300 fade-in slide-in-from-bottom-2">
                   <div
                     onClick={() => updateField("preferredContact", "whatsapp")}
-                    className={`group flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
+                    className={`group flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-all duration-200 ${
                       formData.preferredContact === "whatsapp"
                         ? "border-primary bg-primary/5"
                         : "border-border bg-card hover:border-primary/50 hover:bg-muted/50"
@@ -695,20 +771,30 @@ export default function SignupPage() {
                     <div className="flex items-center gap-3.5">
                       <span className="text-lg">💬</span>
                       <div className="text-left">
-                        <h4 className="font-semibold text-xs text-card-foreground group-hover:text-primary transition-colors">WhatsApp Chat</h4>
-                        <p className="text-[9px] text-muted-foreground mt-0.5">Receive job and detail prompts instantly on WhatsApp.</p>
+                        <h4 className="text-xs font-semibold text-card-foreground transition-colors group-hover:text-primary">
+                          WhatsApp Chat
+                        </h4>
+                        <p className="mt-0.5 text-[9px] text-muted-foreground">
+                          Receive job and detail prompts instantly on WhatsApp.
+                        </p>
                       </div>
                     </div>
-                    <div className={`w-4 h-4 rounded-full border-2 transition-all flex items-center justify-center ${
-                      formData.preferredContact === "whatsapp" ? "border-primary bg-primary" : "border-muted-foreground/30"
-                    }`}>
-                      {formData.preferredContact === "whatsapp" && <Check className="h-2.5 w-2.5 text-primary-foreground stroke-[4]" />}
+                    <div
+                      className={`flex h-4 w-4 items-center justify-center rounded-full border-2 transition-all ${
+                        formData.preferredContact === "whatsapp"
+                          ? "border-primary bg-primary"
+                          : "border-muted-foreground/30"
+                      }`}
+                    >
+                      {formData.preferredContact === "whatsapp" && (
+                        <Check className="h-2.5 w-2.5 stroke-[4] text-primary-foreground" />
+                      )}
                     </div>
                   </div>
 
                   <div
                     onClick={() => updateField("preferredContact", "call")}
-                    className={`group flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
+                    className={`group flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-all duration-200 ${
                       formData.preferredContact === "call"
                         ? "border-primary bg-primary/5"
                         : "border-border bg-card hover:border-primary/50 hover:bg-muted/50"
@@ -717,14 +803,24 @@ export default function SignupPage() {
                     <div className="flex items-center gap-3.5">
                       <span className="text-lg">📞</span>
                       <div className="text-left">
-                        <h4 className="font-semibold text-xs text-card-foreground group-hover:text-primary transition-colors">Direct Call</h4>
-                        <p className="text-[9px] text-muted-foreground mt-0.5">Allow direct voice calls for quick communication.</p>
+                        <h4 className="text-xs font-semibold text-card-foreground transition-colors group-hover:text-primary">
+                          Direct Call
+                        </h4>
+                        <p className="mt-0.5 text-[9px] text-muted-foreground">
+                          Allow direct voice calls for quick communication.
+                        </p>
                       </div>
                     </div>
-                    <div className={`w-4 h-4 rounded-full border-2 transition-all flex items-center justify-center ${
-                      formData.preferredContact === "call" ? "border-primary bg-primary" : "border-muted-foreground/30"
-                    }`}>
-                      {formData.preferredContact === "call" && <Check className="h-2.5 w-2.5 text-primary-foreground stroke-[4]" />}
+                    <div
+                      className={`flex h-4 w-4 items-center justify-center rounded-full border-2 transition-all ${
+                        formData.preferredContact === "call"
+                          ? "border-primary bg-primary"
+                          : "border-muted-foreground/30"
+                      }`}
+                    >
+                      {formData.preferredContact === "call" && (
+                        <Check className="h-2.5 w-2.5 stroke-[4] text-primary-foreground" />
+                      )}
                     </div>
                   </div>
                 </div>
@@ -732,7 +828,7 @@ export default function SignupPage() {
 
               {/* STEP 5: Security Credentials */}
               {currentStep === 5 && (
-                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div className="animate-in space-y-4 duration-300 fade-in slide-in-from-bottom-2">
                   <input
                     type="text"
                     name="username"
@@ -744,77 +840,105 @@ export default function SignupPage() {
                   />
                   <div className="flex flex-col gap-4">
                     <div className="space-y-1.5">
-                      <Label htmlFor="password" className="text-xs font-bold text-foreground">
+                      <Label
+                        htmlFor="password"
+                        className="text-xs font-bold text-foreground"
+                      >
                         Password
                       </Label>
                       <div className="relative">
-                        <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/45 pointer-events-none" />
+                        <Lock className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground/45" />
                         <Input
                           id="password"
                           type={showPassword ? "text" : "password"}
                           value={formData.password}
-                          onChange={(e) => updateField("password", e.target.value)}
+                          onChange={(e) =>
+                            updateField("password", e.target.value)
+                          }
                           placeholder="Min 6 characters"
-                          className="pl-10 pr-10 w-full"
+                          className="w-full pr-10 pl-10"
                           disabled={isLoading}
                           required
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                          className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
                         >
-                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
                         </button>
                       </div>
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label htmlFor="confirmPassword" className="text-xs font-bold text-foreground">
+                      <Label
+                        htmlFor="confirmPassword"
+                        className="text-xs font-bold text-foreground"
+                      >
                         Confirm Password
                       </Label>
                       <div className="relative">
-                        <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/45 pointer-events-none" />
+                        <Lock className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground/45" />
                         <Input
                           id="confirmPassword"
                           type={showConfirmPassword ? "text" : "password"}
                           value={formData.confirmPassword}
-                          onChange={(e) => updateField("confirmPassword", e.target.value)}
+                          onChange={(e) =>
+                            updateField("confirmPassword", e.target.value)
+                          }
                           placeholder="Repeat password"
-                          className="pl-10 pr-10 w-full"
+                          className="w-full pr-10 pl-10"
                           disabled={isLoading}
                           required
                         />
                         <button
                           type="button"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                          onClick={() =>
+                            setShowConfirmPassword(!showConfirmPassword)
+                          }
+                          className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
                         >
-                          {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          {showConfirmPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
                         </button>
                       </div>
                     </div>
                   </div>
 
                   {/* Terms & Conditions Box */}
-                  <div className="flex items-start gap-2.5 pt-2 select-none w-full">
+                  <div className="flex w-full items-start gap-2.5 pt-2 select-none">
                     <Checkbox
                       id="terms"
                       checked={agreedToTerms}
-                      onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
+                      onCheckedChange={(checked) =>
+                        setAgreedToTerms(checked === true)
+                      }
                       disabled={isLoading}
-                      className="mt-0.5 border-input data-[state=checked]:bg-primary data-[state=checked]:border-primary rounded flex-shrink-0"
+                      className="mt-0.5 flex-shrink-0 rounded border-input data-[state=checked]:border-primary data-[state=checked]:bg-primary"
                     />
                     <label
                       htmlFor="terms"
-                      className="flex-1 text-xs leading-relaxed text-muted-foreground cursor-pointer font-normal block"
+                      className="block flex-1 cursor-pointer text-xs leading-relaxed font-normal text-muted-foreground"
                     >
                       I agree to the{" "}
-                      <Link href="/terms" className="text-primary hover:underline font-bold">
+                      <Link
+                        href="/terms"
+                        className="font-bold text-primary hover:underline"
+                      >
                         Terms of Service
                       </Link>{" "}
                       and{" "}
-                      <Link href="/privacy" className="text-primary hover:underline font-bold">
+                      <Link
+                        href="/privacy"
+                        className="font-bold text-primary hover:underline"
+                      >
                         Privacy Policy
                       </Link>
                       .{" "}
@@ -828,21 +952,21 @@ export default function SignupPage() {
 
               {/* Step Validation Error */}
               {stepError && (
-                <div className="rounded-lg border border-destructive/20 bg-destructive/10 px-3.5 py-2 text-[11px] text-destructive flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                <div className="flex animate-in items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 px-3.5 py-2 text-[11px] text-destructive duration-200 fade-in slide-in-from-top-1">
                   <ShieldCheck className="h-4 w-4 flex-shrink-0 rotate-180" />
                   <span>{stepError}</span>
                 </div>
               )}
 
               {/* Navigation Action Buttons (styled matching reference with standard buttons) */}
-              <div className="flex items-center justify-between gap-4 pt-4 border-t border-border">
+              <div className="flex items-center justify-between gap-4 border-t border-border pt-4">
                 {currentStep > 1 ? (
                   <Button
                     type="button"
                     variant="ghost"
                     onClick={goBack}
                     disabled={isLoading}
-                    className="text-muted-foreground hover:text-foreground font-medium text-xs transition-colors cursor-pointer h-9.5 px-4 rounded-lg"
+                    className="h-9.5 cursor-pointer rounded-lg px-4 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
                   >
                     Back
                   </Button>
@@ -855,23 +979,26 @@ export default function SignupPage() {
                     type="button"
                     onClick={goNext}
                     disabled={isLoading}
-                    className="font-bold flex items-center gap-1.5 cursor-pointer h-9.5 px-5 rounded-lg text-xs"
+                    className="flex h-9.5 cursor-pointer items-center gap-1.5 rounded-lg px-5 text-xs font-bold"
                   >
-                    Continue <ChevronRight className="h-3.5 w-3.5 stroke-[2.5]" />
+                    Continue{" "}
+                    <ChevronRight className="h-3.5 w-3.5 stroke-[2.5]" />
                   </Button>
                 ) : (
                   <Button
                     type="submit"
                     disabled={isLoading || !userType}
-                    className="font-extrabold flex items-center gap-1.5 cursor-pointer h-9.5 px-6 rounded-lg text-xs"
+                    className="flex h-9.5 cursor-pointer items-center gap-1.5 rounded-lg px-6 text-xs font-extrabold"
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="h-3.5 w-3.5 animate-spin" /> Processing...
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />{" "}
+                        Processing...
                       </>
                     ) : (
                       <>
-                        Finish Sign Up <Check className="h-3.5 w-3.5 stroke-[3]" />
+                        Finish Sign Up{" "}
+                        <Check className="h-3.5 w-3.5 stroke-[3]" />
                       </>
                     )}
                   </Button>
@@ -882,14 +1009,17 @@ export default function SignupPage() {
         </Card>
 
         {/* Step X of 5 Sub-footer */}
-        <div className="text-center space-y-3.5">
-          <p className="text-[10px] text-muted-foreground font-semibold tracking-wider uppercase">
+        <div className="space-y-3.5 text-center">
+          <p className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
             Step {currentStep} of {totalSteps}
           </p>
 
           <div className="text-xs text-muted-foreground">
             Already have an account?{" "}
-            <Link href="/auth/login" className="font-bold text-primary hover:underline">
+            <Link
+              href="/auth/login"
+              className="font-bold text-primary hover:underline"
+            >
               Sign in
             </Link>
           </div>
@@ -898,10 +1028,12 @@ export default function SignupPage() {
 
       {/* Dynamic Modal Dialog for "Other..." custom trade/service entry */}
       <Dialog open={isOtherModalOpen} onOpenChange={setIsOtherModalOpen}>
-        <DialogContent className="border border-border bg-card p-5 rounded-lg shadow-lg w-full max-w-sm animate-in fade-in zoom-in-95 duration-150">
+        <DialogContent className="w-full max-w-sm animate-in rounded-lg border border-border bg-card p-5 shadow-lg duration-150 zoom-in-95 fade-in">
           <DialogHeader>
             <DialogTitle className="text-sm font-bold text-foreground">
-              {otherFieldType === "trade" ? "Custom Skill / Trade" : "Custom Service Needed"}
+              {otherFieldType === "trade"
+                ? "Custom Skill / Trade"
+                : "Custom Service Needed"}
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
               {otherFieldType === "trade"
@@ -924,12 +1056,12 @@ export default function SignupPage() {
                 }
               }}
               placeholder="e.g. Glass Cleaner, Solar Tech"
-              className="w-full text-xs rounded-lg"
+              className="w-full rounded-lg text-xs"
               autoFocus
             />
           </div>
 
-          <DialogFooter className="flex items-center justify-end gap-2 pt-2 border-t border-border mt-2">
+          <DialogFooter className="mt-2 flex items-center justify-end gap-2 border-t border-border pt-2">
             <Button
               type="button"
               variant="ghost"
@@ -939,7 +1071,7 @@ export default function SignupPage() {
                   updateField(otherFieldType, "")
                 }
               }}
-              className="text-xs h-9.5 px-4 rounded-lg cursor-pointer text-muted-foreground"
+              className="h-9.5 cursor-pointer rounded-lg px-4 text-xs text-muted-foreground"
             >
               Cancel
             </Button>
@@ -954,7 +1086,7 @@ export default function SignupPage() {
                 }
               }}
               disabled={!otherInputValue.trim()}
-              className="text-xs h-9.5 px-4 rounded-lg font-bold cursor-pointer"
+              className="h-9.5 cursor-pointer rounded-lg px-4 text-xs font-bold"
             >
               Confirm
             </Button>

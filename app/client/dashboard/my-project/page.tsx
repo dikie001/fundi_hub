@@ -25,7 +25,10 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { MultiSelect, type MultiSelectOption } from "@/components/ui/multi-select"
+import {
+  MultiSelect,
+  type MultiSelectOption,
+} from "@/components/ui/multi-select"
 import {
   Select,
   SelectContent,
@@ -163,11 +166,21 @@ export default function MyProjectPage() {
                       <SelectValue placeholder="Select budget..." />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Under KES 2,000">Under KES 2,000</SelectItem>
-                      <SelectItem value="KES 2,000 - 5,000">KES 2,000 - 5,000</SelectItem>
-                      <SelectItem value="KES 5,000 - 10,000">KES 5,000 - 10,000</SelectItem>
-                      <SelectItem value="KES 10,000 - 20,000">KES 10,000 - 20,000</SelectItem>
-                      <SelectItem value="Over KES 20,000">Over KES 20,000</SelectItem>
+                      <SelectItem value="Under KES 2,000">
+                        Under KES 2,000
+                      </SelectItem>
+                      <SelectItem value="KES 2,000 - 5,000">
+                        KES 2,000 - 5,000
+                      </SelectItem>
+                      <SelectItem value="KES 5,000 - 10,000">
+                        KES 5,000 - 10,000
+                      </SelectItem>
+                      <SelectItem value="KES 10,000 - 20,000">
+                        KES 10,000 - 20,000
+                      </SelectItem>
+                      <SelectItem value="Over KES 20,000">
+                        Over KES 20,000
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -179,10 +192,18 @@ export default function MyProjectPage() {
                       <SelectValue placeholder="Select urgency..." />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Today / Immediate">Today / Immediate</SelectItem>
-                      <SelectItem value="Within 3 Days">Within 3 Days</SelectItem>
-                      <SelectItem value="Within a Week">Within a Week</SelectItem>
-                      <SelectItem value="Flexible / Planning">Flexible / Planning</SelectItem>
+                      <SelectItem value="Today / Immediate">
+                        Today / Immediate
+                      </SelectItem>
+                      <SelectItem value="Within 3 Days">
+                        Within 3 Days
+                      </SelectItem>
+                      <SelectItem value="Within a Week">
+                        Within a Week
+                      </SelectItem>
+                      <SelectItem value="Flexible / Planning">
+                        Flexible / Planning
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -218,7 +239,10 @@ export default function MyProjectPage() {
                   icon: Briefcase,
                   label: "Services",
                   value: profile?.projectCategory
-                    ? profile.projectCategory.split(",").map((s: string) => s.trim()).join(" · ")
+                    ? profile.projectCategory
+                        .split(",")
+                        .map((s: string) => s.trim())
+                        .join(" · ")
                     : undefined,
                 },
                 {
@@ -316,7 +340,13 @@ export default function MyProjectPage() {
                             </Button>
                             <Button size="sm" asChild className="h-8 text-xs">
                               <a
-                                href={`https://wa.me/${fundi.phone.replace(/[^0-9]/g, "")}?text=Hello%20${encodeURIComponent(fundi.name)},%20I%20found%20you%20on%20FundiHub.%20I%20need%20help%20with%20${encodeURIComponent((profile?.projectCategory || "").split(",").map((s: string) => s.trim()).filter(Boolean).join(" & ") || "a service")}%20in%20${encodeURIComponent(profile?.projectLocation || "my area")}.`}
+                                href={`https://wa.me/${fundi.phone.replace(/[^0-9]/g, "")}?text=Hello%20${encodeURIComponent(fundi.name)},%20I%20found%20you%20on%20FundiHub.%20I%20need%20help%20with%20${encodeURIComponent(
+                                  (profile?.projectCategory || "")
+                                    .split(",")
+                                    .map((s: string) => s.trim())
+                                    .filter(Boolean)
+                                    .join(" & ") || "a service"
+                                )}%20in%20${encodeURIComponent(profile?.projectLocation || "my area")}.`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >

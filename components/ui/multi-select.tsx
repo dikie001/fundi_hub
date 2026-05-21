@@ -50,7 +50,10 @@ export function MultiSelect({
   }
 
   return (
-    <PopoverPrimitive.Root open={open} onOpenChange={disabled ? undefined : setOpen}>
+    <PopoverPrimitive.Root
+      open={open}
+      onOpenChange={disabled ? undefined : setOpen}
+    >
       <PopoverPrimitive.Trigger asChild>
         <button
           type="button"
@@ -58,7 +61,7 @@ export function MultiSelect({
           aria-expanded={open}
           data-slot="multi-select-trigger"
           className={cn(
-            "flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-lg border border-input bg-transparent px-3 py-1.5 text-sm shadow-xs ring-offset-background transition-colors focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30 cursor-pointer text-left",
+            "flex min-h-10 w-full cursor-pointer flex-wrap items-center gap-1.5 rounded-lg border border-input bg-transparent px-3 py-1.5 text-left text-sm shadow-xs ring-offset-background transition-colors focus:ring-1 focus:ring-ring focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30",
             className
           )}
         >
@@ -72,14 +75,16 @@ export function MultiSelect({
                   <Badge
                     key={v}
                     variant="secondary"
-                    className="rounded-md px-1.5 py-0.5 text-xs font-medium gap-1 shrink-0"
+                    className="shrink-0 gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium"
                   >
                     {opt?.label ?? v}
                     <span
                       role="button"
                       aria-label={`Remove ${opt?.label ?? v}`}
-                      onPointerDown={(e) => removeTag(v, e as unknown as React.MouseEvent)}
-                      className="ml-0.5 cursor-pointer opacity-60 hover:opacity-100 hover:text-destructive"
+                      onPointerDown={(e) =>
+                        removeTag(v, e as unknown as React.MouseEvent)
+                      }
+                      className="ml-0.5 cursor-pointer opacity-60 hover:text-destructive hover:opacity-100"
                     >
                       <X className="h-3 w-3" />
                     </span>
@@ -103,13 +108,13 @@ export function MultiSelect({
           sideOffset={4}
           className={cn(
             "z-50 min-w-(--radix-popover-trigger-width) overflow-hidden rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none",
-            "data-[state=open]:animate-in data-[state=closed]:animate-out",
+            "data-[state=closed]:animate-out data-[state=open]:animate-in",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
             "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
           )}
         >
           {options.length > 6 && (
-            <div className="border-b border-border/40 px-2 pb-2 pt-1.5">
+            <div className="border-b border-border/40 px-2 pt-1.5 pb-2">
               <input
                 autoFocus
                 className="w-full bg-transparent text-xs outline-none placeholder:text-muted-foreground"
@@ -123,7 +128,9 @@ export function MultiSelect({
 
           <div className="max-h-60 overflow-y-auto py-1">
             {filtered.length === 0 ? (
-              <div className="px-3 py-2 text-xs text-muted-foreground">No results.</div>
+              <div className="px-3 py-2 text-xs text-muted-foreground">
+                No results.
+              </div>
             ) : (
               filtered.map((opt) => {
                 const isSelected = value.includes(opt.value)
@@ -132,11 +139,11 @@ export function MultiSelect({
                     key={opt.value}
                     type="button"
                     onClick={() => toggle(opt.value)}
-                    className="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors"
+                    className="flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
                   >
                     <div
                       className={cn(
-                        "flex h-4 w-4 items-center justify-center rounded-sm border transition-colors shrink-0",
+                        "flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border transition-colors",
                         isSelected
                           ? "border-primary bg-primary text-primary-foreground"
                           : "border-muted-foreground/40 bg-transparent"
@@ -156,7 +163,7 @@ export function MultiSelect({
               <button
                 type="button"
                 onClick={() => onChange([])}
-                className="w-full rounded-md px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground cursor-pointer text-center transition-colors"
+                className="w-full cursor-pointer rounded-md px-2.5 py-1.5 text-center text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
               >
                 Clear all
               </button>
