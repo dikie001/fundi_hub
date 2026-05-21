@@ -3,6 +3,8 @@ export interface Fundi {
   name: string
   title: string
   category: string
+  trade?: string
+  yearsExperience?: string
   rating: number
   reviews: number
   image: string
