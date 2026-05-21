@@ -164,7 +164,7 @@ export default function SignupPage() {
       state.nationalId = nationalId
     }
     if (referrerId) state.referrerId = referrerId
-    return Buffer.from(JSON.stringify(state)).toString("base64url")
+    return encodeURIComponent(JSON.stringify(state))
   }
 
   const handleGoogleSignup = () => {

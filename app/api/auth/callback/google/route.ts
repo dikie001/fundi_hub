@@ -15,8 +15,10 @@ export async function GET(request: Request) {
     // Decode state that carries pre-collected signup data
     let signupState: Record<string, string> = {}
     try {
-      if (stateRaw) signupState = JSON.parse(Buffer.from(stateRaw, "base64url").toString())
-    } catch { /* ignore */ }
+      if (stateRaw) signupState = JSON.parse(decodeURIComponent(stateRaw))
+    } catch {
+      signupState = {}
+    }
 
     if (error || !code) {
       return NextResponse.redirect(`${baseUrl}/auth/login?error=google_cancelled`)
