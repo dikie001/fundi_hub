@@ -150,15 +150,18 @@ export function AdminOverview() {
   const t = stats.totals
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-bold tracking-tight">Welcome back</h1>
-        <p className="text-xs text-muted-foreground">
-          Live overview of FundiHub activity across the platform.
-        </p>
+      <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 p-6 shadow-lg">
+        <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-primary/20 blur-3xl" />
+        <div className="relative">
+          <h1 className="text-2xl font-bold tracking-tight">Super Admin Dashboard</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Complete platform oversight and management control
+          </p>
+        </div>
       </div>
 
       {/* KPI cards */}
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
         <StatCard
           label="Total Users"
           value={t.users.toLocaleString()}
@@ -198,22 +201,16 @@ export function AdminOverview() {
           accent="rose"
         />
         <StatCard
-          label="Jobs Completed"
-          value={t.jobsCompleted.toLocaleString()}
-          icon={Briefcase}
-          accent="emerald"
-        />
-        <StatCard
-          label="Total Earnings"
-          value={formatCurrency(t.totalEarnings)}
-          icon={DollarSign}
-          accent="amber"
+          label="Audit Logs"
+          value={t.auditLogs.toLocaleString()}
+          icon={ScrollText}
+          accent="slate"
         />
       </div>
 
-      {/* Signups trend */}
+      {/* Charts Section */}
       <div className="grid gap-4 lg:grid-cols-3">
-        <div className="rounded-xl border border-border/60 bg-card p-4 lg:col-span-2">
+        <div className="rounded-xl border border-border/60 bg-gradient-to-br from-card to-card/50 p-4 shadow-sm lg:col-span-2">
           <div className="mb-3 flex items-center justify-between">
             <div>
               <h2 className="text-sm font-bold">Signups – last 12 weeks</h2>
@@ -225,7 +222,7 @@ export function AdminOverview() {
           </div>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={stats.signupsTrend}>
+              <AreaChart data={stats.signupsTrend} margin={{ left: 0, right: 0 }}>
                 <defs>
                   <linearGradient id="cli" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.6} />
@@ -270,11 +267,11 @@ export function AdminOverview() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-border/60 bg-card p-4">
+        <div className="rounded-xl border border-border/60 bg-gradient-to-br from-card to-card/50 p-4 shadow-sm">
           <div className="mb-3">
-            <h2 className="text-sm font-bold">Fundi tier mix</h2>
+            <h2 className="text-sm font-bold">Membership Tiers</h2>
             <p className="text-[11px] text-muted-foreground">
-              Distribution by premium level
+              Distribution across subscription levels
             </p>
           </div>
           <div className="h-64 w-full">
@@ -287,7 +284,10 @@ export function AdminOverview() {
                   cx="50%"
                   cy="50%"
                   outerRadius={80}
-                  label={(e) => `${e.level}`}
+                  label={(e) => {
+                    const labels = { none: 'Free', verified: 'Verified', top: 'Premium' }
+                    return labels[e.level as keyof typeof labels] || e.level
+                  }}
                   labelLine={false}
                 >
                   {stats.premiumBreakdown.map((_, i) => (
@@ -303,7 +303,7 @@ export function AdminOverview() {
 
       {/* Reviews & categories charts */}
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-xl border border-border/60 bg-card p-4">
+        <div className="rounded-xl border border-border/60 bg-gradient-to-br from-card to-card/50 p-4 shadow-sm">
           <div className="mb-3">
             <h2 className="text-sm font-bold">Reviews – last 30 days</h2>
             <p className="text-[11px] text-muted-foreground">
@@ -329,11 +329,11 @@ export function AdminOverview() {
             </ResponsiveContainer>
           </div>
         </div>
-        <div className="rounded-xl border border-border/60 bg-card p-4">
+        <div className="rounded-xl border border-border/60 bg-gradient-to-br from-card to-card/50 p-4 shadow-sm">
           <div className="mb-3">
-            <h2 className="text-sm font-bold">Top categories</h2>
+            <h2 className="text-sm font-bold">Top Skills</h2>
             <p className="text-[11px] text-muted-foreground">
-              Most populated fundi categories
+              Most popular fundi expertise areas
             </p>
           </div>
           <div className="h-64 w-full">
@@ -365,7 +365,7 @@ export function AdminOverview() {
 
       {/* Tables */}
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-xl border border-border/60 bg-card">
+        <div className="rounded-xl border border-border/60 bg-gradient-to-br from-card to-card/50 shadow-sm overflow-hidden">
           <div className="flex items-center justify-between border-b border-border/60 p-4">
             <h2 className="text-sm font-bold">Recent signups</h2>
             <Link
@@ -416,7 +416,7 @@ export function AdminOverview() {
           </table>
         </div>
 
-        <div className="rounded-xl border border-border/60 bg-card">
+        <div className="rounded-xl border border-border/60 bg-gradient-to-br from-card to-card/50 shadow-sm overflow-hidden">
           <div className="flex items-center justify-between border-b border-border/60 p-4">
             <h2 className="text-sm font-bold">Top-rated fundis</h2>
             <Link
@@ -467,7 +467,7 @@ export function AdminOverview() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-xl border border-border/60 bg-card">
+        <div className="rounded-xl border border-border/60 bg-gradient-to-br from-card to-card/50 shadow-sm overflow-hidden">
           <div className="flex items-center justify-between border-b border-border/60 p-4">
             <h2 className="text-sm font-bold">Recent reviews</h2>
             <Link
@@ -509,7 +509,7 @@ export function AdminOverview() {
           </ul>
         </div>
 
-        <div className="rounded-xl border border-border/60 bg-card">
+        <div className="rounded-xl border border-border/60 bg-gradient-to-br from-card to-card/50 shadow-sm overflow-hidden">
           <div className="flex items-center justify-between border-b border-border/60 p-4">
             <div className="flex items-center gap-2">
               <ScrollText className="h-4 w-4 text-muted-foreground" />

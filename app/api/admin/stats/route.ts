@@ -152,12 +152,23 @@ export async function GET() {
       avgRating: b.count ? +(b._sum / b.count).toFixed(2) : 0,
     }))
 
-    const categoriesGroup = await db.fundiProfile.groupBy({
-      by: ["category"],
-      _count: { _all: true },
-      orderBy: { _count: { category: "desc" } },
-      take: 8,
+    // Parse comma-separated skills from all fundis
+    const allFundis = await db.fundiProfile.findMany({
+      select: { skills: true },
     })
+    const skillCounts: Record<string, number> = {}
+    for (const fundi of allFundis) {
+      if (fundi.skills) {
+        const skills = fundi.skills.split(",").map((s) => s.trim()).filter(Boolean)
+        for (const skill of skills) {
+          skillCounts[skill] = (skillCounts[skill] || 0) + 1
+        }
+      }
+    }
+    const topCategories = Object.entries(skillCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8)
+      .map(([skill, count]) => ({ category: skill, count }))
 
     return NextResponse.json({
       totals: {
@@ -180,10 +191,7 @@ export async function GET() {
         status: r.status,
         count: r._count._all,
       })),
-      topCategories: categoriesGroup.map((c) => ({
-        category: c.category,
-        count: c._count._all,
-      })),
+      topCategories,
       signupsTrend,
       reviewsTrend,
       recentUsers,
