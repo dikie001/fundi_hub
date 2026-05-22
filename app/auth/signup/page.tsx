@@ -334,7 +334,9 @@ export default function SignupPage() {
         phone,
         password: isGoogleSignup ? crypto.randomUUID() : password,
         preferredContact,
-        email: isGoogleSignup ? (googleData?.email || `${phone}@fundihub.com`) : `${phone.replace(/[^0-9]/g, "")}@fundihub.com`,
+        email: isGoogleSignup
+          ? googleData?.email || `${phone}@fundihub.com`
+          : `${phone.replace(/[^0-9]/g, "")}@fundihub.com`,
       }
       if (isGoogleSignup && googleData) {
         body.googlePicture = googleData.picture || ""

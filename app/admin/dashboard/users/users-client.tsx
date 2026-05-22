@@ -280,14 +280,21 @@ export function UsersClient() {
                   >
                     <td className="p-3">
                       <div className="flex items-center gap-2">
-                        {(u.image || u.fundiProfile?.image || u.clientProfile?.image) ? (
+                        {u.image ||
+                        u.fundiProfile?.image ||
+                        u.clientProfile?.image ? (
                           <img
-                            src={u.image || u.fundiProfile?.image || u.clientProfile?.image || ""}
+                            src={
+                              u.image ||
+                              u.fundiProfile?.image ||
+                              u.clientProfile?.image ||
+                              ""
+                            }
                             alt={u.name}
-                            className="h-8 w-8 rounded-full object-cover border border-border"
+                            className="h-8 w-8 rounded-full border border-border object-cover"
                           />
                         ) : (
-                          <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center border border-border">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-muted">
                             <span className="text-xs font-medium text-muted-foreground">
                               {u.name.charAt(0).toUpperCase()}
                             </span>

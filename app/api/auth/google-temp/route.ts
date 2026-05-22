@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const cookieStore = await cookies()
     const tempData = cookieStore.get("google_signup_temp")
-    
+
     if (!tempData) {
       return NextResponse.json({ error: "No temp data" }, { status: 404 })
     }
