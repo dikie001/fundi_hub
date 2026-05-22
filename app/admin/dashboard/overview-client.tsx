@@ -289,13 +289,14 @@ export function AdminOverview() {
                   cx="50%"
                   cy="50%"
                   outerRadius={80}
-                  label={(e) => {
+                  label={({ payload }) => {
                     const labels = {
                       none: "Free",
                       verified: "Verified",
                       top: "Premium",
                     }
-                    return labels[e.level as keyof typeof labels] || e.level
+                    const level = (payload as { level?: keyof typeof labels } | undefined)?.level
+                    return (level && labels[level]) || level || ""
                   }}
                   labelLine={false}
                 >

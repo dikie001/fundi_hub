@@ -8,11 +8,7 @@ export async function GET() {
   const { error } = await requireAdmin()
   if (error) return error
 
-  // Defensive accessor: if Prisma client wasn't regenerated after the
-  // AuditLog model was added, db.auditLog may be undefined at runtime.
-  const auditLog = (db as { auditLog?: typeof db.user }).auditLog as
-    | typeof db.user
-    | undefined
+  const auditLog = db.auditLog
 
   try {
     const [
