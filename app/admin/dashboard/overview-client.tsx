@@ -295,7 +295,9 @@ export function AdminOverview() {
                       verified: "Verified",
                       top: "Premium",
                     }
-                    const level = (payload as { level?: keyof typeof labels } | undefined)?.level
+                    const level = (
+                      payload as { level?: keyof typeof labels } | undefined
+                    )?.level
                     return (level && labels[level]) || level || ""
                   }}
                   labelLine={false}
