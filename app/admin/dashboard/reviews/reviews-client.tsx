@@ -197,7 +197,7 @@ export function ReviewsClient() {
 function Pill({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="rounded-lg border border-border/50 bg-card px-3 py-2">
-      <div className="text-[10px] font-medium uppercase text-muted-foreground">
+      <div className="text-[10px] font-medium text-muted-foreground uppercase">
         {label}
       </div>
       <div className="text-lg font-bold">{value}</div>

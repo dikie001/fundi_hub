@@ -99,7 +99,7 @@ export function AuditLogsClient() {
         ) : (
           <div className="max-h-[70vh] overflow-x-auto">
             <table className="w-full text-xs">
-              <thead className="sticky top-0 bg-muted/50 text-[10px] uppercase text-muted-foreground">
+              <thead className="sticky top-0 bg-muted/50 text-[10px] text-muted-foreground uppercase">
                 <tr>
                   <th className="p-3 text-left">When</th>
                   <th className="p-3 text-left">Action</th>
@@ -114,7 +114,7 @@ export function AuditLogsClient() {
                     key={l.id}
                     className="border-t border-border/40 align-top hover:bg-muted/30"
                   >
-                    <td className="whitespace-nowrap p-3 text-muted-foreground">
+                    <td className="p-3 whitespace-nowrap text-muted-foreground">
                       {formatDate(l.createdAt)}
                     </td>
                     <td className="p-3">
