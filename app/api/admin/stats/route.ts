@@ -39,9 +39,7 @@ export async function GET() {
       db.review.count(),
       db.category.count(),
       db.referral.count(),
-      auditLog
-        ? auditLog.count().catch(() => 0)
-        : Promise.resolve(0),
+      auditLog ? auditLog.count().catch(() => 0) : Promise.resolve(0),
       db.fundiProfile.groupBy({
         by: ["premiumLevel"],
         _count: { _all: true },
