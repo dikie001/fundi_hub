@@ -31,7 +31,9 @@ export function PaystackButton({
     reference: new Date().getTime().toString(),
     email: email || "user@fundihub.com",
     amount: amount * 100, // Convert to kobo (smallest currency unit)
-    publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "pk_test_6a8606451e2f7083cdae07b87efb2f8c6b70eeae",
+    publicKey:
+      process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY ||
+      "pk_test_6a8606451e2f7083cdae07b87efb2f8c6b70eeae",
     currency: "KES",
     metadata: {
       custom_fields: [
@@ -65,11 +67,7 @@ export function PaystackButton({
   }
 
   return (
-    <Button
-      onClick={handlePayment}
-      disabled={disabled}
-      className={className}
-    >
+    <Button onClick={handlePayment} disabled={disabled} className={className}>
       {disabled ? (
         <>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />

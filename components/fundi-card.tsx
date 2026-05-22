@@ -182,7 +182,7 @@ export function FundiCard({ fundi }: FundiCardProps) {
               e.stopPropagation()
               setIsReviewModalOpen(true)
             }}
-            className="ml-1 text-[11px] font-bold text-primary hover:underline cursor-pointer"
+            className="ml-1 cursor-pointer text-[11px] font-bold text-primary hover:underline"
           >
             • Leave Review
           </button>

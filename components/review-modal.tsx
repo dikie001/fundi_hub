@@ -1,7 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -14,7 +20,12 @@ interface ReviewModalProps {
   onSubmitSuccess?: () => void
 }
 
-export function ReviewModal({ isOpen, onClose, fundiName, onSubmitSuccess }: ReviewModalProps) {
+export function ReviewModal({
+  isOpen,
+  onClose,
+  fundiName,
+  onSubmitSuccess,
+}: ReviewModalProps) {
   const [reviewerName, setReviewerName] = useState("")
   const [rating, setRating] = useState(0)
   const [hoveredRating, setHoveredRating] = useState(0)
@@ -43,15 +54,18 @@ export function ReviewModal({ isOpen, onClose, fundiName, onSubmitSuccess }: Rev
 
     try {
       const slug = fundiName.trim().replace(/\s+/g, "-")
-      const response = await fetch(`/api/fundis/${encodeURIComponent(slug)}/reviews`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          reviewerName: reviewerName.trim(),
-          rating,
-          comment: comment.trim(),
-        }),
-      })
+      const response = await fetch(
+        `/api/fundis/${encodeURIComponent(slug)}/reviews`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            reviewerName: reviewerName.trim(),
+            rating,
+            comment: comment.trim(),
+          }),
+        }
+      )
 
       const data = await response.json()
 
@@ -144,7 +158,7 @@ export function ReviewModal({ isOpen, onClose, fundiName, onSubmitSuccess }: Rev
               disabled={isSubmitting}
               required
               rows={4}
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
             />
           </div>
 
@@ -162,11 +176,7 @@ export function ReviewModal({ isOpen, onClose, fundiName, onSubmitSuccess }: Rev
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="flex-1"
-            >
+            <Button type="submit" disabled={isSubmitting} className="flex-1">
               {isSubmitting ? "Submitting..." : "Submit Review"}
             </Button>
           </div>

@@ -325,7 +325,8 @@ export default function SignupPage() {
 
   const handlePhoneSignup = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (currentStep < TOTAL_STEPS) {
+    const finalStep = isGoogleSignup ? GOOGLE_STEPS : TOTAL_STEPS
+    if (currentStep < finalStep) {
       goNext()
       return
     }
