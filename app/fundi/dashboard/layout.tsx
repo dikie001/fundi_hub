@@ -28,6 +28,7 @@ import {
 } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { UserMenu } from "@/components/user-menu"
+import { PaystackButton } from "@/components/paystack-button"
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
   const { state } = useSidebar()
@@ -44,6 +45,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     setIsPremiumModalOpen,
     premiumModalType,
     isProcessingPayment,
+    setIsProcessingPayment,
     handleToggleEmergency,
     handleLogout,
     handleActivateBadge,
@@ -180,21 +182,18 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
             >
               Cancel
             </Button>
-            <Button
-              type="button"
-              onClick={handleActivateBadge}
+            <PaystackButton
+              amount={500}
+              email={user?.email || user?.phone + "@fundihub.com"}
+              name={user?.name || "User"}
+              phone={user?.phone || ""}
+              onSuccess={(reference) => handleActivateBadge(reference)}
+              onClose={() => setIsProcessingPayment(false)}
               disabled={isProcessingPayment}
               className="h-9.5 cursor-pointer rounded-lg bg-primary px-4 text-xs font-bold text-primary-foreground"
             >
-              {isProcessingPayment ? (
-                <>
-                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />{" "}
-                  Activating...
-                </>
-              ) : (
-                "Pay & Activate"
-              )}
-            </Button>
+              Pay Ksh 500 & Activate
+            </PaystackButton>
           </DialogFooter>
         </DialogContent>
       </Dialog>

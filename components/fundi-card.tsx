@@ -9,6 +9,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
+import { ReviewModal } from "@/components/review-modal"
 
 interface FundiCardProps {
   fundi: Fundi
@@ -48,6 +49,7 @@ function VerifiedBadge() {
 export function FundiCard({ fundi }: FundiCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
 
   const cardId = fundi.name.trim().replace(/\s+/g, "-")
   const profileLink = `/fundis/${encodeURIComponent(cardId)}`
@@ -174,12 +176,16 @@ export function FundiCard({ fundi }: FundiCardProps) {
             </span>
           </div>
 
-          <Link
-            href={`${profileLink}#reviews-section`}
-            className="ml-1 text-[11px] font-bold text-primary hover:underline"
+          <button
+            onClick={(e: React.MouseEvent) => {
+              e.preventDefault()
+              e.stopPropagation()
+              setIsReviewModalOpen(true)
+            }}
+            className="ml-1 text-[11px] font-bold text-primary hover:underline cursor-pointer"
           >
             • Leave Review
-          </Link>
+          </button>
 
           {fundi.isNearby && (
             <span className="ml-auto rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[9px] font-bold text-emerald-500">
@@ -226,6 +232,13 @@ export function FundiCard({ fundi }: FundiCardProps) {
           </a>
         </Button>
       </div>
+
+      {/* Review Modal */}
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        fundiName={fundi.name}
+      />
     </Card>
   )
 }
