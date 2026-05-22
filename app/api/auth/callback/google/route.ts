@@ -21,7 +21,9 @@ export async function GET(request: Request) {
     }
 
     if (error || !code) {
-      return NextResponse.redirect(`${baseUrl}/auth/login?error=google_cancelled`)
+      return NextResponse.redirect(
+        `${baseUrl}/auth/login?error=google_cancelled`
+      )
     }
 
     const clientId = process.env.GOOGLE_CLIENT_ID!
@@ -47,13 +49,18 @@ export async function GET(request: Request) {
     }
 
     // Fetch Google profile
-    const userInfoRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
-      headers: { Authorization: `Bearer ${tokenData.access_token}` },
-    })
+    const userInfoRes = await fetch(
+      "https://www.googleapis.com/oauth2/v3/userinfo",
+      {
+        headers: { Authorization: `Bearer ${tokenData.access_token}` },
+      }
+    )
     const googleUser = await userInfoRes.json()
 
     if (!googleUser.email) {
-      return NextResponse.redirect(`${baseUrl}/auth/login?error=google_no_email`)
+      return NextResponse.redirect(
+        `${baseUrl}/auth/login?error=google_no_email`
+      )
     }
 
     // Find existing user by email
@@ -63,6 +70,35 @@ export async function GET(request: Request) {
     })
 
     if (!user) {
+      // Check if we have complete signup state
+      const hasCompleteState =
+        signupState.userType &&
+        (signupState.userType === "client"
+          ? signupState.projectCategory
+          : signupState.trade)
+
+      if (!hasCompleteState) {
+        // Store Google info in cookies and redirect to complete signup
+        const cookieStore = await cookies()
+        cookieStore.set(
+          "google_signup_temp",
+          JSON.stringify({
+            name: googleUser.name || googleUser.email.split("@")[0],
+            email: googleUser.email,
+            picture: googleUser.picture,
+            sub: googleUser.sub,
+          }),
+          {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 60 * 15, // 15 minutes
+            path: "/",
+            sameSite: "lax",
+          }
+        )
+        return NextResponse.redirect(`${baseUrl}/auth/signup?google=true`)
+      }
+
       // New user — build from state data collected during onboarding
       const userType = (signupState.userType as "client" | "fundi") || "client"
       const derivedName = googleUser.name || googleUser.email.split("@")[0]
@@ -75,6 +111,7 @@ export async function GET(request: Request) {
           phone: uniquePhone,
           password: crypto.randomBytes(32).toString("hex"),
           role: userType === "fundi" ? "fundi" : "client",
+          image: googleUser.picture || null,
           ...(userType === "fundi"
             ? {
                 fundiProfile: {
@@ -85,7 +122,8 @@ export async function GET(request: Request) {
                     yearsExperience: signupState.yearsExperience || "1",
                     serviceArea: signupState.serviceArea || "",
                     nationalId: signupState.nationalId || "",
-                    preferredContact: (signupState.preferredContact as string) || "whatsapp",
+                    preferredContact:
+                      (signupState.preferredContact as string) || "whatsapp",
                     premiumLevel: "none",
                     image: googleUser.picture || null,
                   },
@@ -107,8 +145,9 @@ export async function GET(request: Request) {
       })
     }
 
-    // Create session
+    // Create session and clear temp cookie
     const cookieStore = await cookies()
+    cookieStore.delete("google_signup_temp")
     cookieStore.set("user_session", user.id, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -117,8 +156,10 @@ export async function GET(request: Request) {
       sameSite: "lax",
     })
 
-    if (user.role === "fundi") return NextResponse.redirect(`${baseUrl}/fundi/dashboard`)
-    if (user.role === "admin") return NextResponse.redirect(`${baseUrl}/admin/dashboard`)
+    if (user.role === "fundi")
+      return NextResponse.redirect(`${baseUrl}/fundi/dashboard`)
+    if (user.role === "admin")
+      return NextResponse.redirect(`${baseUrl}/admin/dashboard`)
     return NextResponse.redirect(`${baseUrl}/client/dashboard`)
   } catch (err) {
     console.error("Google OAuth callback error:", err)

@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
+import { requireAdmin } from "@/lib/admin-auth"
+
+export const dynamic = "force-dynamic"
 
 export async function GET(request: Request) {
+  const { error } = await requireAdmin()
+  if (error) return error
   try {
     const url = new URL(request.url)
     const q = url.searchParams.get("q")
