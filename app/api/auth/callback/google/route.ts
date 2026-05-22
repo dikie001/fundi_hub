@@ -63,6 +63,30 @@ export async function GET(request: Request) {
     })
 
     if (!user) {
+      // Check if we have complete signup state
+      const hasCompleteState = signupState.userType && 
+        (signupState.userType === "client" 
+          ? signupState.projectCategory 
+          : signupState.trade)
+
+      if (!hasCompleteState) {
+        // Store Google info in cookies and redirect to complete signup
+        const cookieStore = await cookies()
+        cookieStore.set("google_signup_temp", JSON.stringify({
+          name: googleUser.name || googleUser.email.split("@")[0],
+          email: googleUser.email,
+          picture: googleUser.picture,
+          sub: googleUser.sub,
+        }), {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          maxAge: 60 * 15, // 15 minutes
+          path: "/",
+          sameSite: "lax",
+        })
+        return NextResponse.redirect(`${baseUrl}/auth/signup?google=true`)
+      }
+
       // New user — build from state data collected during onboarding
       const userType = (signupState.userType as "client" | "fundi") || "client"
       const derivedName = googleUser.name || googleUser.email.split("@")[0]
@@ -75,6 +99,7 @@ export async function GET(request: Request) {
           phone: uniquePhone,
           password: crypto.randomBytes(32).toString("hex"),
           role: userType === "fundi" ? "fundi" : "client",
+          image: googleUser.picture || null,
           ...(userType === "fundi"
             ? {
                 fundiProfile: {

@@ -34,7 +34,8 @@ export function Navigation() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link href="/#home" className="flex items-center gap-2">
+            <Link href="/#home" className="flex items-center gap-3">
+              <img src="/fundi_hub_logo.jpeg" alt="FundiHub" className="h-10 w-10 rounded-lg object-cover" />
               <div className="text-2xl font-bold text-primary">FundiHub</div>
             </Link>
             {isNotHome && (
@@ -82,6 +83,7 @@ export function Navigation() {
                   name={authUser.name}
                   phone={authUser.phone}
                   image={
+                    authUser.image ||
                     authUser.fundiProfile?.image ||
                     authUser.clientProfile?.image
                   }

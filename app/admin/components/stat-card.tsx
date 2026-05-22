@@ -14,7 +14,14 @@ export function StatCard({
   value: string | number
   icon?: LucideIcon
   hint?: string
-  accent?: "primary" | "emerald" | "amber" | "blue" | "rose" | "violet" | "slate"
+  accent?:
+    | "primary"
+    | "emerald"
+    | "amber"
+    | "blue"
+    | "rose"
+    | "violet"
+    | "slate"
 }) {
   const accents: Record<string, string> = {
     primary: "bg-primary/10 text-primary",
@@ -26,7 +33,7 @@ export function StatCard({
     slate: "bg-slate-500/10 text-slate-600 dark:text-slate-400",
   }
   return (
-    <div className="rounded-xl border border-border/60 bg-gradient-to-br from-card to-card/50 p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
+    <div className="rounded-xl border border-border/60 bg-gradient-to-br from-card to-card/50 p-4 shadow-sm transition-shadow duration-200 hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">

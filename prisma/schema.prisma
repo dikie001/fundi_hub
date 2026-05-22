@@ -32,6 +32,7 @@ model User {
   phone     String
   password  String
   role      UserType @default(client)
+  image     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -56,7 +57,7 @@ model FundiProfile {
 
   title            String
   category         String
-  rating           Float        @default(5.0)
+  rating           Float        @default(0.0)
   reviews          Int          @default(0)
   jobsCompleted    Int          @default(0)
   successRate      Float        @default(100.0)

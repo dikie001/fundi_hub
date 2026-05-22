@@ -30,16 +30,19 @@ interface AdminUser {
   email: string | null
   phone: string
   role: Role
+  image: string | null
   createdAt: string
   fundiProfile?: {
     premiumLevel: string
     rating: number
     reviews: number
     jobsCompleted: number
+    image: string | null
   } | null
   clientProfile?: {
     projectCategory: string | null
     projectLocation: string | null
+    image: string | null
   } | null
 }
 
@@ -276,10 +279,27 @@ export function UsersClient() {
                     className="border-t border-border/40 hover:bg-muted/30"
                   >
                     <td className="p-3">
-                      <div className="font-medium">{u.name}</div>
-                      <div className="text-[10px] text-muted-foreground">
-                        {u.phone}
-                        {u.email && ` · ${u.email}`}
+                      <div className="flex items-center gap-2">
+                        {(u.image || u.fundiProfile?.image || u.clientProfile?.image) ? (
+                          <img
+                            src={u.image || u.fundiProfile?.image || u.clientProfile?.image || ""}
+                            alt={u.name}
+                            className="h-8 w-8 rounded-full object-cover border border-border"
+                          />
+                        ) : (
+                          <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center border border-border">
+                            <span className="text-xs font-medium text-muted-foreground">
+                              {u.name.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                        <div>
+                          <div className="font-medium">{u.name}</div>
+                          <div className="text-[10px] text-muted-foreground">
+                            {u.phone}
+                            {u.email && ` · ${u.email}`}
+                          </div>
+                        </div>
                       </div>
                     </td>
                     <td className="p-3">

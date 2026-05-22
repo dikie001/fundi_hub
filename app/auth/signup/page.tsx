@@ -116,12 +116,28 @@ export default function SignupPage() {
     "whatsapp" | "call" | "email"
   >("whatsapp")
   const [checkingSession, setCheckingSession] = useState(true)
+  const [isGoogleSignup, setIsGoogleSignup] = useState(false)
+  const [googleData, setGoogleData] = useState<any>(null)
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search)
       const ref = params.get("ref")
+      const google = params.get("google")
       if (ref) setReferrerId(ref)
+      if (google === "true") {
+        setIsGoogleSignup(true)
+        // Fetch Google temp data from server
+        fetch("/api/auth/google-temp")
+          .then((r) => (r.ok ? r.json() : null))
+          .then((d) => {
+            if (d?.name) {
+              setGoogleData(d)
+              setName(d.name)
+            }
+          })
+          .catch(() => {})
+      }
     }
   }, [])
 
@@ -275,13 +291,15 @@ export default function SignupPage() {
         setStepError("Enter your phone number.")
         return false
       }
-      if (!password || password.length < 6) {
-        setStepError("Password must be at least 6 characters.")
-        return false
-      }
-      if (password !== confirmPassword) {
-        setStepError("Passwords do not match.")
-        return false
+      if (!isGoogleSignup) {
+        if (!password || password.length < 6) {
+          setStepError("Password must be at least 6 characters.")
+          return false
+        }
+        if (password !== confirmPassword) {
+          setStepError("Passwords do not match.")
+          return false
+        }
       }
       if (!agreedToTerms) {
         setStepError("You must agree to the Terms and Privacy Policy.")
@@ -314,9 +332,13 @@ export default function SignupPage() {
         userType: userType ?? "client",
         name,
         phone,
-        password,
+        password: isGoogleSignup ? crypto.randomUUID() : password,
         preferredContact,
-        email: `${phone.replace(/[^0-9]/g, "")}@fundihub.com`,
+        email: isGoogleSignup ? (googleData?.email || `${phone}@fundihub.com`) : `${phone.replace(/[^0-9]/g, "")}@fundihub.com`,
+      }
+      if (isGoogleSignup && googleData) {
+        body.googlePicture = googleData.picture || ""
+        body.googleSub = googleData.sub || ""
       }
       if (referrerId) body.referrerId = referrerId
       if (userType === "client") {

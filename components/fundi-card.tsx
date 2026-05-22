@@ -169,7 +169,9 @@ export function FundiCard({ fundi }: FundiCardProps) {
         <div className="mt-2.5 flex flex-wrap items-center gap-2 text-xs">
           <div className="flex items-center gap-1 font-bold text-foreground">
             <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
-            <span>{fundi.rating ? Number(fundi.rating).toFixed(1) : "0.0"}</span>
+            <span>
+              {fundi.rating ? Number(fundi.rating).toFixed(1) : "0.0"}
+            </span>
           </div>
 
           <Link

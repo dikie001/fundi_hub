@@ -22,6 +22,8 @@ export async function POST(request: Request) {
       budgetRange,
       urgency,
       referrerId,
+      googlePicture,
+      googleSub,
     } = body
 
     if (!password || !name || !phone || !userType) {
@@ -52,6 +54,7 @@ export async function POST(request: Request) {
         phone,
         password: hashedPassword,
         role: userType === "fundi" ? "fundi" : "client",
+        ...(googlePicture ? { image: googlePicture } : {}),
         ...(userType === "fundi"
           ? {
               fundiProfile: {
@@ -64,6 +67,7 @@ export async function POST(request: Request) {
                   nationalId: nationalId || "",
                   preferredContact: preferredContact || "whatsapp",
                   premiumLevel: "none",
+                  ...(googlePicture ? { image: googlePicture } : {}),
                 },
               },
             }
@@ -74,6 +78,7 @@ export async function POST(request: Request) {
                   projectLocation: projectLocation || "",
                   budgetRange: budgetRange || "",
                   urgency: urgency || "",
+                  ...(googlePicture ? { image: googlePicture } : {}),
                 },
               },
             }),

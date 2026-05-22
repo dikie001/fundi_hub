@@ -159,7 +159,10 @@ export async function GET() {
     const skillCounts: Record<string, number> = {}
     for (const fundi of allFundis) {
       if (fundi.skills) {
-        const skills = fundi.skills.split(",").map((s) => s.trim()).filter(Boolean)
+        const skills = fundi.skills
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
         for (const skill of skills) {
           skillCounts[skill] = (skillCounts[skill] || 0) + 1
         }

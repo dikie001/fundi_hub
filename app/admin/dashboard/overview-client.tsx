@@ -151,9 +151,11 @@ export function AdminOverview() {
   return (
     <div className="space-y-6">
       <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 p-6 shadow-lg">
-        <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-primary/20 blur-3xl" />
+        <div className="absolute top-0 right-0 h-32 w-32 rounded-full bg-primary/20 blur-3xl" />
         <div className="relative">
-          <h1 className="text-2xl font-bold tracking-tight">Super Admin Dashboard</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Super Admin Dashboard
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Complete platform oversight and management control
           </p>
@@ -222,7 +224,10 @@ export function AdminOverview() {
           </div>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={stats.signupsTrend} margin={{ left: 0, right: 0 }}>
+              <AreaChart
+                data={stats.signupsTrend}
+                margin={{ left: 0, right: 0 }}
+              >
                 <defs>
                   <linearGradient id="cli" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.6} />
@@ -285,7 +290,11 @@ export function AdminOverview() {
                   cy="50%"
                   outerRadius={80}
                   label={(e) => {
-                    const labels = { none: 'Free', verified: 'Verified', top: 'Premium' }
+                    const labels = {
+                      none: "Free",
+                      verified: "Verified",
+                      top: "Premium",
+                    }
                     return labels[e.level as keyof typeof labels] || e.level
                   }}
                   labelLine={false}
@@ -365,7 +374,7 @@ export function AdminOverview() {
 
       {/* Tables */}
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-xl border border-border/60 bg-gradient-to-br from-card to-card/50 shadow-sm overflow-hidden">
+        <div className="overflow-hidden rounded-xl border border-border/60 bg-gradient-to-br from-card to-card/50 shadow-sm">
           <div className="flex items-center justify-between border-b border-border/60 p-4">
             <h2 className="text-sm font-bold">Recent signups</h2>
             <Link
@@ -416,7 +425,7 @@ export function AdminOverview() {
           </table>
         </div>
 
-        <div className="rounded-xl border border-border/60 bg-gradient-to-br from-card to-card/50 shadow-sm overflow-hidden">
+        <div className="overflow-hidden rounded-xl border border-border/60 bg-gradient-to-br from-card to-card/50 shadow-sm">
           <div className="flex items-center justify-between border-b border-border/60 p-4">
             <h2 className="text-sm font-bold">Top-rated fundis</h2>
             <Link
@@ -467,7 +476,7 @@ export function AdminOverview() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-xl border border-border/60 bg-gradient-to-br from-card to-card/50 shadow-sm overflow-hidden">
+        <div className="overflow-hidden rounded-xl border border-border/60 bg-gradient-to-br from-card to-card/50 shadow-sm">
           <div className="flex items-center justify-between border-b border-border/60 p-4">
             <h2 className="text-sm font-bold">Recent reviews</h2>
             <Link
@@ -509,7 +518,7 @@ export function AdminOverview() {
           </ul>
         </div>
 
-        <div className="rounded-xl border border-border/60 bg-gradient-to-br from-card to-card/50 shadow-sm overflow-hidden">
+        <div className="overflow-hidden rounded-xl border border-border/60 bg-gradient-to-br from-card to-card/50 shadow-sm">
           <div className="flex items-center justify-between border-b border-border/60 p-4">
             <div className="flex items-center gap-2">
               <ScrollText className="h-4 w-4 text-muted-foreground" />
