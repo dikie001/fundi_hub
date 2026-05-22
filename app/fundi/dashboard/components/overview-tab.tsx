@@ -22,22 +22,13 @@ export function OverviewTab(props: any) {
   } = props
 
   return (
-    <div className="animate-in space-y-8 duration-300 fade-in slide-in-from-bottom-2">
-      <div className="flex flex-col gap-4 border-b border-border/40 pb-5 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-foreground">
-            Habari, {user?.name || "Partner"}! 👋
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Welcome to your Partner Suite. You have <span className="font-bold text-primary">{matchingLeads.length} matching job opportunities</span> in {profile?.trade || "your trade"} today.
-          </p>
-        </div>
-      </div>
-
-      {/* Top summary: compact, non-distracting */}
-      <div className="mb-2">
+    <div className="animate-in space-y-6 duration-300 fade-in slide-in-from-bottom-2">
+      <div className="flex flex-col gap-2">
+        <h1 className="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-foreground">
+          Habari, {user?.name || "Partner"}! 👋
+        </h1>
         <p className="text-sm text-muted-foreground">
-          Welcome to your Partner Suite. You have <span className="font-bold text-primary">{matchingLeads.length} matching job opportunities</span> in {profile?.trade || "your trade"} today.
+          You have <span className="font-bold text-primary">{matchingLeads.length} matching job {matchingLeads.length === 1 ? 'opportunity' : 'opportunities'}</span> in {profile?.trade || "your trade"} today.
         </p>
       </div>
 

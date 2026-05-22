@@ -145,8 +145,9 @@ export async function GET(request: Request) {
       })
     }
 
-    // Create session
+    // Create session and clear temp cookie
     const cookieStore = await cookies()
+    cookieStore.delete("google_signup_temp")
     cookieStore.set("user_session", user.id, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

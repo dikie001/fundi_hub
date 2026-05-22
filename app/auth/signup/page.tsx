@@ -78,6 +78,7 @@ const URGENCY_LEVELS = [
 ]
 
 const TOTAL_STEPS = 5
+const GOOGLE_STEPS = 4 // Google users skip final step
 
 const STEP_LABELS = [
   "Who are you?",
@@ -282,7 +283,7 @@ export default function SignupPage() {
         return false
       }
     }
-    if (currentStep === 5) {
+    if (currentStep === 5 && !isGoogleSignup) {
       if (!name.trim()) {
         setStepError("Enter your full name.")
         return false
@@ -291,15 +292,13 @@ export default function SignupPage() {
         setStepError("Enter your phone number.")
         return false
       }
-      if (!isGoogleSignup) {
-        if (!password || password.length < 6) {
-          setStepError("Password must be at least 6 characters.")
-          return false
-        }
-        if (password !== confirmPassword) {
-          setStepError("Passwords do not match.")
-          return false
-        }
+      if (!password || password.length < 6) {
+        setStepError("Password must be at least 6 characters.")
+        return false
+      }
+      if (password !== confirmPassword) {
+        setStepError("Passwords do not match.")
+        return false
       }
       if (!agreedToTerms) {
         setStepError("You must agree to the Terms and Privacy Policy.")
@@ -310,7 +309,14 @@ export default function SignupPage() {
   }
 
   const goNext = () => {
-    if (validate()) setCurrentStep((p) => Math.min(TOTAL_STEPS, p + 1))
+    if (validate()) {
+      // If Google signup and on step 4, complete signup instead of going to step 5
+      if (isGoogleSignup && currentStep === 4) {
+        handlePhoneSignup({ preventDefault: () => {} } as React.FormEvent)
+      } else {
+        setCurrentStep((p) => Math.min(TOTAL_STEPS, p + 1))
+      }
+    }
   }
   const goBack = () => {
     setStepError("")
@@ -395,7 +401,7 @@ export default function SignupPage() {
             </p>
           </div>
           <div className="flex w-full gap-1.5">
-            {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
+            {Array.from({ length: isGoogleSignup ? GOOGLE_STEPS : TOTAL_STEPS }).map((_, i) => (
               <div
                 key={i}
                 className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
@@ -676,8 +682,8 @@ export default function SignupPage() {
                 </div>
               )}
 
-              {/* ── STEP 5: Account creation — Google OR phone+password ── */}
-              {currentStep === 5 && (
+              {/* ── STEP 5: Account creation — Google OR phone+password (Skip for Google users) ── */}
+              {currentStep === 5 && !isGoogleSignup && (
                 <div className="animate-in space-y-5 duration-300 fade-in slide-in-from-bottom-2">
                   {/* Google option */}
                   <Button
