@@ -3,10 +3,11 @@
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { MessageCircle, Phone, Star, MapPin } from "lucide-react"
+import { MessageCircle, Phone, Star, MapPin, User } from "lucide-react"
 import type { Fundi } from "@/lib/types"
 import Image from "next/image"
 import Link from "next/link"
+import { useState } from "react"
 import { cn } from "@/lib/utils"
 
 interface FundiCardProps {
@@ -45,12 +46,8 @@ function VerifiedBadge() {
 }
 
 export function FundiCard({ fundi }: FundiCardProps) {
-  const initials = fundi.name
-    .trim()
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const [imageError, setImageError] = useState(false)
 
   const cardId = fundi.name.trim().replace(/\s+/g, "-")
   const profileLink = `/fundis/${encodeURIComponent(cardId)}`
@@ -84,19 +81,27 @@ export function FundiCard({ fundi }: FundiCardProps) {
 
         {/* Profile Info Row */}
         <div className="flex items-center gap-3">
-          <div className="relative flex h-13 w-13 shrink-0 items-center justify-center rounded-full border border-border/40 bg-muted/40 shadow-xs">
-            {fundi.image ? (
-              <Image
-                src={fundi.image}
-                alt={fundi.name}
-                fill
-                unoptimized
-                className="rounded-full object-cover"
-              />
+          <div className="relative flex h-13 w-13 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border/40 bg-muted/40 shadow-xs">
+            {fundi.image && !imageError ? (
+              <>
+                {!imageLoaded && (
+                  <div className="absolute inset-0 animate-pulse rounded-full bg-muted" />
+                )}
+                <Image
+                  src={fundi.image}
+                  alt={fundi.name}
+                  fill
+                  unoptimized
+                  onLoad={() => setImageLoaded(true)}
+                  onError={() => setImageError(true)}
+                  className={cn(
+                    "rounded-full object-cover transition-opacity duration-200",
+                    imageLoaded ? "opacity-100" : "opacity-0"
+                  )}
+                />
+              </>
             ) : (
-              <span className="text-xs font-black text-muted-foreground">
-                {initials}
-              </span>
+              <User className="h-6 w-6 text-muted-foreground" />
             )}
           </div>
 

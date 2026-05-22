@@ -8,6 +8,12 @@ export async function GET() {
   const { error } = await requireAdmin()
   if (error) return error
 
+  // Defensive accessor: if Prisma client wasn't regenerated after the
+  // AuditLog model was added, db.auditLog may be undefined at runtime.
+  const auditLog = (db as { auditLog?: typeof db.user }).auditLog as
+    | typeof db.user
+    | undefined
+
   try {
     const [
       totalUsers,
@@ -33,7 +39,9 @@ export async function GET() {
       db.review.count(),
       db.category.count(),
       db.referral.count(),
-      db.auditLog.count(),
+      auditLog
+        ? auditLog.count().catch(() => 0)
+        : Promise.resolve(0),
       db.fundiProfile.groupBy({
         by: ["premiumLevel"],
         _count: { _all: true },
@@ -69,10 +77,11 @@ export async function GET() {
           },
         },
       }),
-      db.auditLog.findMany({
-        orderBy: { createdAt: "desc" },
-        take: 8,
-      }),
+      auditLog
+        ? auditLog
+            .findMany({ orderBy: { createdAt: "desc" }, take: 8 })
+            .catch(() => [])
+        : Promise.resolve([]),
       db.fundiProfile.findMany({
         orderBy: [{ rating: "desc" }, { reviews: "desc" }],
         take: 5,
