@@ -20,6 +20,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
+  const [checkingSession, setCheckingSession] = useState(true)
   const searchParams = useSearchParams()
 
   const googleError = searchParams.get("error")
@@ -27,6 +28,32 @@ export default function LoginPage() {
     : null
   const [password, setPassword] = useState("")
   const [loginError, setLoginError] = useState("")
+
+  // Auto-redirect if already authenticated
+  useEffect(() => {
+    let cancelled = false
+    fetch("/api/auth/me", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (cancelled) return
+        const role = d?.user?.role
+        if (role === "fundi") {
+          window.location.replace("/fundi/dashboard")
+        } else if (role === "client") {
+          window.location.replace("/client/dashboard")
+        } else if (role === "admin") {
+          window.location.replace("/admin/dashboard")
+        } else {
+          setCheckingSession(false)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setCheckingSession(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -61,6 +88,14 @@ export default function LoginPage() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  if (checkingSession) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    )
   }
 
   return (

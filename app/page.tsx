@@ -31,6 +31,33 @@ export default function Home() {
   const [fundis, setFundis] = useState<Fundi[]>([])
   const [isLoadingFundis, setIsLoadingFundis] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
+  const [checkingSession, setCheckingSession] = useState(true)
+
+  // Auto-redirect logged-in users to their dashboard
+  useEffect(() => {
+    let cancelled = false
+    fetch("/api/auth/me", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (cancelled) return
+        const role = d?.user?.role
+        if (role === "fundi") {
+          window.location.replace("/fundi/dashboard")
+        } else if (role === "client") {
+          window.location.replace("/client/dashboard")
+        } else if (role === "admin") {
+          window.location.replace("/admin/dashboard")
+        } else {
+          setCheckingSession(false)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setCheckingSession(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   useEffect(() => {
     async function loadData() {
@@ -119,6 +146,14 @@ export default function Home() {
   })
 
   const hasSearch = searchQuery.trim() !== ""
+
+  if (checkingSession) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      </div>
+    )
+  }
 
   return (
     <div className="flex min-h-screen flex-col">

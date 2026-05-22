@@ -110,12 +110,39 @@ export default function SignupPage() {
   const [yearsExperience, setYearsExperience] = useState("")
   const [nationalId, setNationalId] = useState("")
   const [preferredContact, setPreferredContact] = useState<"whatsapp" | "call" | "email">("whatsapp")
+  const [checkingSession, setCheckingSession] = useState(true)
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search)
       const ref = params.get("ref")
       if (ref) setReferrerId(ref)
+    }
+  }, [])
+
+  // Auto-redirect if already authenticated
+  useEffect(() => {
+    let cancelled = false
+    fetch("/api/auth/me", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (cancelled) return
+        const role = d?.user?.role
+        if (role === "fundi") {
+          window.location.replace("/fundi/dashboard")
+        } else if (role === "client") {
+          window.location.replace("/client/dashboard")
+        } else if (role === "admin") {
+          window.location.replace("/admin/dashboard")
+        } else {
+          setCheckingSession(false)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setCheckingSession(false)
+      })
+    return () => {
+      cancelled = true
     }
   }, [])
 
@@ -256,6 +283,14 @@ export default function SignupPage() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  if (checkingSession) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    )
   }
 
   return (
