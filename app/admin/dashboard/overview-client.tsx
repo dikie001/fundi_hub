@@ -291,10 +291,7 @@ export function AdminOverview() {
                   labelLine={false}
                 >
                   {stats.premiumBreakdown.map((_, i) => (
-                    <Cell
-                      key={i}
-                      fill={PIE_COLORS[i % PIE_COLORS.length]}
-                    />
+                    <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
@@ -347,7 +344,11 @@ export function AdminOverview() {
                 margin={{ left: 30 }}
               >
                 <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                <XAxis type="number" tick={{ fontSize: 10 }} allowDecimals={false} />
+                <XAxis
+                  type="number"
+                  tick={{ fontSize: 10 }}
+                  allowDecimals={false}
+                />
                 <YAxis
                   dataKey="category"
                   type="category"
@@ -375,7 +376,7 @@ export function AdminOverview() {
             </Link>
           </div>
           <table className="w-full text-xs">
-            <thead className="bg-muted/40 text-[10px] uppercase text-muted-foreground">
+            <thead className="bg-muted/40 text-[10px] text-muted-foreground uppercase">
               <tr>
                 <th className="p-3 text-left">Name</th>
                 <th className="p-3 text-left">Role</th>
@@ -426,7 +427,7 @@ export function AdminOverview() {
             </Link>
           </div>
           <table className="w-full text-xs">
-            <thead className="bg-muted/40 text-[10px] uppercase text-muted-foreground">
+            <thead className="bg-muted/40 text-[10px] text-muted-foreground uppercase">
               <tr>
                 <th className="p-3 text-left">Fundi</th>
                 <th className="p-3 text-left">Rating</th>

@@ -260,7 +260,7 @@ export function UsersClient() {
         ) : (
           <div className="max-h-[70vh] overflow-x-auto">
             <table className="w-full text-xs">
-              <thead className="sticky top-0 bg-muted/50 text-[10px] uppercase text-muted-foreground">
+              <thead className="sticky top-0 bg-muted/50 text-[10px] text-muted-foreground uppercase">
                 <tr>
                   <th className="p-3 text-left">User</th>
                   <th className="p-3 text-left">Role</th>
@@ -495,7 +495,7 @@ export function UsersClient() {
 function SummaryPill({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-lg border border-border/50 bg-card px-3 py-2">
-      <div className="text-[10px] font-medium uppercase text-muted-foreground">
+      <div className="text-[10px] font-medium text-muted-foreground uppercase">
         {label}
       </div>
       <div className="text-lg font-bold">{value.toLocaleString()}</div>

@@ -49,7 +49,10 @@ export async function PATCH(
       }
     }
     if (Object.keys(data).length === 0) {
-      return NextResponse.json({ error: "No changes provided" }, { status: 400 })
+      return NextResponse.json(
+        { error: "No changes provided" },
+        { status: 400 }
+      )
     }
     const updated = await db.fundiProfile.update({ where: { id }, data })
     await logAudit({

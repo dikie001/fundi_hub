@@ -194,10 +194,10 @@ export default function Home() {
                   Clear
                 </button>
               ) : (
-                <Search className="absolute top-1/2 right-5 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Search className="absolute top-1/2 right-5 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
               )}
             </div>
-{/* 
+            {/* 
             {!hasSearch && (
               <div className="mt-6 flex justify-center gap-4">
                 <Button variant="outline" asChild>
@@ -441,7 +441,7 @@ export default function Home() {
           <p className="mb-12 text-center text-muted-foreground">
             Flexible pricing for every fundi
           </p>
-          <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto">
+          <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle>One-Time Registration</CardTitle>

@@ -100,7 +100,7 @@ export function ClientsClient() {
         ) : (
           <div className="max-h-[70vh] overflow-x-auto">
             <table className="w-full text-xs">
-              <thead className="sticky top-0 bg-muted/50 text-[10px] uppercase text-muted-foreground">
+              <thead className="sticky top-0 bg-muted/50 text-[10px] text-muted-foreground uppercase">
                 <tr>
                   <th className="p-3 text-left">Client</th>
                   <th className="p-3 text-left">Looking for</th>

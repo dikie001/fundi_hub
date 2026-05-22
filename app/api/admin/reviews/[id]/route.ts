@@ -1,13 +1,18 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { logAudit } from "@/lib/audit"
+import { requireAdmin } from "@/lib/admin-auth"
+
+export const dynamic = "force-dynamic"
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { error, user: adminUser } = await requireAdmin()
+  if (error) return error
   try {
-    const { id } = params
+    const { id } = await params
     const existing = await db.review.findUnique({ where: { id } })
     if (!existing)
       return NextResponse.json({ error: "Not found" }, { status: 404 })
@@ -29,9 +34,10 @@ export async function DELETE(
     })
 
     await logAudit({
-      action: "REVIEW_DELETED",
-      details: `Review ${id} deleted`,
+      action: "ADMIN_REVIEW_DELETED",
+      details: `Admin ${adminUser?.name} deleted review ${id} for fundi ${fundiId}`,
       req: request,
+      userId: adminUser?.id,
     })
 
     return NextResponse.json({ message: "Deleted" })
