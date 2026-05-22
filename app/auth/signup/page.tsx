@@ -401,7 +401,9 @@ export default function SignupPage() {
             </p>
           </div>
           <div className="flex w-full gap-1.5">
-            {Array.from({ length: isGoogleSignup ? GOOGLE_STEPS : TOTAL_STEPS }).map((_, i) => (
+            {Array.from({
+              length: isGoogleSignup ? GOOGLE_STEPS : TOTAL_STEPS,
+            }).map((_, i) => (
               <div
                 key={i}
                 className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${

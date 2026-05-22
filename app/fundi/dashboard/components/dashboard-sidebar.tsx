@@ -42,10 +42,18 @@ export function DashboardSidebar(props: any) {
     >
       <SidebarHeader className="flex h-16 flex-row items-center border-b border-border/25 px-6">
         {isCollapsed ? (
-          <img src="/fundi_hub_logo.jpeg" alt="FundiHub" className="h-8 w-8 rounded-lg object-cover mx-auto" />
+          <img
+            src="/fundi_hub_logo.jpeg"
+            alt="FundiHub"
+            className="mx-auto h-8 w-8 rounded-lg object-cover"
+          />
         ) : (
           <div className="flex items-center gap-2">
-            <img src="/fundi_hub_logo.jpeg" alt="FundiHub" className="h-8 w-8 rounded-lg object-cover" />
+            <img
+              src="/fundi_hub_logo.jpeg"
+              alt="FundiHub"
+              className="h-8 w-8 rounded-lg object-cover"
+            />
             <span className="bg-linear-to-r from-orange-500 to-amber-500 bg-clip-text text-lg font-black tracking-tight text-transparent">
               FundiHub
             </span>
