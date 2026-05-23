@@ -78,7 +78,7 @@ const URGENCY_LEVELS = [
 ]
 
 const TOTAL_STEPS = 5
-const GOOGLE_STEPS = 4 // Google users skip final step
+const GOOGLE_STEPS = 5 // Google users also go through all 5 steps (step 5 shows simplified phone-only form)
 
 const STEP_LABELS = [
   "Who are you?",
@@ -127,17 +127,24 @@ export default function SignupPage() {
       const google = params.get("google")
       if (ref) setReferrerId(ref)
       if (google === "true") {
-        setIsGoogleSignup(true)
         // Fetch Google temp data from server
         fetch("/api/auth/google-temp")
           .then((r) => (r.ok ? r.json() : null))
           .then((d) => {
             if (d?.name) {
+              // Only activate Google signup if we actually have Google data
+              setIsGoogleSignup(true)
               setGoogleData(d)
               setName(d.name)
+            } else {
+              // No Google data found - remove ?google=true from URL and use normal signup
+              window.history.replaceState({}, "", "/auth/signup" + (ref ? `?ref=${ref}` : ""))
             }
           })
-          .catch(() => {})
+          .catch(() => {
+            // Google auth failed - remove ?google=true from URL
+            window.history.replaceState({}, "", "/auth/signup" + (ref ? `?ref=${ref}` : ""))
+          })
       }
     }
   }, [])
@@ -283,26 +290,39 @@ export default function SignupPage() {
         return false
       }
     }
-    if (currentStep === 5 && !isGoogleSignup) {
-      if (!name.trim()) {
-        setStepError("Enter your full name.")
-        return false
-      }
-      if (!phone.trim()) {
-        setStepError("Enter your phone number.")
-        return false
-      }
-      if (!password || password.length < 6) {
-        setStepError("Password must be at least 6 characters.")
-        return false
-      }
-      if (password !== confirmPassword) {
-        setStepError("Passwords do not match.")
-        return false
-      }
-      if (!agreedToTerms) {
-        setStepError("You must agree to the Terms and Privacy Policy.")
-        return false
+    if (currentStep === 5) {
+      if (isGoogleSignup) {
+        // Google users only need phone and terms agreement
+        if (!phone.trim()) {
+          setStepError("Enter your phone number.")
+          return false
+        }
+        if (!agreedToTerms) {
+          setStepError("You must agree to the Terms and Privacy Policy.")
+          return false
+        }
+      } else {
+        // Normal users need full account details
+        if (!name.trim()) {
+          setStepError("Enter your full name.")
+          return false
+        }
+        if (!phone.trim()) {
+          setStepError("Enter your phone number.")
+          return false
+        }
+        if (!password || password.length < 6) {
+          setStepError("Password must be at least 6 characters.")
+          return false
+        }
+        if (password !== confirmPassword) {
+          setStepError("Passwords do not match.")
+          return false
+        }
+        if (!agreedToTerms) {
+          setStepError("You must agree to the Terms and Privacy Policy.")
+          return false
+        }
       }
     }
     return true
@@ -310,21 +330,7 @@ export default function SignupPage() {
 
   const goNext = () => {
     if (validate()) {
-      // If Google signup and reached the Google-final step, attempt auto-submit
-      if (isGoogleSignup && currentStep === GOOGLE_STEPS) {
-        // Only auto-submit if we have Google data OR the user has entered contact info
-        const hasGoogleData = !!googleData
-        const hasContactInfo = name.trim() !== "" || phone.trim() !== ""
-        if (!hasGoogleData && !hasContactInfo) {
-          setStepError(
-            "Please provide your contact details or complete Google sign-in."
-          )
-          return
-        }
-        handlePhoneSignup({ preventDefault: () => {} } as React.FormEvent)
-      } else {
-        setCurrentStep((p) => Math.min(TOTAL_STEPS, p + 1))
-      }
+      setCurrentStep((p) => Math.min(TOTAL_STEPS, p + 1))
     }
   }
   const goBack = () => {
@@ -881,6 +887,80 @@ export default function SignupPage() {
                       {userType === "fundi"
                         ? "My trade identity will be verified before matching jobs."
                         : "My project details will be shared with matched fundis."}
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* ── STEP 5: Google users - just phone number ── */}
+              {currentStep === 5 && isGoogleSignup && (
+                <div className="animate-in space-y-5 duration-300 fade-in slide-in-from-bottom-2">
+                  <div className="rounded-lg border border-border/50 bg-muted/20 p-4">
+                    <div className="flex items-center gap-3">
+                      {googleData?.picture && (
+                        <img 
+                          src={googleData.picture} 
+                          alt={googleData.name} 
+                          className="h-12 w-12 rounded-full" 
+                        />
+                      )}
+                      <div>
+                        <p className="text-sm font-semibold">{googleData?.name || name}</p>
+                        <p className="text-xs text-muted-foreground">{googleData?.email}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="phone-google" className="text-xs font-semibold text-foreground">
+                      Phone Number
+                    </Label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        id="phone-google"
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="+254 712 345 678"
+                        className="pl-10"
+                        disabled={isLoading}
+                        required
+                      />
+                    </div>
+                    <p className="text-[10px] text-muted-foreground">
+                      Your phone number will be used by fundis to contact you
+                    </p>
+                  </div>
+
+                  {/* Terms */}
+                  <div className="flex w-full items-start gap-2.5 pt-1 select-none">
+                    <Checkbox
+                      id="terms-google"
+                      checked={agreedToTerms}
+                      onCheckedChange={(c) => setAgreedToTerms(c === true)}
+                      disabled={isLoading}
+                      className="mt-0.5 shrink-0 rounded border-input data-[state=checked]:border-primary data-[state=checked]:bg-primary"
+                    />
+                    <label
+                      htmlFor="terms-google"
+                      className="flex-1 cursor-pointer text-xs leading-relaxed text-muted-foreground"
+                    >
+                      I agree to the{" "}
+                      <Link
+                        href="/terms"
+                        className="font-bold text-primary hover:underline"
+                      >
+                        Terms of Service
+                      </Link>{" "}
+                      and{" "}
+                      <Link
+                        href="/privacy"
+                        className="font-bold text-primary hover:underline"
+                      >
+                        Privacy Policy
+                      </Link>
+                      .
                     </label>
                   </div>
                 </div>
