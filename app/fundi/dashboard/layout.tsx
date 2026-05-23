@@ -93,7 +93,6 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
 
   if (isLoading) {
     return <FundiLoader />
-    )
   }
 
   return (
