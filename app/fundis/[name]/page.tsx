@@ -54,6 +54,7 @@ type FundiPageData = {
   premiumLevel: "none" | "verified" | "top"
   isAvailable: boolean
   isNearby: boolean
+  preferredContact: string
   description: string
   yearsExperience: string
   serviceArea: string
@@ -172,6 +173,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
       premiumLevel: profile.premiumLevel,
       isAvailable: profile.isAvailable,
       isNearby: profile.isNearby,
+      preferredContact: profile.preferredContact || "whatsapp",
       description: profile.description || "No bio description provided.",
       yearsExperience: profile.yearsExperience || "N/A",
       serviceArea: profile.serviceArea || "N/A",
@@ -496,9 +498,9 @@ export default async function FundiProfilePage({ params }: PageProps) {
                       {fundiData.preferredContact}
                     </span>
                     .
-                    {fundiData.isEmergency
-                      ? " Available 24/7 for urgent call-outs."
-                      : " Generally available during normal working hours."}
+                    {fundiData.isAvailable
+                      ? " Currently available for new bookings."
+                      : " Currently unavailable for new bookings."}
                   </p>
                 </div>
 
