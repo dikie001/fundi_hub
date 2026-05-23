@@ -4,7 +4,7 @@ import { Search, Sparkles, Zap } from "lucide-react"
 
 export function ClientLoader() {
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-background via-background to-blue-500/5">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-linear-to-br from-background via-background to-blue-500/5">
       <div className="relative flex items-center justify-center">
         {/* Rotating ring */}
         <div className="absolute h-32 w-32 animate-spin rounded-full border-4 border-blue-500/20 border-t-blue-500"></div>
