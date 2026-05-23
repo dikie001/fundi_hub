@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import { Prisma } from "@prisma/client"
 import { db } from "@/lib/db"
 import { requireAdmin } from "@/lib/admin-auth"
 import { logAudit } from "@/lib/audit"
@@ -12,6 +11,7 @@ export async function GET() {
 
   try {
     const categories = await db.category.findMany({ orderBy: { name: "asc" } })
+    type CategoryRow = Awaited<ReturnType<typeof db.category.findMany>>[number]
     // Add fundi counts
     const counts = await db.fundiProfile.groupBy({
       by: ["category"],
@@ -20,7 +20,7 @@ export async function GET() {
     const countMap: Record<string, number> = {}
     for (const c of counts) countMap[c.category] = c._count._all
     return NextResponse.json({
-      categories: categories.map((c: Prisma.CategoryGetPayload<{}>) => ({
+      categories: categories.map((c: CategoryRow) => ({
         ...c,
         fundiCount: countMap[c.name] ?? 0,
       })),
