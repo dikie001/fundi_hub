@@ -30,7 +30,12 @@ export async function getFundis(): Promise<Fundi[]> {
     })
 
     return dbFundis.map((user) => {
-      const profile = user.fundiProfile!
+      const profile = user.fundiProfile! as unknown as NonNullable<
+        typeof user.fundiProfile
+      > & {
+        isAvailable: boolean
+        isNearby: boolean
+      }
       return {
         id: user.id,
         name: user.name,
