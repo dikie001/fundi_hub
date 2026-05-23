@@ -1,21 +1,6 @@
-import { Geist, Geist_Mono, Merriweather } from "next/font/google"
-
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { cn } from "@/lib/utils"
-
-const merriweather = Merriweather({ subsets: ["latin"], variable: "--font-serif" })
-
-const fontSans = Geist({
-  subsets: ["latin"],
-  variable: "--font-sans",
-})
-
-const fontMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-})
 
 export default function RootLayout({
   children,
@@ -26,7 +11,15 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", fontSans.variable, fontMono.variable, "font-sans", merriweather.variable)}
+      style={{
+        ["--font-sans" as string]:
+          'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        ["--font-mono" as string]:
+          'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace',
+        ["--font-serif" as string]:
+          'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
+      }}
+      className="antialiased font-sans"
     >
       <body>
         <ThemeProvider>
