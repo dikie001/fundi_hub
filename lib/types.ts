@@ -33,7 +33,7 @@ export interface ReviewData {
   rating: number
   comment: string
   ip?: string | null
-  createdAt?: Date | string
+  createdAt: Date | string
 }
 
 export interface FundiProfileData {
