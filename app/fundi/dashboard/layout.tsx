@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/sidebar"
 import { DashboardSidebar } from "./components/dashboard-sidebar"
 import { Separator } from "@/components/ui/separator"
+import { FundiLoader } from "@/components/fundi-loader"
 import {
   Dialog,
   DialogContent,
@@ -91,13 +92,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     menuItems.find((item) => item.href === pathname) || menuItems[0]
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-screen animate-pulse flex-col items-center justify-center gap-3.5 bg-radial from-background to-muted text-foreground">
-        <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-xs font-medium text-muted-foreground">
-          Loading your profile...
-        </p>
-      </div>
+    return <FundiLoader />
     )
   }
 
