@@ -135,8 +135,10 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     "verified"
   )
   const [isProcessingPayment, setIsProcessingPayment] = useState(false)
-  const [isAvailabilityDialogOpen, setIsAvailabilityDialogOpen] = useState(false)
-  const [pendingAvailabilityValue, setPendingAvailabilityValue] = useState(false)
+  const [isAvailabilityDialogOpen, setIsAvailabilityDialogOpen] =
+    useState(false)
+  const [pendingAvailabilityValue, setPendingAvailabilityValue] =
+    useState(false)
 
   const [editName, setEditName] = useState("")
   const [editTitle, setEditTitle] = useState("")
@@ -242,14 +244,14 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
 
   const confirmAvailabilityChange = async () => {
     if (!profile) return
-    
+
     const currentVal = profile.isAvailable
     const newVal = pendingAvailabilityValue
-    
+
     try {
       setProfile((prev: any) => ({ ...prev, isAvailable: newVal }))
       setIsAvailabilityDialogOpen(false)
-      
+
       await fetch("/api/fundi/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },

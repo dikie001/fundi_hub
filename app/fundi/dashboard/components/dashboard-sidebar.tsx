@@ -237,8 +237,8 @@ export function DashboardSidebar(props: any) {
           onOpenChange={setIsAvailabilityDialogOpen}
         >
           <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
+            <DialogHeader className="space-y-3">
+              <DialogTitle className="flex items-center gap-2.5">
                 {pendingAvailabilityValue ? (
                   <CheckCircle2 className="h-5 w-5 text-green-500" />
                 ) : (
@@ -248,13 +248,13 @@ export function DashboardSidebar(props: any) {
                   ? "Set as Available?"
                   : "Set as Unavailable?"}
               </DialogTitle>
-              <DialogDescription className="pt-2 text-sm leading-relaxed">
+              <DialogDescription className="space-y-3">
                 {pendingAvailabilityValue ? (
                   <>
                     <p className="font-medium text-foreground">
                       You will appear in client searches and receive job leads.
                     </p>
-                    <p className="mt-2 text-muted-foreground">
+                    <p className="text-muted-foreground">
                       Clients searching for fundis in your trade will be able to
                       find and contact you.
                     </p>
@@ -265,7 +265,7 @@ export function DashboardSidebar(props: any) {
                       You will NOT appear in client searches and won't receive
                       new leads.
                     </p>
-                    <p className="mt-2 text-muted-foreground">
+                    <p className="text-muted-foreground">
                       You can turn this back on anytime to start receiving leads
                       again.
                     </p>
@@ -273,7 +273,7 @@ export function DashboardSidebar(props: any) {
                 )}
               </DialogDescription>
             </DialogHeader>
-            <DialogFooter className="gap-2 sm:gap-0">
+            <DialogFooter className="gap-2 sm:gap-4">
               <Button
                 type="button"
                 variant="outline"
@@ -281,15 +281,7 @@ export function DashboardSidebar(props: any) {
               >
                 Cancel
               </Button>
-              <Button
-                type="button"
-                onClick={confirmAvailabilityChange}
-                className={
-                  pendingAvailabilityValue
-                    ? "bg-green-600 hover:bg-green-700"
-                    : ""
-                }
-              >
+              <Button type="button" onClick={confirmAvailabilityChange}>
                 {pendingAvailabilityValue
                   ? "Set as Available"
                   : "Set as Unavailable"}
