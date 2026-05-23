@@ -5,29 +5,20 @@ import {
   Card,
   CardContent,
   CardHeader,
-  CardTitle,
-  CardDescription,
+  CardTitle
 } from "@/components/ui/card"
 import {
-  CheckCircle2,
+  AlertCircle,
+  Calendar,
   ChevronRight,
   Clock,
-  DollarSign,
-  MapPin,
-  Phone,
-  Shield,
-  ShieldCheck,
-  Star,
-  AlertCircle,
-  Briefcase,
   Download,
-  HelpCircle,
   ExternalLink,
+  HelpCircle,
+  MapPin,
   MessageSquare,
-  Wrench,
-  Image as ImageIcon,
-  Plus,
-  Calendar,
+  Phone,
+  Wrench
 } from "lucide-react"
 
 export function OverviewTab(props: any) {
