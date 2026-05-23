@@ -12,6 +12,7 @@ import {
   Image as ImageIcon,
   CheckCircle2,
   Loader2,
+  X,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -32,21 +33,25 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
-  MultiSelect,
-  type MultiSelectOption,
-} from "@/components/ui/multi-select"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Badge } from "@/components/ui/badge"
 
-const FUNDI_TRADES: MultiSelectOption[] = [
-  { value: "Plumber", label: "Plumber" },
-  { value: "Electrician", label: "Electrician" },
-  { value: "Carpenter", label: "Carpenter" },
-  { value: "Painter", label: "Painter" },
-  { value: "Mason", label: "Mason" },
-  { value: "Welder", label: "Welder" },
-  { value: "Appliance Repair", label: "Appliance Repair" },
-  { value: "HVAC Tech", label: "HVAC Tech" },
-  { value: "Cleaner", label: "Cleaner" },
-  { value: "Gardener", label: "Gardener" },
+const FUNDI_TRADES = [
+  "Plumber",
+  "Electrician",
+  "Carpenter",
+  "Painter",
+  "Mason",
+  "Welder",
+  "Appliance Repair",
+  "HVAC Tech",
+  "Cleaner",
+  "Gardener",
 ]
 
 type PortfolioItem = {
@@ -405,133 +410,171 @@ export function ProfileTab({
 
       {/* Edit Profile Dialog */}
       <Dialog open={isEditProfileOpen} onOpenChange={setIsEditProfileOpen}>
-        <DialogContent className="max-h-[90vh] w-[95vw] max-w-2xl overflow-y-auto">
-          <DialogHeader className="space-y-2">
-            <DialogTitle className="text-lg font-semibold">
+        <DialogContent className="max-h-[90vh] w-[95vw] max-w-6xl overflow-y-auto">
+          <DialogHeader className="space-y-3">
+            <DialogTitle className="text-xl font-semibold">
               Edit Profile Details
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-base">
               Update your professional information
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={onEditProfileSubmit} className="space-y-6 pt-4">
-            {/* Basic Info */}
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="edit-name">Full Name</Label>
+          <form onSubmit={onEditProfileSubmit} className="space-y-8 pt-6">
+            {/* Basic Info - 2 Columns on Large Screens */}
+            <div className="grid gap-6 lg:grid-cols-2">
+              <div className="space-y-2.5">
+                <Label htmlFor="edit-name" className="text-base">Full Name</Label>
                 <Input
                   id="edit-name"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
                   placeholder="Your full name"
+                  className="h-11"
                   required
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="edit-title">Professional Title</Label>
+              <div className="space-y-2.5">
+                <Label htmlFor="edit-title" className="text-base">Professional Title</Label>
                 <Input
                   id="edit-title"
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
                   placeholder="e.g. Electrician Expert"
+                  className="h-11"
                   required
                 />
               </div>
             </div>
 
-            {/* Trade & Experience */}
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="edit-trade">Trade Categories</Label>
-                <MultiSelect
-                  options={FUNDI_TRADES}
-                  value={editTrades}
-                  onChange={setEditTrades}
-                  placeholder="Select trades..."
-                />
-                <p className="text-xs text-muted-foreground">
-                  Select one or more trades
-                </p>
-              </div>
+            {/* Trade Categories - Full Width */}
+            <div className="space-y-2.5">
+              <Label className="text-base">Trade Categories</Label>
+              <Select
+                onValueChange={(value) => {
+                  if (!editTrades.includes(value)) {
+                    setEditTrades([...editTrades, value])
+                  }
+                }}
+              >
+                <SelectTrigger className="h-11">
+                  <SelectValue placeholder="Add a trade..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {FUNDI_TRADES.map((trade) => (
+                    <SelectItem key={trade} value={trade}>
+                      {trade}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {editTrades.length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-2">
+                  {editTrades.map((trade) => (
+                    <Badge
+                      key={trade}
+                      variant="secondary"
+                      className="px-3 py-1.5 text-sm"
+                    >
+                      {trade}
+                      <button
+                        type="button"
+                        onClick={() => setEditTrades(editTrades.filter((t) => t !== trade))}
+                        className="ml-2 hover:text-destructive"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              )}
+              <p className="text-sm text-muted-foreground">
+                Select one or more trades that appear on your profile
+              </p>
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="edit-exp">Years of Experience</Label>
+            {/* Years of Experience & Service Area - 2 Columns */}
+            <div className="grid gap-6 lg:grid-cols-2">
+              <div className="space-y-2.5">
+                <Label htmlFor="edit-exp" className="text-base">Years of Experience</Label>
                 <Input
                   id="edit-exp"
                   type="number"
                   value={editYearsExp}
                   onChange={(e) => setEditYearsExp(e.target.value)}
                   placeholder="10"
+                  className="h-11"
                   required
                 />
               </div>
-            </div>
 
-            {/* Location & Contact */}
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="edit-area">Service Coverage Area</Label>
+              <div className="space-y-2.5">
+                <Label htmlFor="edit-area" className="text-base">Service Coverage Area</Label>
                 <Input
                   id="edit-area"
                   value={editArea}
                   onChange={(e) => setEditArea(e.target.value)}
-                  placeholder="langata"
+                  placeholder="e.g. Nairobi, Westlands, Kilimani"
+                  className="h-11"
                   required
                 />
               </div>
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="edit-contact">Preferred Contact Method</Label>
-                <select
-                  id="edit-contact"
-                  value={preferredContact}
-                  onChange={(e) => setPreferredContact(e.target.value)}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-                >
-                  <option value="whatsapp">WhatsApp</option>
-                  <option value="phone">Phone Call</option>
-                  <option value="email">Email</option>
-                </select>
+            {/* Preferred Contact & Specializations - 2 Columns */}
+            <div className="grid gap-6 lg:grid-cols-2">
+              <div className="space-y-2.5">
+                <Label htmlFor="edit-contact" className="text-base">Preferred Contact Method</Label>
+                <Select value={preferredContact} onValueChange={setPreferredContact}>
+                  <SelectTrigger className="h-11">
+                    <SelectValue placeholder="Select contact method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                    <SelectItem value="phone">Phone Call</SelectItem>
+                    <SelectItem value="email">Email</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2.5">
+                <Label htmlFor="edit-skills" className="text-base">
+                  Specializations (comma-separated)
+                </Label>
+                <Input
+                  id="edit-skills"
+                  value={skillsInputValue}
+                  onChange={handleSkillsChange}
+                  placeholder="e.g. Pipe Leak Repair, Drainage Installation"
+                  className="h-11"
+                />
               </div>
             </div>
 
-            {/* Skills */}
-            <div className="space-y-2">
-              <Label htmlFor="edit-skills">
-                Specializations (comma-separated)
-              </Label>
-              <Input
-                id="edit-skills"
-                value={skillsInputValue}
-                onChange={handleSkillsChange}
-                placeholder="e.g. Pipe Leak Repair, Drainage Installation, Wiring"
-              />
-            </div>
-
-            {/* Bio */}
-            <div className="space-y-2">
-              <Label htmlFor="edit-desc-dialog">Professional Biography</Label>
+            {/* Professional Bio - Full Width */}
+            <div className="space-y-2.5">
+              <Label htmlFor="edit-desc-dialog" className="text-base">Professional Biography</Label>
               <textarea
                 id="edit-desc-dialog"
                 value={editDesc}
                 onChange={(e) => setEditDesc(e.target.value)}
-                placeholder="Describe your expertise and experience..."
-                rows={4}
-                className="flex w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                placeholder="Describe your expertise, experience, and what makes you stand out..."
+                rows={5}
+                className="flex w-full resize-none rounded-md border border-input bg-background px-4 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
               />
             </div>
 
-            <DialogFooter className="gap-2 pt-4">
+            <DialogFooter className="gap-2 pt-6">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setIsEditProfileOpen(false)}
+                className="h-11 px-6"
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isUpdating}>
+              <Button type="submit" disabled={isUpdating} className="h-11 px-6">
                 {isUpdating ? "Saving..." : "Save Changes"}
               </Button>
             </DialogFooter>
