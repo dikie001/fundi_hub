@@ -20,6 +20,7 @@ import {
   Users,
   MessageSquare,
   Zap,
+  CheckCircle2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -161,7 +162,7 @@ export default function SignupPage() {
   // Auto-redirect if already authenticated
   useEffect(() => {
     let cancelled = false
-    fetch("/api/auth/me", { cache: "no-store" })
+    fetch("/api/auth/me", { cache: "no-store", credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         if (cancelled) return
@@ -389,6 +390,7 @@ export default function SignupPage() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(body),
       })
       const data = await res.json()
@@ -400,7 +402,14 @@ export default function SignupPage() {
         setStepError("")
         // Redirect after showing success message
         setTimeout(() => {
-          window.location.href = "/auth/login?registered=true"
+          if (isGoogleSignup) {
+            // Direct Google users to their dashboard (auto-login via Google flow expected)
+            const dest =
+              userType === "fundi" ? "/fundi/dashboard" : "/client/dashboard"
+            window.location.href = dest
+          } else {
+            window.location.href = "/auth/login?registered=true"
+          }
         }, 2500)
       }
     } catch {

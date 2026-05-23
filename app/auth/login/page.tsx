@@ -32,7 +32,7 @@ export default function LoginPage() {
   // Auto-redirect if already authenticated
   useEffect(() => {
     let cancelled = false
-    fetch("/api/auth/me", { cache: "no-store" })
+    fetch("/api/auth/me", { cache: "no-store", credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         if (cancelled) return

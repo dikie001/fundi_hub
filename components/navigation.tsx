@@ -15,7 +15,7 @@ export function Navigation() {
   const isNotHome = pathname !== "/"
 
   useEffect(() => {
-    fetch("/api/auth/me")
+    fetch("/api/auth/me", { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         if (d?.user) setAuthUser(d.user)
