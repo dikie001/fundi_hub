@@ -119,6 +119,7 @@ export default function SignupPage() {
   const [checkingSession, setCheckingSession] = useState(true)
   const [isGoogleSignup, setIsGoogleSignup] = useState(false)
   const [googleData, setGoogleData] = useState<any>(null)
+  const [registrationSuccess, setRegistrationSuccess] = useState(false)
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -138,12 +139,20 @@ export default function SignupPage() {
               setName(d.name)
             } else {
               // No Google data found - remove ?google=true from URL and use normal signup
-              window.history.replaceState({}, "", "/auth/signup" + (ref ? `?ref=${ref}` : ""))
+              window.history.replaceState(
+                {},
+                "",
+                "/auth/signup" + (ref ? `?ref=${ref}` : "")
+              )
             }
           })
           .catch(() => {
             // Google auth failed - remove ?google=true from URL
-            window.history.replaceState({}, "", "/auth/signup" + (ref ? `?ref=${ref}` : ""))
+            window.history.replaceState(
+              {},
+              "",
+              "/auth/signup" + (ref ? `?ref=${ref}` : "")
+            )
           })
       }
     }
@@ -386,7 +395,13 @@ export default function SignupPage() {
       if (!res.ok) {
         setStepError(data.error || "An error occurred. Please try again.")
       } else {
-        window.location.href = "/auth/login"
+        // Show success message
+        setRegistrationSuccess(true)
+        setStepError("")
+        // Redirect after showing success message
+        setTimeout(() => {
+          window.location.href = "/auth/login?registered=true"
+        }, 2500)
       }
     } catch {
       setStepError("Network error. Please try again.")
@@ -898,25 +913,32 @@ export default function SignupPage() {
                   <div className="rounded-lg border border-border/50 bg-muted/20 p-4">
                     <div className="flex items-center gap-3">
                       {googleData?.picture && (
-                        <img 
-                          src={googleData.picture} 
-                          alt={googleData.name} 
-                          className="h-12 w-12 rounded-full" 
+                        <img
+                          src={googleData.picture}
+                          alt={googleData.name}
+                          className="h-12 w-12 rounded-full"
                         />
                       )}
                       <div>
-                        <p className="text-sm font-semibold">{googleData?.name || name}</p>
-                        <p className="text-xs text-muted-foreground">{googleData?.email}</p>
+                        <p className="text-sm font-semibold">
+                          {googleData?.name || name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {googleData?.email}
+                        </p>
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone-google" className="text-xs font-semibold text-foreground">
+                    <Label
+                      htmlFor="phone-google"
+                      className="text-xs font-semibold text-foreground"
+                    >
                       Phone Number
                     </Label>
                     <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Phone className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                       <Input
                         id="phone-google"
                         type="tel"
@@ -966,8 +988,19 @@ export default function SignupPage() {
                 </div>
               )}
 
+              {/* Success */}
+              {registrationSuccess && (
+                <div className="flex animate-in items-center gap-2 rounded-lg border border-green-500/20 bg-green-500/10 px-3.5 py-2.5 text-xs text-green-600 dark:text-green-400 duration-200 fade-in slide-in-from-top-1">
+                  <CheckCircle2 className="h-5 w-5 shrink-0" />
+                  <div className="flex-1">
+                    <p className="font-semibold">Account created successfully!</p>
+                    <p className="text-[10px] opacity-80">Redirecting to login...</p>
+                  </div>
+                </div>
+              )}
+
               {/* Error */}
-              {stepError && (
+              {stepError && !registrationSuccess && (
                 <div className="flex animate-in items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 px-3.5 py-2 text-[11px] text-destructive duration-200 fade-in slide-in-from-top-1">
                   <ShieldCheck className="h-4 w-4 shrink-0 rotate-180" />
                   <span>{stepError}</span>
