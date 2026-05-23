@@ -1,6 +1,12 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Copy, Check, Users, DollarSign, Gift, Share2 } from "lucide-react"
 import type { SafeUser } from "@/lib/types"
@@ -28,9 +34,12 @@ export function ReferralsTab({
   return (
     <div className="animate-in space-y-6 duration-300 fade-in slide-in-from-bottom-2">
       <div className="border-b border-border/40 pb-4">
-        <h1 className="text-xl font-extrabold text-foreground">Referrals & Rewards</h1>
+        <h1 className="text-xl font-extrabold text-foreground">
+          Referrals & Rewards
+        </h1>
         <p className="mt-0.5 text-xs text-muted-foreground">
-          Monitor your invite lists, copy registration links, and track your wallet payout statistics.
+          Monitor your invite lists, copy registration links, and track your
+          wallet payout statistics.
         </p>
       </div>
 
@@ -43,10 +52,16 @@ export function ReferralsTab({
           </CardHeader>
           <CardContent>
             <div className="mt-1 flex items-baseline gap-1.5">
-              <span className="text-3xl font-extrabold text-foreground">{referralCount}</span>
-              <span className="text-xs text-muted-foreground">partners registered</span>
+              <span className="text-3xl font-extrabold text-foreground">
+                {referralCount}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                partners registered
+              </span>
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">Keep sharing your link to earn more rewards!</p>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Keep sharing your link to earn more rewards!
+            </p>
           </CardContent>
         </Card>
 
@@ -58,9 +73,13 @@ export function ReferralsTab({
           </CardHeader>
           <CardContent>
             <div className="mt-1 flex items-baseline gap-1.5">
-              <span className="text-3xl font-extrabold text-foreground">KES {referralEarnings.toLocaleString()}</span>
+              <span className="text-3xl font-extrabold text-foreground">
+                KES {referralEarnings.toLocaleString()}
+              </span>
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">KES 100 earned per successful signup.</p>
+            <p className="mt-2 text-xs text-muted-foreground">
+              KES 100 earned per successful signup.
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -71,7 +90,8 @@ export function ReferralsTab({
             <Share2 className="h-4 w-4 text-primary" /> Invite New Partners
           </CardTitle>
           <CardDescription className="text-xs text-muted-foreground">
-            Copy and send your custom referral link to other fundis. When they sign up, you will earn KES 100 instantly.
+            Copy and send your custom referral link to other fundis. When they
+            sign up, you will earn KES 100 instantly.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -109,8 +129,9 @@ export function ReferralsTab({
           <div>
             <h3 className="text-sm font-bold text-foreground">Payout Terms</h3>
             <p className="mt-1 text-xs leading-normal text-muted-foreground">
-              Earnings are credited directly to your partner wallet. Withdrawals are processed weekly on Friday afternoons
-              via M-Pesa to your registered phone number. Minimum payout threshold is KES 500.
+              Earnings are credited directly to your partner wallet. Withdrawals
+              are processed weekly on Friday afternoons via M-Pesa to your
+              registered phone number. Minimum payout threshold is KES 500.
             </p>
           </div>
         </div>

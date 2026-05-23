@@ -17,7 +17,11 @@ import { Button } from "@/components/ui/button"
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useState, useEffect } from "react"
-import type { ClientProfileData, DashboardMenuItem, SafeUser } from "@/lib/types"
+import type {
+  ClientProfileData,
+  DashboardMenuItem,
+  SafeUser,
+} from "@/lib/types"
 
 export function ClientDashboardSidebar({
   isCollapsed,

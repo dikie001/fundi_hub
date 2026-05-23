@@ -158,7 +158,7 @@ export function DashboardSidebar(props: DashboardSidebarProps) {
                       id="availability-toggle-collapsed"
                       checked={profile?.isAvailable || false}
                       onCheckedChange={() =>
-                        handleToggleAvailability(profile?.isAvailable)
+                        handleToggleAvailability(profile?.isAvailable ?? false)
                       }
                       className="scale-85 cursor-pointer"
                     />
@@ -219,7 +219,7 @@ export function DashboardSidebar(props: DashboardSidebarProps) {
                 id="availability-toggle"
                 checked={profile?.isAvailable || false}
                 onCheckedChange={() =>
-                  handleToggleAvailability(profile?.isAvailable)
+                  handleToggleAvailability(profile?.isAvailable ?? false)
                 }
                 className="cursor-pointer"
               />

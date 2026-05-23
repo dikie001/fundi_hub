@@ -222,9 +222,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         typeof window !== "undefined"
           ? JSON.parse(localStorage.getItem("deleted_leads") || "[]")
           : []
-      setLeads(
-        data.filter((lead) => !deletedList.includes(lead.id))
-      )
+      setLeads(data.filter((lead) => !deletedList.includes(lead.id)))
     } catch (error) {
       console.error("Failed to fetch matching leads:", error)
     }

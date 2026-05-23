@@ -382,38 +382,36 @@ export default async function FundiProfilePage({ params }: PageProps) {
                 {fundiData.portfolio && fundiData.portfolio.length > 0 ? (
                   <div className="space-y-4">
                     <div className="grid gap-4 sm:grid-cols-2">
-                      {fundiData.portfolio
-                        .slice(0, 1)
-                        .map((item, index) => (
-                          <div
-                            key={item.id || index}
-                            className="group overflow-hidden rounded-xl border border-border/50 bg-muted/20 transition-all hover:border-primary/30"
-                          >
-                            <div className="relative aspect-video w-full overflow-hidden bg-muted/60">
-                              {item.image ? (
-                                <Image
-                                  src={item.image}
-                                  alt={item.title}
-                                  fill
-                                  unoptimized
-                                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                />
-                              ) : (
-                                <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-                                  <Sparkles className="h-8 w-8 opacity-40" />
-                                </div>
-                              )}
-                            </div>
-                            <div className="p-3">
-                              <h4 className="truncate text-xs font-bold text-foreground">
-                                {item.title}
-                              </h4>
-                              <span className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
-                                {item.category}
-                              </span>
-                            </div>
+                      {fundiData.portfolio.slice(0, 1).map((item, index) => (
+                        <div
+                          key={item.id || index}
+                          className="group overflow-hidden rounded-xl border border-border/50 bg-muted/20 transition-all hover:border-primary/30"
+                        >
+                          <div className="relative aspect-video w-full overflow-hidden bg-muted/60">
+                            {item.image ? (
+                              <Image
+                                src={item.image}
+                                alt={item.title}
+                                fill
+                                unoptimized
+                                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                              />
+                            ) : (
+                              <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                                <Sparkles className="h-8 w-8 opacity-40" />
+                              </div>
+                            )}
                           </div>
-                        ))}
+                          <div className="p-3">
+                            <h4 className="truncate text-xs font-bold text-foreground">
+                              {item.title}
+                            </h4>
+                            <span className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+                              {item.category}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                     {fundiData.portfolio.length > 1 && (
                       <div className="border-t border-border/15 pt-2">

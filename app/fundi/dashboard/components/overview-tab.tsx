@@ -1,12 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   AlertCircle,
   Calendar,
@@ -18,7 +13,7 @@ import {
   MapPin,
   MessageSquare,
   Phone,
-  Wrench
+  Wrench,
 } from "lucide-react"
 import type { FundiLead, FundiProfileData, SafeUser } from "@/lib/types"
 import type { PortfolioItem } from "../context/DashboardContext"

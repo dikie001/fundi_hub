@@ -1,7 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { AlertCircle, Calendar, Clock, MapPin, Phone, MessageSquare } from "lucide-react"
+import {
+  AlertCircle,
+  Calendar,
+  Clock,
+  MapPin,
+  Phone,
+  MessageSquare,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
@@ -28,7 +35,9 @@ export function LeadsTab({
   handleRestoreLead,
   handleDeleteLeadPermanently,
 }: LeadsTabProps) {
-  const [leadSubTab, setLeadSubTab] = useState<"matching" | "applied" | "archived">("matching")
+  const [leadSubTab, setLeadSubTab] = useState<
+    "matching" | "applied" | "archived"
+  >("matching")
 
   const getActiveLeads = () => {
     switch (leadSubTab) {
@@ -48,9 +57,12 @@ export function LeadsTab({
     <div className="animate-in space-y-6 duration-300 fade-in slide-in-from-bottom-2">
       <div className="flex flex-col gap-4 border-b border-border/40 pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-xl font-extrabold text-foreground">Client Lead Matches</h1>
+          <h1 className="text-xl font-extrabold text-foreground">
+            Client Lead Matches
+          </h1>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Review, apply, and contact clients looking for {profile?.trade || "General"} services.
+            Review, apply, and contact clients looking for{" "}
+            {profile?.trade || "General"} services.
           </p>
         </div>
         <div className="flex gap-1.5 self-start rounded-xl border border-border/20 bg-muted/40 p-1 sm:self-center">
@@ -61,10 +73,14 @@ export function LeadsTab({
           ].map(([tab, label]) => (
             <button
               key={tab}
-              onClick={() => setLeadSubTab(tab as "matching" | "applied" | "archived")}
+              onClick={() =>
+                setLeadSubTab(tab as "matching" | "applied" | "archived")
+              }
               className={cn(
                 "cursor-pointer rounded-lg px-3.5 py-1.5 text-xs font-black uppercase transition-all hover:text-foreground",
-                leadSubTab === tab ? "bg-card text-foreground shadow-xs" : "text-muted-foreground"
+                leadSubTab === tab
+                  ? "bg-card text-foreground shadow-xs"
+                  : "text-muted-foreground"
               )}
             >
               {label}
@@ -102,7 +118,9 @@ export function LeadsTab({
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4 p-5">
-                  <p className="text-xs leading-normal text-muted-foreground">{lead.description}</p>
+                  <p className="text-xs leading-normal text-muted-foreground">
+                    {lead.description}
+                  </p>
                   <div className="grid grid-cols-2 gap-3 border-t border-border/20 pt-3 text-xs">
                     <div className="flex items-center gap-1.5 text-muted-foreground">
                       <MapPin className="h-4 w-4 shrink-0 text-primary" />
@@ -119,7 +137,10 @@ export function LeadsTab({
               {leadSubTab === "matching" && (
                 <div className="flex flex-col justify-between gap-4 border-t border-border/25 bg-muted/10 p-5 sm:flex-row sm:items-center">
                   <div className="text-xs text-muted-foreground">
-                    Client: <span className="font-bold text-foreground">{lead.clientName}</span>
+                    Client:{" "}
+                    <span className="font-bold text-foreground">
+                      {lead.clientName}
+                    </span>
                   </div>
                   <div className="flex flex-wrap justify-end gap-2">
                     <Button
@@ -144,7 +165,10 @@ export function LeadsTab({
               {leadSubTab === "applied" && (
                 <div className="flex flex-col justify-between gap-4 border-t border-border/25 bg-muted/10 p-5 sm:flex-row sm:items-center">
                   <div className="text-xs text-muted-foreground">
-                    Client: <span className="font-bold text-foreground">{lead.clientName}</span>
+                    Client:{" "}
+                    <span className="font-bold text-foreground">
+                      {lead.clientName}
+                    </span>
                   </div>
                   <div className="flex flex-wrap justify-end gap-2">
                     <Button
@@ -153,7 +177,10 @@ export function LeadsTab({
                       asChild
                       className="h-8 cursor-pointer rounded-lg px-3 text-[11px] font-bold"
                     >
-                      <a href={`tel:${lead.phone}`} className="flex items-center gap-1.5">
+                      <a
+                        href={`tel:${lead.phone}`}
+                        className="flex items-center gap-1.5"
+                      >
                         <Phone className="h-3.5 w-3.5" /> Call
                       </a>
                     </Button>
@@ -178,7 +205,10 @@ export function LeadsTab({
               {leadSubTab === "archived" && (
                 <div className="flex flex-col justify-between gap-4 border-t border-border/25 bg-muted/10 p-5 sm:flex-row sm:items-center">
                   <div className="text-xs text-muted-foreground">
-                    Client: <span className="font-bold text-foreground">{lead.clientName}</span>
+                    Client:{" "}
+                    <span className="font-bold text-foreground">
+                      {lead.clientName}
+                    </span>
                   </div>
                   <div className="flex flex-wrap justify-end gap-2">
                     <Button
