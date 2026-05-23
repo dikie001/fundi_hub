@@ -429,8 +429,6 @@ export function ProfileTab({
         portfolioProgress={portfolioProgress}
         onSubmit={handlePortfolioUpload}
       />
-
-
     </div>
   )
 }
