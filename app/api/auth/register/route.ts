@@ -26,9 +26,23 @@ export async function POST(request: Request) {
       googleSub,
     } = body
 
-    if (!password || !name || !phone || !userType) {
+    // Validate basic required fields
+    const missingFields = []
+    if (!name) missingFields.push("name")
+    if (!phone) missingFields.push("phone number")
+    if (!password) missingFields.push("password")
+    if (!userType) missingFields.push("user type")
+
+    // Validate fundi-specific required fields
+    if (userType === "fundi") {
+      if (!trade) missingFields.push("trade/category")
+      if (!preferredContact) missingFields.push("preferred contact method")
+    }
+
+    if (missingFields.length > 0) {
+      const fieldsList = missingFields.join(", ")
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: `Please provide: ${fieldsList}` },
         { status: 400 }
       )
     }
