@@ -1,7 +1,9 @@
 import { cookies, headers } from "next/headers"
 import { redirect } from "next/navigation"
+import { Suspense } from "react"
 import { db } from "@/lib/db"
 import { AdminShell } from "./components/admin-shell"
+import { AdminLoader } from "@/components/admin-loader"
 
 export default async function AdminLayout({
   children,
@@ -30,8 +32,10 @@ export default async function AdminLayout({
   if (!user || user.role !== "admin") return redirect("/auth/login")
 
   return (
-    <AdminShell userName={user.name} userPhone={user.phone}>
-      {children}
-    </AdminShell>
+    <Suspense fallback={<AdminLoader />}>
+      <AdminShell userName={user.name} userPhone={user.phone}>
+        {children}
+      </AdminShell>
+    </Suspense>
   )
 }

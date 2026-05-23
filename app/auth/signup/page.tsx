@@ -310,8 +310,17 @@ export default function SignupPage() {
 
   const goNext = () => {
     if (validate()) {
-      // If Google signup and on step 4, complete signup instead of going to step 5
-      if (isGoogleSignup && currentStep === 4) {
+      // If Google signup and reached the Google-final step, attempt auto-submit
+      if (isGoogleSignup && currentStep === GOOGLE_STEPS) {
+        // Only auto-submit if we have Google data OR the user has entered contact info
+        const hasGoogleData = !!googleData
+        const hasContactInfo = name.trim() !== "" || phone.trim() !== ""
+        if (!hasGoogleData && !hasContactInfo) {
+          setStepError(
+            "Please provide your contact details or complete Google sign-in."
+          )
+          return
+        }
         handlePhoneSignup({ preventDefault: () => {} } as React.FormEvent)
       } else {
         setCurrentStep((p) => Math.min(TOTAL_STEPS, p + 1))
@@ -325,7 +334,8 @@ export default function SignupPage() {
 
   const handlePhoneSignup = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (currentStep < TOTAL_STEPS) {
+    const finalStep = isGoogleSignup ? GOOGLE_STEPS : TOTAL_STEPS
+    if (currentStep < finalStep) {
       goNext()
       return
     }

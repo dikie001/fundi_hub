@@ -39,6 +39,7 @@ type DashboardContextType = {
   premiumModalType: "verified" | "top"
   setPremiumModalType: (type: "verified" | "top") => void
   isProcessingPayment: boolean
+  setIsProcessingPayment: (processing: boolean) => void
   editName: string
   setEditName: (name: string) => void
   editTitle: string
@@ -84,7 +85,7 @@ type DashboardContextType = {
   handleArchiveLead: (leadId: string) => void
   handleRestoreLead: (leadId: string) => void
   handleDeleteLeadPermanently: (leadId: string) => void
-  handleActivateBadge: () => Promise<void>
+  handleActivateBadge: (paymentReference: string) => Promise<void>
   copyReferralLink: () => void
   handleLogout: () => Promise<void>
 }
@@ -416,20 +417,28 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     setLeads((prev) => prev.filter((lead) => lead.id !== leadId))
   }
 
-  const handleActivateBadge = async () => {
+  const handleActivateBadge = async (paymentReference: string) => {
     setIsProcessingPayment(true)
     try {
-      const response = await fetch("/api/fundi/profile", {
-        method: "PUT",
+      const response = await fetch("/api/payments/verify", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ premiumLevel: premiumModalType }),
+        body: JSON.stringify({
+          reference: paymentReference,
+          premiumLevel: premiumModalType,
+        }),
       })
-      if (response.ok) {
+      const data = await response.json()
+      if (response.ok && data.success) {
         setIsPremiumModalOpen(false)
         await fetchProfile()
+        alert("Premium badge activated successfully!")
+      } else {
+        alert(data.error || "Payment verification failed")
       }
     } catch (error) {
       console.error("Error upgrading premium tier:", error)
+      alert("An error occurred while activating your badge")
     } finally {
       setIsProcessingPayment(false)
     }
@@ -494,6 +503,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         premiumModalType,
         setPremiumModalType,
         isProcessingPayment,
+        setIsProcessingPayment,
         editName,
         setEditName,
         editTitle,

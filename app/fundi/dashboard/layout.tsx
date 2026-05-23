@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/sidebar"
 import { DashboardSidebar } from "./components/dashboard-sidebar"
 import { Separator } from "@/components/ui/separator"
+import { FundiLoader } from "@/components/fundi-loader"
 import {
   Dialog,
   DialogContent,
@@ -28,6 +29,7 @@ import {
 } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { UserMenu } from "@/components/user-menu"
+import { PaystackButton } from "@/components/paystack-button"
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
   const { state } = useSidebar()
@@ -44,6 +46,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     setIsPremiumModalOpen,
     premiumModalType,
     isProcessingPayment,
+    setIsProcessingPayment,
     handleToggleEmergency,
     handleLogout,
     handleActivateBadge,
@@ -89,14 +92,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     menuItems.find((item) => item.href === pathname) || menuItems[0]
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-screen animate-pulse flex-col items-center justify-center gap-3.5 bg-radial from-background to-muted text-foreground">
-        <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-xs font-medium text-muted-foreground">
-          Loading your profile...
-        </p>
-      </div>
-    )
+    return <FundiLoader />
   }
 
   return (
@@ -180,21 +176,18 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
             >
               Cancel
             </Button>
-            <Button
-              type="button"
-              onClick={handleActivateBadge}
+            <PaystackButton
+              amount={500}
+              email={user?.email || user?.phone + "@fundihub.com"}
+              name={user?.name || "User"}
+              phone={user?.phone || ""}
+              onSuccess={(reference) => handleActivateBadge(reference)}
+              onClose={() => setIsProcessingPayment(false)}
               disabled={isProcessingPayment}
               className="h-9.5 cursor-pointer rounded-lg bg-primary px-4 text-xs font-bold text-primary-foreground"
             >
-              {isProcessingPayment ? (
-                <>
-                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />{" "}
-                  Activating...
-                </>
-              ) : (
-                "Pay & Activate"
-              )}
-            </Button>
+              Pay Ksh 500 & Activate
+            </PaystackButton>
           </DialogFooter>
         </DialogContent>
       </Dialog>
