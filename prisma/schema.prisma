@@ -69,7 +69,7 @@ model FundiProfile {
   nationalId       String?
   preferredContact String       @default("whatsapp")
   premiumLevel     PremiumLevel @default(none)
-  isEmergency      Boolean      @default(false)
+  isAvailable      Boolean      @default(true)
   isNearby         Boolean      @default(false)
   description      String?      @db.Text
   skills           String       @default("")

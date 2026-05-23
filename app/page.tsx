@@ -129,7 +129,7 @@ export default function Home() {
     .sort((a, b) => b.rating - a.rating)
     .slice(0, 3)
   const nearbyFundis = fundis.filter((f) => f.isNearby).slice(0, 3)
-  const emergencyFundis = fundis.filter((f) => f.isEmergency).slice(0, 3)
+  const availableFundis = fundis.filter((f) => f.isAvailable).slice(0, 3)
 
   const filteredFundis = fundis.filter((f) => {
     const query = searchQuery.trim().toLowerCase()
@@ -320,7 +320,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* Emergency Services - Hidden when searching */}
+      {/* Available Services - Hidden when searching */}
       {!hasSearch && (
         <section className="border-b border-border px-4 pt-8 pb-16 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
@@ -338,7 +338,7 @@ export default function Home() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {isLoadingFundis
                 ? renderFundiSkeletons()
-                : emergencyFundis.map((fundi) => (
+                : availableFundis.map((fundi) => (
                     <FundiCard key={fundi.id} fundi={fundi} />
                   ))}
             </div>

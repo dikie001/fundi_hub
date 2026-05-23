@@ -39,7 +39,7 @@ export default function FindFundisPage() {
   const [search, setSearch] = useState("")
   const [tradeFilter, setTradeFilter] = useState("All")
   const [verifiedOnly, setVerifiedOnly] = useState(false)
-  const [emergencyOnly, setEmergencyOnly] = useState(false)
+  const [availableOnly, setAvailableOnly] = useState(false)
 
   const filtered = useMemo(() => {
     return allFundis.filter((f) => {
@@ -53,16 +53,16 @@ export default function FindFundisPage() {
       const matchTrade =
         tradeFilter === "All" || tradeName === tradeFilter.toLowerCase()
       const matchVerified = !verifiedOnly || f.verified
-      const matchEmergency = !emergencyOnly || f.isEmergency
-      return matchSearch && matchTrade && matchVerified && matchEmergency
+      const matchAvailable = !availableOnly || f.isAvailable
+      return matchSearch && matchTrade && matchVerified && matchAvailable
     })
-  }, [allFundis, search, tradeFilter, verifiedOnly, emergencyOnly])
+  }, [allFundis, search, tradeFilter, verifiedOnly, availableOnly])
 
   const clearFilters = () => {
     setSearch("")
     setTradeFilter("All")
     setVerifiedOnly(false)
-    setEmergencyOnly(false)
+    setAvailableOnly(false)
   }
 
   return (
@@ -124,14 +124,14 @@ export default function FindFundisPage() {
             <ShieldCheck className="h-3.5 w-3.5" /> Verified Only
           </button>
           <button
-            onClick={() => setEmergencyOnly(!emergencyOnly)}
+            onClick={() => setAvailableOnly(!availableOnly)}
             className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
-              emergencyOnly
+              availableOnly
                 ? "border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
                 : "border-border text-muted-foreground hover:border-emerald-500/40"
             }`}
           >
-            <Zap className="h-3.5 w-3.5" /> Emergency Available
+            <Zap className="h-3.5 w-3.5" /> Available Now
           </button>
           <span className="ml-auto flex items-center text-xs text-muted-foreground">
             <Filter className="mr-1 h-3.5 w-3.5" />
@@ -170,9 +170,9 @@ export default function FindFundisPage() {
                       {fundi.verified && (
                         <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-primary" />
                       )}
-                      {fundi.isEmergency && (
+                      {fundi.isAvailable && (
                         <span className="rounded border border-emerald-500/20 bg-emerald-500/10 px-1 py-0.5 text-[8px] font-bold text-emerald-600 uppercase dark:text-emerald-400">
-                          On-Call âš¡
+                          Available
                         </span>
                       )}
                     </div>

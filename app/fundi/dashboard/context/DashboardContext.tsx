@@ -40,6 +40,10 @@ type DashboardContextType = {
   setPremiumModalType: (type: "verified" | "top") => void
   isProcessingPayment: boolean
   setIsProcessingPayment: (processing: boolean) => void
+  isAvailabilityDialogOpen: boolean
+  setIsAvailabilityDialogOpen: (open: boolean) => void
+  pendingAvailabilityValue: boolean
+  confirmAvailabilityChange: () => Promise<void>
   editName: string
   setEditName: (name: string) => void
   editTitle: string
@@ -77,7 +81,7 @@ type DashboardContextType = {
   completionScore: number
   fetchProfile: () => Promise<void>
   fetchLeads: () => Promise<void>
-  handleToggleEmergency: (currentVal: boolean) => Promise<void>
+  handleToggleAvailability: (currentVal: boolean) => Promise<void>
   handleUpdateProfile: (e: React.FormEvent) => Promise<void>
   handleAvatarChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   handlePortfolioUpload: (e: React.FormEvent) => void
@@ -131,6 +135,10 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     "verified"
   )
   const [isProcessingPayment, setIsProcessingPayment] = useState(false)
+  const [isAvailabilityDialogOpen, setIsAvailabilityDialogOpen] =
+    useState(false)
+  const [pendingAvailabilityValue, setPendingAvailabilityValue] =
+    useState(false)
 
   const [editName, setEditName] = useState("")
   const [editTitle, setEditTitle] = useState("")
@@ -228,17 +236,31 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     fetchLeads()
   }, [])
 
-  const handleToggleEmergency = async (currentVal: boolean) => {
+  const handleToggleAvailability = async (currentVal: boolean) => {
     if (!profile) return
+    setPendingAvailabilityValue(!currentVal)
+    setIsAvailabilityDialogOpen(true)
+  }
+
+  const confirmAvailabilityChange = async () => {
+    if (!profile) return
+
+    const currentVal = profile.isAvailable
+    const newVal = pendingAvailabilityValue
+
     try {
-      setProfile((prev: any) => ({ ...prev, isEmergency: !currentVal }))
+      setProfile((prev: any) => ({ ...prev, isAvailable: newVal }))
+      setIsAvailabilityDialogOpen(false)
+
       await fetch("/api/fundi/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isEmergency: !currentVal }),
+        body: JSON.stringify({ isAvailable: newVal }),
       })
     } catch (error) {
-      console.error("Failed to toggle emergency status:", error)
+      console.error("Failed to toggle availability status:", error)
+      // Revert on error
+      setProfile((prev: any) => ({ ...prev, isAvailable: currentVal }))
     }
   }
 
@@ -504,6 +526,10 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         setPremiumModalType,
         isProcessingPayment,
         setIsProcessingPayment,
+        isAvailabilityDialogOpen,
+        setIsAvailabilityDialogOpen,
+        pendingAvailabilityValue,
+        confirmAvailabilityChange,
         editName,
         setEditName,
         editTitle,
@@ -541,7 +567,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         completionScore,
         fetchProfile,
         fetchLeads,
-        handleToggleEmergency,
+        handleToggleAvailability,
         handleUpdateProfile,
         handleAvatarChange,
         handlePortfolioUpload,

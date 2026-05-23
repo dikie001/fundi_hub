@@ -8,29 +8,37 @@ import { Navigation } from "@/components/navigation"
 import { ReviewsList } from "@/components/reviews-list"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { 
-  Star, 
-  MapPin, 
-  Phone, 
-  MessageCircle, 
-  Calendar, 
-  Award, 
-  Shield, 
-  Clock, 
-  Briefcase, 
-  Sparkles, 
+import {
+  Star,
+  MapPin,
+  Phone,
+  MessageCircle,
+  Calendar,
+  Award,
+  Shield,
+  Clock,
+  Briefcase,
+  Sparkles,
   ArrowLeft,
   CheckCircle,
-  ExternalLink
+  ExternalLink,
 } from "lucide-react"
 
 interface PageProps {
   params: Promise<{ name: string }>
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const resolvedParams = await params
   const decodedName = decodeURIComponent(resolvedParams.name).replace(/-/g, " ")
   return {
@@ -85,9 +93,11 @@ export default async function FundiProfilePage({ params }: PageProps) {
 
   if (dbUser && dbUser.fundiProfile) {
     const profile = dbUser.fundiProfile
-    
+
     // Find if current client IP already left a review
-    const existingReview = (profile.reviewsList || []).find((r: any) => r.ip === clientIp)
+    const existingReview = (profile.reviewsList || []).find(
+      (r: any) => r.ip === clientIp
+    )
     if (existingReview) {
       clientReview = {
         reviewerName: existingReview.reviewerName,
@@ -104,9 +114,13 @@ export default async function FundiProfilePage({ params }: PageProps) {
       }
     }
 
-    const skillsArray = typeof profile.skills === "string" && profile.skills.trim()
-      ? profile.skills.split(",").map((s: string) => s.trim()).filter(Boolean)
-      : []
+    const skillsArray =
+      typeof profile.skills === "string" && profile.skills.trim()
+        ? profile.skills
+            .split(",")
+            .map((s: string) => s.trim())
+            .filter(Boolean)
+        : []
 
     fundiData = {
       id: dbUser.id,
@@ -119,7 +133,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
       phone: dbUser.phone,
       whatsapp: dbUser.phone,
       premiumLevel: profile.premiumLevel,
-      isEmergency: profile.isEmergency,
+      isAvailable: profile.isAvailable,
       isNearby: profile.isNearby,
       description: profile.description || "No bio description provided.",
       yearsExperience: profile.yearsExperience || "N/A",
@@ -149,21 +163,22 @@ export default async function FundiProfilePage({ params }: PageProps) {
 
       {/* Main Container */}
       <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        
-
         {/* Profile Hero Header Card */}
         <div className="relative mb-8 overflow-hidden rounded-xl border border-border/50 bg-card p-6 shadow-xs md:p-8">
           {/* Neon/Premium Backdrop glow */}
-          <div className="absolute top-0 right-0 -mr-20 -mt-20 h-80 w-80 rounded-full bg-primary/5 blur-3xl" />
-          
+          <div className="absolute top-0 right-0 -mt-20 -mr-20 h-80 w-80 rounded-full bg-primary/5 blur-3xl" />
+
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-            <div className="flex flex-row gap-4 sm:gap-6 items-center">
+            <div className="flex flex-row items-center gap-4 sm:gap-6">
               {/* Profile Avatar */}
-              <div className={`relative flex h-20 w-20 sm:h-28 sm:w-28 shrink-0 items-center justify-center rounded-full border bg-muted/40 shadow-inner ring-4 ${
-                fundiData.premiumLevel === "top" || fundiData.premiumLevel === "verified"
-                  ? "ring-indigo-500/20 border-indigo-500/40" 
-                  : "ring-border/20 border-border"
-              }`}>
+              <div
+                className={`relative flex h-20 w-20 shrink-0 items-center justify-center rounded-full border bg-muted/40 shadow-inner ring-4 sm:h-28 sm:w-28 ${
+                  fundiData.premiumLevel === "top" ||
+                  fundiData.premiumLevel === "verified"
+                    ? "border-indigo-500/40 ring-indigo-500/20"
+                    : "border-border ring-border/20"
+                }`}
+              >
                 {fundiData.image ? (
                   <Image
                     src={fundiData.image}
@@ -173,39 +188,50 @@ export default async function FundiProfilePage({ params }: PageProps) {
                     className="rounded-full object-cover"
                   />
                 ) : (
-                  <span className="text-2xl font-black text-muted-foreground">{initials}</span>
+                  <span className="text-2xl font-black text-muted-foreground">
+                    {initials}
+                  </span>
                 )}
               </div>
 
               {/* Bio Identity details */}
-              <div className="space-y-1.5 flex-1 min-w-0">
+              <div className="min-w-0 flex-1 space-y-1.5">
                 <div className="flex flex-wrap items-center gap-2">
                   <h1 className="text-xl font-extrabold tracking-tight text-foreground sm:text-3xl">
                     {fundiData.name}
                   </h1>
                   <div className="flex flex-wrap gap-1.5">
-                    {(fundiData.premiumLevel === "top" || fundiData.premiumLevel === "verified") && (
-                      <Badge variant="outline" className="border-indigo-500/25 bg-indigo-500/5 text-indigo-600 dark:text-indigo-400 shadow-xs text-[10px] py-0.5 px-2 font-bold flex items-center gap-1">
+                    {(fundiData.premiumLevel === "top" ||
+                      fundiData.premiumLevel === "verified") && (
+                      <Badge
+                        variant="outline"
+                        className="flex items-center gap-1 border-indigo-500/25 bg-indigo-500/5 px-2 py-0.5 text-[10px] font-bold text-indigo-600 shadow-xs dark:text-indigo-400"
+                      >
                         <Star size={10} className="fill-current" />
                         Premium Partner
                       </Badge>
                     )}
                   </div>
                 </div>
-                <p className="text-sm sm:text-base font-semibold text-muted-foreground">{fundiData.title}</p>
-                
+                <p className="text-sm font-semibold text-muted-foreground sm:text-base">
+                  {fundiData.title}
+                </p>
+
                 {/* Meta details list */}
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-1 text-xs sm:text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1 font-bold text-foreground shrink-0">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-1 text-xs text-muted-foreground sm:text-sm">
+                  <span className="flex shrink-0 items-center gap-1 font-bold text-foreground">
                     <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
                     {fundiData.rating}
-                    <span className="font-medium text-muted-foreground">({fundiData.reviews} {fundiData.reviews === 1 ? "review" : "reviews"})</span>
+                    <span className="font-medium text-muted-foreground">
+                      ({fundiData.reviews}{" "}
+                      {fundiData.reviews === 1 ? "review" : "reviews"})
+                    </span>
                   </span>
-                  <span className="flex items-center gap-1 shrink-0">
+                  <span className="flex shrink-0 items-center gap-1">
                     <MapPin className="h-3.5 w-3.5 text-primary" />
                     {fundiData.serviceArea}
                   </span>
-                  <span className="rounded-md border border-primary/20 bg-primary/5 px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-primary uppercase shrink-0">
+                  <span className="shrink-0 rounded-md border border-primary/20 bg-primary/5 px-2 py-0.5 text-[9px] font-bold text-primary uppercase sm:text-[10px]">
                     {fundiData.category}
                   </span>
                 </div>
@@ -214,13 +240,19 @@ export default async function FundiProfilePage({ params }: PageProps) {
 
             {/* Quick Status Pill badges */}
             <div className="flex flex-wrap gap-2 md:flex-col md:items-end">
-              {fundiData.isEmergency && (
-                <Badge variant="outline" className="border-red-500/30 bg-red-500/10 px-3 py-1 font-bold text-red-500 hover:bg-red-500/15">
-                  24/7 Emergency
+              {fundiData.isAvailable && (
+                <Badge
+                  variant="outline"
+                  className="border-red-500/30 bg-red-500/10 px-3 py-1 font-bold text-red-500 hover:bg-red-500/15"
+                >
+                  Available 24/7
                 </Badge>
               )}
               {fundiData.isNearby && (
-                <Badge variant="outline" className="border-emerald-500/30 bg-emerald-500/10 px-3 py-1 font-bold text-emerald-400 hover:bg-emerald-500/15">
+                <Badge
+                  variant="outline"
+                  className="border-emerald-500/30 bg-emerald-500/10 px-3 py-1 font-bold text-emerald-400 hover:bg-emerald-500/15"
+                >
                   Nearby
                 </Badge>
               )}
@@ -230,10 +262,8 @@ export default async function FundiProfilePage({ params }: PageProps) {
 
         {/* Detail Content Grid */}
         <div className="grid gap-6 md:grid-cols-3 md:gap-8">
-          
           {/* Main Info Column (Left 2/3) */}
           <div className="space-y-8 md:col-span-2">
-            
             {/* About Card */}
             <Card className="border-border/50 bg-card">
               <CardHeader className="pb-3">
@@ -243,22 +273,30 @@ export default async function FundiProfilePage({ params }: PageProps) {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-wrap">
+                <p className="text-sm leading-relaxed whitespace-pre-wrap text-muted-foreground">
                   {fundiData.description}
                 </p>
 
                 <Separator className="bg-border/50" />
 
                 {/* Experience & Stats Row */}
-                <div className="flex flex-wrap justify-between sm:justify-start gap-4 sm:gap-16 pt-2">
+                <div className="flex flex-wrap justify-between gap-4 pt-2 sm:justify-start sm:gap-16">
                   <div className="space-y-1">
-                    <span className="text-xs text-muted-foreground">Experience</span>
+                    <span className="text-xs text-muted-foreground">
+                      Experience
+                    </span>
                     <p className="text-sm font-bold text-foreground">
-                      {fundiData.yearsExperience} {fundiData.yearsExperience === "1" || fundiData.yearsExperience === 1 ? "year" : "years"}
+                      {fundiData.yearsExperience}{" "}
+                      {fundiData.yearsExperience === "1" ||
+                      fundiData.yearsExperience === 1
+                        ? "year"
+                        : "years"}
                     </p>
                   </div>
                   <div className="space-y-1">
-                    <span className="text-xs text-muted-foreground">Success Rating</span>
+                    <span className="text-xs text-muted-foreground">
+                      Success Rating
+                    </span>
                     <p className="text-sm font-bold text-foreground">
                       {Math.round((fundiData.rating / 5) * 100)}%
                     </p>
@@ -279,10 +317,10 @@ export default async function FundiProfilePage({ params }: PageProps) {
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
                     {fundiData.skills.map((skill: string, index: number) => (
-                      <Badge 
+                      <Badge
                         key={index}
                         variant="secondary"
-                        className="bg-muted hover:bg-muted/80 text-xs font-semibold px-3 py-1 text-foreground border border-border/50 rounded-lg"
+                        className="rounded-lg border border-border/50 bg-muted px-3 py-1 text-xs font-semibold text-foreground hover:bg-muted/80"
                       >
                         {skill}
                       </Badge>
@@ -307,41 +345,49 @@ export default async function FundiProfilePage({ params }: PageProps) {
                 {fundiData.portfolio && fundiData.portfolio.length > 0 ? (
                   <div className="space-y-4">
                     <div className="grid gap-4 sm:grid-cols-2">
-                      {fundiData.portfolio.slice(0, 1).map((item: any, index: number) => (
-                        <div 
-                          key={item.id || index}
-                          className="group overflow-hidden rounded-xl border border-border/50 bg-muted/20 transition-all hover:border-primary/30"
-                        >
-                          <div className="relative aspect-video w-full overflow-hidden bg-muted/60">
-                            {item.image ? (
-                              <Image
-                                src={item.image}
-                                alt={item.title}
-                                fill
-                                unoptimized
-                                className="object-cover transition-transform duration-300 group-hover:scale-105"
-                              />
-                            ) : (
-                              <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-                                <Sparkles className="h-8 w-8 opacity-40" />
-                              </div>
-                            )}
+                      {fundiData.portfolio
+                        .slice(0, 1)
+                        .map((item: any, index: number) => (
+                          <div
+                            key={item.id || index}
+                            className="group overflow-hidden rounded-xl border border-border/50 bg-muted/20 transition-all hover:border-primary/30"
+                          >
+                            <div className="relative aspect-video w-full overflow-hidden bg-muted/60">
+                              {item.image ? (
+                                <Image
+                                  src={item.image}
+                                  alt={item.title}
+                                  fill
+                                  unoptimized
+                                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                />
+                              ) : (
+                                <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                                  <Sparkles className="h-8 w-8 opacity-40" />
+                                </div>
+                              )}
+                            </div>
+                            <div className="p-3">
+                              <h4 className="truncate text-xs font-bold text-foreground">
+                                {item.title}
+                              </h4>
+                              <span className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+                                {item.category}
+                              </span>
+                            </div>
                           </div>
-                          <div className="p-3">
-                            <h4 className="font-bold text-xs truncate text-foreground">{item.title}</h4>
-                            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{item.category}</span>
-                          </div>
-                        </div>
-                      ))}
+                        ))}
                     </div>
                     {fundiData.portfolio.length > 1 && (
-                      <div className="pt-2 border-t border-border/15">
-                        <Button 
-                          variant="outline" 
-                          className="w-full h-10 font-bold rounded-xl flex items-center justify-center gap-1.5 cursor-pointer hover:bg-muted text-xs" 
+                      <div className="border-t border-border/15 pt-2">
+                        <Button
+                          variant="outline"
+                          className="flex h-10 w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl text-xs font-bold hover:bg-muted"
                           asChild
                         >
-                          <Link href={`/fundis/${resolvedParams.name}/portfolio`}>
+                          <Link
+                            href={`/fundis/${resolvedParams.name}/portfolio`}
+                          >
                             See More Projects ({fundiData.portfolio.length})
                             <ExternalLink className="h-3.5 w-3.5 text-primary" />
                           </Link>
@@ -350,39 +396,42 @@ export default async function FundiProfilePage({ params }: PageProps) {
                     )}
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center py-12 text-center border-2 border-dashed border-border/50 rounded-xl bg-muted/10">
-                    <Briefcase className="h-10 w-10 text-muted-foreground/40 mb-3" />
-                    <p className="text-sm font-semibold text-muted-foreground">No portfolio showcase projects added yet.</p>
-                    <p className="text-xs text-muted-foreground/60 mt-1">This expert is currently updating their photo gallery.</p>
+                  <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-border/50 bg-muted/10 py-12 text-center">
+                    <Briefcase className="mb-3 h-10 w-10 text-muted-foreground/40" />
+                    <p className="text-sm font-semibold text-muted-foreground">
+                      No portfolio showcase projects added yet.
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground/60">
+                      This expert is currently updating their photo gallery.
+                    </p>
                   </div>
                 )}
               </CardContent>
             </Card>
-
           </div>
 
           {/* Quick Connect Column (Right 1/3) */}
           <div className="space-y-6">
-            
             {/* Direct Connect Action Widget */}
             <Card className="sticky top-20 border-2 border-primary/20 bg-linear-to-b from-card via-card to-primary/5 shadow-md">
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg font-black tracking-tight">Direct Connect</CardTitle>
+                <CardTitle className="text-lg font-black tracking-tight">
+                  Direct Connect
+                </CardTitle>
                 <CardDescription className="text-xs">
                   Connect instantly. No booking fee or middleman involved.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                
                 {/* Contact Buttons */}
                 <div className="space-y-2">
-                  <Button 
-                    className="w-full h-11 bg-primary text-primary-foreground font-bold hover:bg-primary/90 flex items-center justify-center gap-2 rounded-xl transition-all"
+                  <Button
+                    className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary font-bold text-primary-foreground transition-all hover:bg-primary/90"
                     asChild
                   >
-                    <a 
-                      href={`https://wa.me/${fundiData.whatsapp.replace(/\D/g, "")}?text=Hello%20${encodeURIComponent(fundiData.name)},%20I%20saw%20your%20profile%20on%20FundiHub%20and%20need%20assistance.`} 
-                      target="_blank" 
+                    <a
+                      href={`https://wa.me/${fundiData.whatsapp.replace(/\D/g, "")}?text=Hello%20${encodeURIComponent(fundiData.name)},%20I%20saw%20your%20profile%20on%20FundiHub%20and%20need%20assistance.`}
+                      target="_blank"
                       rel="noopener noreferrer"
                     >
                       <MessageCircle className="h-5 w-5" />
@@ -390,9 +439,9 @@ export default async function FundiProfilePage({ params }: PageProps) {
                     </a>
                   </Button>
 
-                  <Button 
-                    variant="outline" 
-                    className="w-full h-11 border-border bg-background hover:bg-muted text-foreground font-bold flex items-center justify-center gap-2 rounded-xl"
+                  <Button
+                    variant="outline"
+                    className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border-border bg-background font-bold text-foreground hover:bg-muted"
                     asChild
                   >
                     <a href={`tel:${fundiData.phone}`}>
@@ -402,14 +451,20 @@ export default async function FundiProfilePage({ params }: PageProps) {
                   </Button>
                 </div>
 
-                <div className="rounded-lg bg-muted/40 p-3 text-xs text-muted-foreground space-y-2 border border-border/30">
+                <div className="space-y-2 rounded-lg border border-border/30 bg-muted/40 p-3 text-xs text-muted-foreground">
                   <div className="flex items-center gap-2 font-bold text-foreground">
                     <Clock className="h-3.5 w-3.5 text-primary" />
                     <span>Availability</span>
                   </div>
                   <p className="leading-relaxed">
-                    Preferred contact: <span className="font-semibold text-foreground capitalize">{fundiData.preferredContact}</span>. 
-                    {fundiData.isEmergency ? " Available 24/7 for urgent call-outs." : " Generally available during normal working hours."}
+                    Preferred contact:{" "}
+                    <span className="font-semibold text-foreground capitalize">
+                      {fundiData.preferredContact}
+                    </span>
+                    .
+                    {fundiData.isEmergency
+                      ? " Available 24/7 for urgent call-outs."
+                      : " Generally available during normal working hours."}
                   </p>
                 </div>
 
@@ -427,25 +482,21 @@ export default async function FundiProfilePage({ params }: PageProps) {
                     <span className="text-muted-foreground font-medium">Direct WhatsApp response</span>
                   </div>
                 </div> */}
-
               </CardContent>
             </Card>
-
           </div>
-
         </div>
 
         <Separator className="my-10" />
 
         {/* Reviews Section */}
         <div className="mt-8">
-          <ReviewsList 
-            fundiUserId={fundiData.id} 
-            initialReviews={fundiData.reviewsList || []} 
+          <ReviewsList
+            fundiUserId={fundiData.id}
+            initialReviews={fundiData.reviewsList || []}
             clientReview={clientReview}
           />
         </div>
-
       </main>
     </div>
   )

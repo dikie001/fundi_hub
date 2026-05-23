@@ -25,7 +25,7 @@ export async function requireAdmin() {
   if (!userId) {
     return {
       error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
-      user: null as const,
+      user: null,
     }
   }
 
@@ -33,9 +33,9 @@ export async function requireAdmin() {
   if (!user || user.role !== "admin") {
     return {
       error: NextResponse.json({ error: "Forbidden" }, { status: 403 }),
-      user: null as const,
+      user: null,
     }
   }
 
-  return { error: null as const, user }
+  return { error: null, user }
 }

@@ -47,7 +47,6 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     premiumModalType,
     isProcessingPayment,
     setIsProcessingPayment,
-    handleToggleEmergency,
     handleLogout,
     handleActivateBadge,
   } = useDashboard()
@@ -103,9 +102,6 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
         pathname={pathname}
         profile={profile}
         mounted={mounted}
-        resolvedTheme="light"
-        setTheme={() => {}}
-        handleToggleEmergency={handleToggleEmergency}
       />
 
       <SidebarInset className="flex min-h-screen flex-1 flex-col">

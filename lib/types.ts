@@ -12,7 +12,7 @@ export interface Fundi {
   whatsapp: string
   verified: boolean
   premiumLevel: "none" | "verified" | "top"
-  isEmergency: boolean
+  isAvailable: boolean
   isNearby: boolean
   description: string
   serviceArea?: string

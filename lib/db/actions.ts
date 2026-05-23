@@ -45,7 +45,7 @@ export async function getFundis(): Promise<Fundi[]> {
         whatsapp: user.phone,
         verified: profile.premiumLevel !== "none",
         premiumLevel: profile.premiumLevel as "none" | "verified" | "top",
-        isEmergency: profile.isEmergency,
+        isAvailable: profile.isAvailable,
         isNearby: profile.isNearby,
         description: profile.description || "",
         serviceArea: profile.serviceArea,

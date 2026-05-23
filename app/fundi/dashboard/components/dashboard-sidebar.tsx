@@ -4,6 +4,14 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -20,20 +28,20 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
-import { Moon, Sun } from "lucide-react"
+import { User, CheckCircle2, XCircle } from "lucide-react"
 import Link from "next/link"
+import { useDashboard } from "../context/DashboardContext"
 
 export function DashboardSidebar(props: any) {
+  const { isCollapsed, menuItems, pathname, profile, mounted } = props
+
   const {
-    isCollapsed,
-    menuItems,
-    pathname,
-    profile,
-    mounted,
-    resolvedTheme,
-    setTheme,
-    handleToggleEmergency,
-  } = props
+    isAvailabilityDialogOpen,
+    setIsAvailabilityDialogOpen,
+    pendingAvailabilityValue,
+    handleToggleAvailability,
+    confirmAvailabilityChange,
+  } = useDashboard()
 
   return (
     <Sidebar
@@ -130,76 +138,157 @@ export function DashboardSidebar(props: any) {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="space-y-4 border-t border-border/25 bg-muted/5 p-4">
+      <SidebarFooter className="space-y-3 border-t border-border/25 bg-muted/5 p-4">
         {isCollapsed ? (
-          <div className="flex justify-center py-1">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="flex items-center justify-center">
-                  <Switch
-                    id="emergency-toggle-collapsed"
-                    checked={profile?.isEmergency || false}
-                    onCheckedChange={() =>
-                      handleToggleEmergency(profile?.isEmergency)
-                    }
-                    className="scale-85 cursor-pointer"
-                  />
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="font-medium">
-                On-Call Status: {profile?.isEmergency ? "Online" : "Offline"}
-              </TooltipContent>
-            </Tooltip>
-          </div>
-        ) : (
-          <div className="flex items-center justify-between rounded-lg border border-border bg-card p-3.5 shadow-2xs">
-            <div className="space-y-0.5">
-              <Label
-                htmlFor="emergency-toggle"
-                className="cursor-pointer text-xs font-medium text-foreground"
-              >
-                On-Call Status
-              </Label>
-              <p className="text-[10px] font-normal text-muted-foreground">
-                {profile?.isEmergency ? "Online" : "Offline"}
-              </p>
+          <>
+            <div className="flex justify-center py-1">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center justify-center">
+                    <Switch
+                      id="availability-toggle-collapsed"
+                      checked={profile?.isAvailable || false}
+                      onCheckedChange={() =>
+                        handleToggleAvailability(profile?.isAvailable)
+                      }
+                      className="scale-85 cursor-pointer"
+                    />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="max-w-xs font-medium">
+                  <div className="space-y-1">
+                    <p className="font-semibold">
+                      Availability Status:{" "}
+                      {profile?.isAvailable ? "Available" : "Unavailable"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {profile?.isAvailable
+                        ? "Visible in client searches"
+                        : "Hidden from searches"}
+                    </p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
             </div>
-            <Switch
-              id="emergency-toggle"
-              checked={profile?.isEmergency || false}
-              onCheckedChange={() =>
-                handleToggleEmergency(profile?.isEmergency)
-              }
-              className="cursor-pointer"
-            />
-          </div>
+            <div className="flex justify-center">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="icon"
+                    className="h-9 w-9 cursor-pointer rounded-lg"
+                  >
+                    <Link href="/fundi/dashboard/profile">
+                      <User className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="font-medium">
+                  My Profile
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center justify-between rounded-lg border border-border bg-card p-3.5 shadow-2xs">
+              <div className="space-y-0.5">
+                <Label
+                  htmlFor="availability-toggle"
+                  className="cursor-pointer text-xs font-medium text-foreground"
+                >
+                  Availability Status
+                </Label>
+                <p className="text-[10px] font-normal text-muted-foreground">
+                  {profile?.isAvailable
+                    ? "Available - Visible in searches"
+                    : "Unavailable - Hidden from searches"}
+                </p>
+              </div>
+              <Switch
+                id="availability-toggle"
+                checked={profile?.isAvailable || false}
+                onCheckedChange={() =>
+                  handleToggleAvailability(profile?.isAvailable)
+                }
+                className="cursor-pointer"
+              />
+            </div>
+
+            <Button
+              asChild
+              variant="outline"
+              className="w-full cursor-pointer rounded-lg border-border/40"
+            >
+              <Link
+                href="/fundi/dashboard/profile"
+                className="flex items-center gap-2"
+              >
+                <User className="h-4 w-4" />
+                <span>My Profile</span>
+              </Link>
+            </Button>
+          </>
         )}
 
-        {mounted && (
-          <div className="flex justify-center border-t border-border/30 pt-3">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 cursor-pointer rounded-lg"
-                  onClick={() =>
-                    setTheme(resolvedTheme === "dark" ? "light" : "dark")
-                  }
-                >
-                  {resolvedTheme === "dark" ? (
-                    <Sun className="h-4.5 w-4.5 text-amber-500" />
-                  ) : (
-                    <Moon className="h-4.5 w-4.5 text-zinc-700" />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="font-medium">
-                {resolvedTheme === "dark" ? "Light Mode" : "Dark Mode"}
-              </TooltipContent>
-            </Tooltip>
-          </div>
-        )}
+        <Dialog
+          open={isAvailabilityDialogOpen}
+          onOpenChange={setIsAvailabilityDialogOpen}
+        >
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader className="space-y-3">
+              <DialogTitle className="flex items-center gap-2.5">
+                {pendingAvailabilityValue ? (
+                  <CheckCircle2 className="h-5 w-5 text-green-500" />
+                ) : (
+                  <XCircle className="h-5 w-5 text-orange-500" />
+                )}
+                {pendingAvailabilityValue
+                  ? "Set as Available?"
+                  : "Set as Unavailable?"}
+              </DialogTitle>
+              <DialogDescription className="space-y-3">
+                {pendingAvailabilityValue ? (
+                  <>
+                    <p className="font-medium text-foreground">
+                      You will appear in client searches and receive job leads.
+                    </p>
+                    <p className="text-muted-foreground">
+                      Clients searching for fundis in your trade will be able to
+                      find and contact you.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-medium text-foreground">
+                      You will NOT appear in client searches and won't receive
+                      new leads.
+                    </p>
+                    <p className="text-muted-foreground">
+                      You can turn this back on anytime to start receiving leads
+                      again.
+                    </p>
+                  </>
+                )}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="gap-2 sm:gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsAvailabilityDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button type="button" onClick={confirmAvailabilityChange}>
+                {pendingAvailabilityValue
+                  ? "Set as Available"
+                  : "Set as Unavailable"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </SidebarFooter>
     </Sidebar>
   )
