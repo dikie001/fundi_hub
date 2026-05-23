@@ -4,7 +4,7 @@ import { Wrench, Hammer, Zap } from "lucide-react"
 
 export function FundiLoader() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-background via-background to-primary/5">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-background via-background to-primary/5">
       <div className="relative flex items-center justify-center">
         {/* Rotating ring */}
         <div className="absolute h-32 w-32 animate-spin rounded-full border-4 border-primary/20 border-t-primary"></div>
