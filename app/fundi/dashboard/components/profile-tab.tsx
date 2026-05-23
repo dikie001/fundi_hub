@@ -424,7 +424,9 @@ export function ProfileTab({
             {/* Basic Info - 2 Columns on Large Screens */}
             <div className="grid gap-6 lg:grid-cols-2">
               <div className="space-y-2.5">
-                <Label htmlFor="edit-name" className="text-base">Full Name</Label>
+                <Label htmlFor="edit-name" className="text-base">
+                  Full Name
+                </Label>
                 <Input
                   id="edit-name"
                   value={editName}
@@ -436,7 +438,9 @@ export function ProfileTab({
               </div>
 
               <div className="space-y-2.5">
-                <Label htmlFor="edit-title" className="text-base">Professional Title</Label>
+                <Label htmlFor="edit-title" className="text-base">
+                  Professional Title
+                </Label>
                 <Input
                   id="edit-title"
                   value={editTitle}
@@ -480,7 +484,9 @@ export function ProfileTab({
                       {trade}
                       <button
                         type="button"
-                        onClick={() => setEditTrades(editTrades.filter((t) => t !== trade))}
+                        onClick={() =>
+                          setEditTrades(editTrades.filter((t) => t !== trade))
+                        }
                         className="ml-2 hover:text-destructive"
                       >
                         <X className="h-3.5 w-3.5" />
@@ -497,7 +503,9 @@ export function ProfileTab({
             {/* Years of Experience & Service Area - 2 Columns */}
             <div className="grid gap-6 lg:grid-cols-2">
               <div className="space-y-2.5">
-                <Label htmlFor="edit-exp" className="text-base">Years of Experience</Label>
+                <Label htmlFor="edit-exp" className="text-base">
+                  Years of Experience
+                </Label>
                 <Input
                   id="edit-exp"
                   type="number"
@@ -510,7 +518,9 @@ export function ProfileTab({
               </div>
 
               <div className="space-y-2.5">
-                <Label htmlFor="edit-area" className="text-base">Service Coverage Area</Label>
+                <Label htmlFor="edit-area" className="text-base">
+                  Service Coverage Area
+                </Label>
                 <Input
                   id="edit-area"
                   value={editArea}
@@ -525,8 +535,13 @@ export function ProfileTab({
             {/* Preferred Contact & Specializations - 2 Columns */}
             <div className="grid gap-6 lg:grid-cols-2">
               <div className="space-y-2.5">
-                <Label htmlFor="edit-contact" className="text-base">Preferred Contact Method</Label>
-                <Select value={preferredContact} onValueChange={setPreferredContact}>
+                <Label htmlFor="edit-contact" className="text-base">
+                  Preferred Contact Method
+                </Label>
+                <Select
+                  value={preferredContact}
+                  onValueChange={setPreferredContact}
+                >
                   <SelectTrigger className="h-11">
                     <SelectValue placeholder="Select contact method" />
                   </SelectTrigger>
@@ -554,7 +569,9 @@ export function ProfileTab({
 
             {/* Professional Bio - Full Width */}
             <div className="space-y-2.5">
-              <Label htmlFor="edit-desc-dialog" className="text-base">Professional Biography</Label>
+              <Label htmlFor="edit-desc-dialog" className="text-base">
+                Professional Biography
+              </Label>
               <textarea
                 id="edit-desc-dialog"
                 value={editDesc}
