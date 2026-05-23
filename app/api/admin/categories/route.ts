@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server"
+import { Prisma } from "@prisma/client"
 import { db } from "@/lib/db"
 import { requireAdmin } from "@/lib/admin-auth"
 import { logAudit } from "@/lib/audit"
-import type { Category } from "@prisma/client"
 
 export const dynamic = "force-dynamic"
 
@@ -20,7 +20,7 @@ export async function GET() {
     const countMap: Record<string, number> = {}
     for (const c of counts) countMap[c.category] = c._count._all
     return NextResponse.json({
-      categories: categories.map((c: Category) => ({
+      categories: categories.map((c: Prisma.CategoryGetPayload<{}>) => ({
         ...c,
         fundiCount: countMap[c.name] ?? 0,
       })),
