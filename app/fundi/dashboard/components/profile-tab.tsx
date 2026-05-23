@@ -208,7 +208,8 @@ export function ProfileTab({
                 )}
               </div>
               <p className="text-sm font-semibold text-foreground">
-                {editTitle || `${(editTrades && editTrades[0]) || "General"} Specialist`}
+                {editTitle ||
+                  `${(editTrades && editTrades[0]) || "General"} Specialist`}
               </p>
               <div className="flex flex-wrap items-center justify-center gap-2 pt-1 sm:justify-start">
                 {(editTrades.length > 0 ? editTrades : ["General"]).map((t) => (
@@ -404,117 +405,90 @@ export function ProfileTab({
 
       {/* Edit Profile Dialog */}
       <Dialog open={isEditProfileOpen} onOpenChange={setIsEditProfileOpen}>
-        <DialogContent className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-lg border border-border bg-card p-6 shadow-lg">
-          <DialogHeader>
-            <DialogTitle className="text-base font-bold text-foreground">
+        <DialogContent className="max-h-[90vh] w-[95vw] max-w-2xl overflow-y-auto">
+          <DialogHeader className="space-y-2">
+            <DialogTitle className="text-lg font-semibold">
               Edit Profile Details
             </DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground">
-              Provide information about your business, experience and trade.
+            <DialogDescription>
+              Update your professional information
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={onEditProfileSubmit} className="mt-4 space-y-6">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="edit-name"
-                  className="text-sm font-semibold text-foreground"
-                >
-                  Full Name
-                </Label>
+
+          <form onSubmit={onEditProfileSubmit} className="space-y-6 pt-4">
+            {/* Basic Info */}
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-name">Full Name</Label>
                 <Input
                   id="edit-name"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  placeholder="Your Full Name"
+                  placeholder="Your full name"
                   required
-                  className="h-10 rounded-lg text-sm"
                 />
               </div>
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="edit-title"
-                  className="text-sm font-semibold text-foreground"
-                >
-                  Professional Title
-                </Label>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-title">Professional Title</Label>
                 <Input
                   id="edit-title"
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
-                  placeholder="e.g. Master Plumber, Electrician Specialist"
+                  placeholder="e.g. Electrician Expert"
                   required
-                  className="h-10 rounded-lg text-sm"
                 />
               </div>
             </div>
 
+            {/* Trade & Experience */}
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="edit-trade"
-                  className="text-sm font-semibold text-foreground"
-                >
-                  Trade Categories
-                </Label>
-                <div className="rounded-lg border border-border/20 bg-muted/5 p-2">
-                  <MultiSelect
-                    options={FUNDI_TRADES}
-                    value={editTrades}
-                    onChange={setEditTrades}
-                    placeholder="Select your trades..."
-                  />
-                </div>
-                <p className="mt-1 text-xs text-muted-foreground">Select one or more trades. These appear on your public profile.</p>
+              <div className="space-y-2">
+                <Label htmlFor="edit-trade">Trade Categories</Label>
+                <MultiSelect
+                  options={FUNDI_TRADES}
+                  value={editTrades}
+                  onChange={setEditTrades}
+                  placeholder="Select trades..."
+                />
+                <p className="text-xs text-muted-foreground">
+                  Select one or more trades
+                </p>
               </div>
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="edit-exp"
-                  className="text-sm font-semibold text-foreground"
-                >
-                  Years of Experience
-                </Label>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-exp">Years of Experience</Label>
                 <Input
                   id="edit-exp"
                   type="number"
                   value={editYearsExp}
                   onChange={(e) => setEditYearsExp(e.target.value)}
-                  placeholder="e.g. 5"
+                  placeholder="10"
                   required
-                  className="h-10 rounded-lg text-sm"
                 />
               </div>
             </div>
 
+            {/* Location & Contact */}
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="edit-area"
-                  className="text-sm font-semibold text-foreground"
-                >
-                  Service Coverage Area
-                </Label>
+              <div className="space-y-2">
+                <Label htmlFor="edit-area">Service Coverage Area</Label>
                 <Input
                   id="edit-area"
                   value={editArea}
                   onChange={(e) => setEditArea(e.target.value)}
-                  placeholder="e.g. Nairobi CBD, Westlands, Kilimani"
+                  placeholder="langata"
                   required
-                  className="h-10 rounded-lg text-sm"
                 />
               </div>
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="edit-contact"
-                  className="text-sm font-semibold text-foreground"
-                >
-                  Preferred Contact Method
-                </Label>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-contact">Preferred Contact Method</Label>
                 <select
                   id="edit-contact"
                   value={preferredContact}
                   onChange={(e) => setPreferredContact(e.target.value)}
-                  className="flex h-10 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-sm focus-visible:outline-hidden dark:bg-card"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                 >
                   <option value="whatsapp">WhatsApp</option>
                   <option value="phone">Phone Call</option>
@@ -523,11 +497,9 @@ export function ProfileTab({
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <Label
-                htmlFor="edit-skills"
-                className="text-sm font-semibold text-foreground"
-              >
+            {/* Skills */}
+            <div className="space-y-2">
+              <Label htmlFor="edit-skills">
                 Specializations (comma-separated)
               </Label>
               <Input
@@ -535,40 +507,31 @@ export function ProfileTab({
                 value={skillsInputValue}
                 onChange={handleSkillsChange}
                 placeholder="e.g. Pipe Leak Repair, Drainage Installation, Wiring"
-                className="h-10 rounded-lg text-sm"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <Label
-                htmlFor="edit-desc-dialog"
-                className="text-sm font-semibold text-foreground"
-              >
-                Professional Biography
-              </Label>
+            {/* Bio */}
+            <div className="space-y-2">
+              <Label htmlFor="edit-desc-dialog">Professional Biography</Label>
               <textarea
                 id="edit-desc-dialog"
                 value={editDesc}
                 onChange={(e) => setEditDesc(e.target.value)}
-                placeholder="Describe your expertise, work style and achievements..."
-                className="flex min-h-24 w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm shadow-xs placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/10"
+                placeholder="Describe your expertise and experience..."
+                rows={4}
+                className="flex w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
               />
             </div>
 
-            <DialogFooter className="flex items-center justify-end gap-2 border-t border-border/30 pt-4">
+            <DialogFooter className="gap-2 pt-4">
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 onClick={() => setIsEditProfileOpen(false)}
-                className="h-10 cursor-pointer rounded-lg px-4 text-sm"
               >
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                disabled={isUpdating}
-                className="h-10 cursor-pointer rounded-lg px-4 text-sm font-semibold"
-              >
+              <Button type="submit" disabled={isUpdating}>
                 {isUpdating ? "Saving..." : "Save Changes"}
               </Button>
             </DialogFooter>
