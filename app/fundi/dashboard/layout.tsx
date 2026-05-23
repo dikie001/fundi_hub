@@ -47,7 +47,6 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     premiumModalType,
     isProcessingPayment,
     setIsProcessingPayment,
-    handleToggleEmergency,
     handleLogout,
     handleActivateBadge,
   } = useDashboard()

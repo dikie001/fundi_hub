@@ -56,7 +56,7 @@ export default function FindFundisPage() {
       const matchAvailable = !availableOnly || f.isAvailable
       return matchSearch && matchTrade && matchVerified && matchAvailable
     })
-  }, [allFundis, search, tradeFilter, verifiedOnly, emergencyOnly])
+  }, [allFundis, search, tradeFilter, verifiedOnly, availableOnly])
 
   const clearFilters = () => {
     setSearch("")
