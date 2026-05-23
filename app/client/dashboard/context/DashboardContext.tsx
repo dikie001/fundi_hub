@@ -34,7 +34,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
   const fetchData = async () => {
     setIsLoading(true)
     try {
-      const meRes = await fetch("/api/auth/me")
+      const meRes = await fetch("/api/auth/me", { credentials: "include" })
       if (!meRes.ok) {
         window.location.href = "/auth/login"
         return
