@@ -19,7 +19,7 @@ export async function PUT(request: Request) {
       yearsExperience,
       serviceArea,
       description,
-      isEmergency,
+      isAvailable,
       preferredContact,
       premiumLevel,
       image,
@@ -63,10 +63,10 @@ export async function PUT(request: Request) {
           description !== undefined
             ? description
             : user.fundiProfile?.description,
-        isEmergency:
-          isEmergency !== undefined
-            ? isEmergency
-            : user.fundiProfile?.isEmergency,
+        isAvailable:
+          isAvailable !== undefined
+            ? isAvailable
+            : user.fundiProfile?.isAvailable,
         preferredContact:
           preferredContact !== undefined
             ? preferredContact

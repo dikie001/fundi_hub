@@ -39,7 +39,7 @@ interface FundiRow {
   successRate: number
   jobEarnings: number
   premiumLevel: Premium
-  isEmergency: boolean
+  isAvailable: boolean
   isNearby: boolean
   description: string | null
   skills: string
@@ -72,7 +72,7 @@ export function FundisClient() {
   const [skills, setSkills] = useState("")
   const [description, setDescription] = useState("")
   const [premiumLevel, setPremiumLevel] = useState<Premium>("none")
-  const [isEmergency, setIsEmergency] = useState(false)
+  const [isAvailable, setIsAvailable] = useState(false)
   const [isNearby, setIsNearby] = useState(false)
   const [rating, setRating] = useState("5")
   const [reviews, setReviews] = useState("0")
@@ -108,7 +108,7 @@ export function FundisClient() {
     setSkills(f.skills)
     setDescription(f.description ?? "")
     setPremiumLevel(f.premiumLevel)
-    setIsEmergency(f.isEmergency)
+    setIsAvailable(f.isAvailable)
     setIsNearby(f.isNearby)
     setRating(String(f.rating))
     setReviews(String(f.reviews))
@@ -133,7 +133,7 @@ export function FundisClient() {
           skills,
           description,
           premiumLevel,
-          isEmergency,
+          isAvailable,
           isNearby,
           rating: parseFloat(rating) || 0,
           reviews: parseInt(reviews) || 0,
@@ -395,10 +395,10 @@ export function FundisClient() {
               <div className="flex items-center gap-6 pt-2">
                 <label className="flex items-center gap-2 text-xs">
                   <Switch
-                    checked={isEmergency}
-                    onCheckedChange={setIsEmergency}
+                    checked={isAvailable}
+                    onCheckedChange={setIsAvailable}
                   />
-                  Emergency
+                  Available
                 </label>
                 <label className="flex items-center gap-2 text-xs">
                   <Switch checked={isNearby} onCheckedChange={setIsNearby} />

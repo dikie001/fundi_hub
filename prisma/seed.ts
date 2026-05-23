@@ -27,7 +27,7 @@ const fundis = [
     image: "",
     phone: "+254712345678",
     premiumLevel: "top" as const,
-    isEmergency: true,
+    isAvailable: true,
     isNearby: true,
     description:
       "15+ years experience in residential and commercial plumbing. 24/7 emergency services available.",
@@ -43,7 +43,7 @@ const fundis = [
     image: "",
     phone: "+254723456789",
     premiumLevel: "verified" as const,
-    isEmergency: true,
+    isAvailable: true,
     isNearby: false,
     description:
       "Certified electrician with expertise in wiring, installations, and troubleshooting.",
@@ -59,7 +59,7 @@ const fundis = [
     image: "",
     phone: "+254734567890",
     premiumLevel: "none" as const,
-    isEmergency: false,
+    isAvailable: false,
     isNearby: true,
     description:
       "Custom furniture and home renovation specialist. Quality craftsmanship guaranteed.",
@@ -75,7 +75,7 @@ const fundis = [
     image: "",
     phone: "+254745678901",
     premiumLevel: "top" as const,
-    isEmergency: false,
+    isAvailable: false,
     isNearby: false,
     description:
       "Skilled in all welding types. Industrial and domestic projects welcome.",
@@ -91,7 +91,7 @@ const fundis = [
     image: "",
     phone: "+254756789012",
     premiumLevel: "none" as const,
-    isEmergency: false,
+    isAvailable: false,
     isNearby: true,
     description:
       "Interior and exterior painting with attention to detail. Eco-friendly paints available.",
@@ -107,7 +107,7 @@ const fundis = [
     image: "",
     phone: "+254767890123",
     premiumLevel: "verified" as const,
-    isEmergency: true,
+    isAvailable: true,
     isNearby: false,
     description:
       "Engine repairs, maintenance, and diagnostics for all vehicle types.",
@@ -160,7 +160,7 @@ async function main() {
             nationalId: "12345678",
             preferredContact: "whatsapp",
             premiumLevel: fundi.premiumLevel,
-            isEmergency: fundi.isEmergency,
+            isAvailable: fundi.isAvailable,
             isNearby: fundi.isNearby,
             description: fundi.description,
             skills: fundi.skills,

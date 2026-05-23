@@ -4,6 +4,14 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -20,8 +28,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
-import { User } from "lucide-react"
+import { User, CheckCircle2, XCircle } from "lucide-react"
 import Link from "next/link"
+import { useDashboard } from "../context/DashboardContext"
 
 export function DashboardSidebar(props: any) {
   const {
@@ -30,10 +39,15 @@ export function DashboardSidebar(props: any) {
     pathname,
     profile,
     mounted,
-    resolvedTheme,
-    setTheme,
-    handleToggleEmergency,
   } = props
+
+  const {
+    isAvailabilityDialogOpen,
+    setIsAvailabilityDialogOpen,
+    pendingAvailabilityValue,
+    handleToggleAvailability,
+    confirmAvailabilityChange,
+  } = useDashboard()
 
   return (
     <Sidebar
@@ -138,10 +152,10 @@ export function DashboardSidebar(props: any) {
                 <TooltipTrigger asChild>
                   <div className="flex items-center justify-center">
                     <Switch
-                      id="emergency-toggle-collapsed"
-                      checked={profile?.isEmergency || false}
+                      id="availability-toggle-collapsed"
+                      checked={profile?.isAvailable || false}
                       onCheckedChange={() =>
-                        handleToggleEmergency(profile?.isEmergency)
+                        handleToggleAvailability(profile?.isAvailable)
                       }
                       className="scale-85 cursor-pointer"
                     />
@@ -149,9 +163,14 @@ export function DashboardSidebar(props: any) {
                 </TooltipTrigger>
                 <TooltipContent side="right" className="max-w-xs font-medium">
                   <div className="space-y-1">
-                    <p className="font-semibold">On-Call Status: {profile?.isEmergency ? "Online" : "Offline"}</p>
+                    <p className="font-semibold">
+                      Availability Status:{" "}
+                      {profile?.isAvailable ? "Available" : "Unavailable"}
+                    </p>
                     <p className="text-xs text-muted-foreground">
-                      {profile?.isEmergency ? "Visible in client searches" : "Hidden from searches"}
+                      {profile?.isAvailable
+                        ? "Visible in client searches"
+                        : "Hidden from searches"}
                     </p>
                   </div>
                 </TooltipContent>
@@ -178,39 +197,94 @@ export function DashboardSidebar(props: any) {
             </div>
           </>
         ) : (
-          <div className="flex items-center justify-between rounded-lg border border-border bg-card p-3.5 shadow-2xs">
-            <div className="space-y-0.5">
-              <Label
-                htmlFor="emergency-toggle"
-                className="cursor-pointer text-xs font-medium text-foreground"
-              >
-                On-Call Status
-              </Label>
-              <p className="text-[10px] font-normal text-muted-foreground">
-                {profile?.isEmergency ? "Online - Visible in searches" : "Offline - Hidden from searches"}
-              </p>
+          <>
+            <div className="flex items-center justify-between rounded-lg border border-border bg-card p-3.5 shadow-2xs">
+              <div className="space-y-0.5">
+                <Label
+                  htmlFor="availability-toggle"
+                  className="cursor-pointer text-xs font-medium text-foreground"
+                >
+                  Availability Status
+                </Label>
+                <p className="text-[10px] font-normal text-muted-foreground">
+                  {profile?.isAvailable
+                    ? "Available - Visible in searches"
+                    : "Unavailable - Hidden from searches"}
+                </p>
+              </div>
+              <Switch
+                id="availability-toggle"
+                checked={profile?.isAvailable || false}
+                onCheckedChange={() =>
+                  handleToggleAvailability(profile?.isAvailable)
+                }
+                className="cursor-pointer"
+              />
             </div>
-            <Switch
-              id="emergency-toggle"
-              checked={profile?.isEmergency || false}
-              onCheckedChange={() =>
-                handleToggleEmergency(profile?.isEmergency)
-              }
-              className="cursor-pointer"
-            />
-          </div>
+
+            <Button
+              asChild
+              variant="outline"
+              className="w-full cursor-pointer rounded-lg border-border/40"
+            >
+              <Link
+                href="/fundi/dashboard/profile"
+                className="flex items-center gap-2"
+              >
+                <User className="h-4 w-4" />
+                <span>My Profile</span>
+              </Link>
+            </Button>
+          </>
         )}
 
-        <Button
-          asChild
-          variant="outline"
-          className="w-full cursor-pointer rounded-lg border-border/40"
-        >
-          <Link href="/fundi/dashboard/profile" className="flex items-center gap-2">
-            <User className="h-4 w-4" />
-            {!isCollapsed && <span>My Profile</span>}
-          </Link>
-        </Button>
+        <Dialog open={isAvailabilityDialogOpen} onOpenChange={setIsAvailabilityDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                {pendingAvailabilityValue ? (
+                  <CheckCircle2 className="h-5 w-5 text-green-500" />
+                ) : (
+                  <XCircle className="h-5 w-5 text-orange-500" />
+                )}
+                {pendingAvailabilityValue ? "Set as Available?" : "Set as Unavailable?"}
+              </DialogTitle>
+              <DialogDescription className="pt-2 text-sm leading-relaxed">
+                {pendingAvailabilityValue ? (
+                  <>
+                    <p className="font-medium text-foreground">You will appear in client searches and receive job leads.</p>
+                    <p className="mt-2 text-muted-foreground">
+                      Clients searching for fundis in your trade will be able to find and contact you.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-medium text-foreground">You will NOT appear in client searches and won't receive new leads.</p>
+                    <p className="mt-2 text-muted-foreground">
+                      You can turn this back on anytime to start receiving leads again.
+                    </p>
+                  </>
+                )}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsAvailabilityDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                onClick={confirmAvailabilityChange}
+                className={pendingAvailabilityValue ? "bg-green-600 hover:bg-green-700" : ""}
+              >
+                {pendingAvailabilityValue ? "Set as Available" : "Set as Unavailable"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </SidebarFooter>
     </Sidebar>
   )

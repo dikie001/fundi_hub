@@ -119,7 +119,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
       phone: dbUser.phone,
       whatsapp: dbUser.phone,
       premiumLevel: profile.premiumLevel,
-      isEmergency: profile.isEmergency,
+      isAvailable: profile.isAvailable,
       isNearby: profile.isNearby,
       description: profile.description || "No bio description provided.",
       yearsExperience: profile.yearsExperience || "N/A",
@@ -214,9 +214,9 @@ export default async function FundiProfilePage({ params }: PageProps) {
 
             {/* Quick Status Pill badges */}
             <div className="flex flex-wrap gap-2 md:flex-col md:items-end">
-              {fundiData.isEmergency && (
+              {fundiData.isAvailable && (
                 <Badge variant="outline" className="border-red-500/30 bg-red-500/10 px-3 py-1 font-bold text-red-500 hover:bg-red-500/15">
-                  24/7 Emergency
+                  Available 24/7
                 </Badge>
               )}
               {fundiData.isNearby && (

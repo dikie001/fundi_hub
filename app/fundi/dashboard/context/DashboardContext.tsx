@@ -40,6 +40,10 @@ type DashboardContextType = {
   setPremiumModalType: (type: "verified" | "top") => void
   isProcessingPayment: boolean
   setIsProcessingPayment: (processing: boolean) => void
+  isAvailabilityDialogOpen: boolean
+  setIsAvailabilityDialogOpen: (open: boolean) => void
+  pendingAvailabilityValue: boolean
+  confirmAvailabilityChange: () => Promise<void>
   editName: string
   setEditName: (name: string) => void
   editTitle: string
@@ -131,6 +135,8 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     "verified"
   )
   const [isProcessingPayment, setIsProcessingPayment] = useState(false)
+  const [isAvailabilityDialogOpen, setIsAvailabilityDialogOpen] = useState(false)
+  const [pendingAvailabilityValue, setPendingAvailabilityValue] = useState(false)
 
   const [editName, setEditName] = useState("")
   const [editTitle, setEditTitle] = useState("")
@@ -230,23 +236,24 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
 
   const handleToggleAvailability = async (currentVal: boolean) => {
     if (!profile) return
+    setPendingAvailabilityValue(!currentVal)
+    setIsAvailabilityDialogOpen(true)
+  }
+
+  const confirmAvailabilityChange = async () => {
+    if (!profile) return
     
-    const newStatus = !currentVal
-    const message = newStatus
-      ? "Set your status to Available? You will appear in client searches and receive job leads."
-      : "Set your status to Unavailable? You will NOT appear in client searches and won't receive new leads until you turn this back on."
-    
-    const confirmed = window.confirm(message)
-    if (!confirmed) return
+    const currentVal = profile.isAvailable
+    const newVal = pendingAvailabilityValue
     
     try {
-      setProfile((prev: any) => ({ ...prev, isAvailable: !currentVal }))
+      setProfile((prev: any) => ({ ...prev, isAvailable: newVal }))
+      setIsAvailabilityDialogOpen(false)
+      
       await fetch("/api/fundi/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isAvailable: !currentVal }),
-      })
-    } catch (error) {
+        body: JSON.stringify({ isAvailable: newVal }),
       console.error("Failed to toggle availability status:", error)
       // Revert on error
       setProfile((prev: any) => ({ ...prev, isAvailable: currentVal }))
@@ -515,6 +522,10 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         setPremiumModalType,
         isProcessingPayment,
         setIsProcessingPayment,
+        isAvailabilityDialogOpen,
+        setIsAvailabilityDialogOpen,
+        pendingAvailabilityValue,
+        confirmAvailabilityChange,
         editName,
         setEditName,
         editTitle,
