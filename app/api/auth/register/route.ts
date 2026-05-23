@@ -132,7 +132,11 @@ export async function POST(request: Request) {
     // If this was a Google signup, set a session cookie so the user is logged in
     if (googleSub) {
       const response = NextResponse.json(
-        { message: "Registration successful", userId: user.id, role: user.role },
+        {
+          message: "Registration successful",
+          userId: user.id,
+          role: user.role,
+        },
         { status: 201 }
       )
       response.cookies.set("user_session", user.id, {
