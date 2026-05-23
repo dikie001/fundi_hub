@@ -77,7 +77,7 @@ type DashboardContextType = {
   completionScore: number
   fetchProfile: () => Promise<void>
   fetchLeads: () => Promise<void>
-  handleToggleEmergency: (currentVal: boolean) => Promise<void>
+  handleToggleAvailability: (currentVal: boolean) => Promise<void>
   handleUpdateProfile: (e: React.FormEvent) => Promise<void>
   handleAvatarChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   handlePortfolioUpload: (e: React.FormEvent) => void
@@ -228,17 +228,28 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     fetchLeads()
   }, [])
 
-  const handleToggleEmergency = async (currentVal: boolean) => {
+  const handleToggleAvailability = async (currentVal: boolean) => {
     if (!profile) return
+    
+    const newStatus = !currentVal
+    const message = newStatus
+      ? "Set your status to Available? You will appear in client searches and receive job leads."
+      : "Set your status to Unavailable? You will NOT appear in client searches and won't receive new leads until you turn this back on."
+    
+    const confirmed = window.confirm(message)
+    if (!confirmed) return
+    
     try {
-      setProfile((prev: any) => ({ ...prev, isEmergency: !currentVal }))
+      setProfile((prev: any) => ({ ...prev, isAvailable: !currentVal }))
       await fetch("/api/fundi/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isEmergency: !currentVal }),
+        body: JSON.stringify({ isAvailable: !currentVal }),
       })
     } catch (error) {
-      console.error("Failed to toggle emergency status:", error)
+      console.error("Failed to toggle availability status:", error)
+      // Revert on error
+      setProfile((prev: any) => ({ ...prev, isAvailable: currentVal }))
     }
   }
 
@@ -541,7 +552,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         completionScore,
         fetchProfile,
         fetchLeads,
-        handleToggleEmergency,
+        handleToggleAvailability,
         handleUpdateProfile,
         handleAvatarChange,
         handlePortfolioUpload,

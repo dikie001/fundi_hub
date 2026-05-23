@@ -20,7 +20,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
-import { Moon, Sun } from "lucide-react"
+import { User } from "lucide-react"
 import Link from "next/link"
 
 export function DashboardSidebar(props: any) {
@@ -130,27 +130,53 @@ export function DashboardSidebar(props: any) {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="space-y-4 border-t border-border/25 bg-muted/5 p-4">
+      <SidebarFooter className="space-y-3 border-t border-border/25 bg-muted/5 p-4">
         {isCollapsed ? (
-          <div className="flex justify-center py-1">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="flex items-center justify-center">
-                  <Switch
-                    id="emergency-toggle-collapsed"
-                    checked={profile?.isEmergency || false}
-                    onCheckedChange={() =>
-                      handleToggleEmergency(profile?.isEmergency)
-                    }
-                    className="scale-85 cursor-pointer"
-                  />
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="font-medium">
-                On-Call Status: {profile?.isEmergency ? "Online" : "Offline"}
-              </TooltipContent>
-            </Tooltip>
-          </div>
+          <>
+            <div className="flex justify-center py-1">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center justify-center">
+                    <Switch
+                      id="emergency-toggle-collapsed"
+                      checked={profile?.isEmergency || false}
+                      onCheckedChange={() =>
+                        handleToggleEmergency(profile?.isEmergency)
+                      }
+                      className="scale-85 cursor-pointer"
+                    />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="max-w-xs font-medium">
+                  <div className="space-y-1">
+                    <p className="font-semibold">On-Call Status: {profile?.isEmergency ? "Online" : "Offline"}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {profile?.isEmergency ? "Visible in client searches" : "Hidden from searches"}
+                    </p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+            <div className="flex justify-center">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="icon"
+                    className="h-9 w-9 cursor-pointer rounded-lg"
+                  >
+                    <Link href="/fundi/dashboard/profile">
+                      <User className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="font-medium">
+                  My Profile
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          </>
         ) : (
           <div className="flex items-center justify-between rounded-lg border border-border bg-card p-3.5 shadow-2xs">
             <div className="space-y-0.5">
@@ -161,7 +187,7 @@ export function DashboardSidebar(props: any) {
                 On-Call Status
               </Label>
               <p className="text-[10px] font-normal text-muted-foreground">
-                {profile?.isEmergency ? "Online" : "Offline"}
+                {profile?.isEmergency ? "Online - Visible in searches" : "Offline - Hidden from searches"}
               </p>
             </div>
             <Switch
@@ -175,31 +201,16 @@ export function DashboardSidebar(props: any) {
           </div>
         )}
 
-        {mounted && (
-          <div className="flex justify-center border-t border-border/30 pt-3">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 cursor-pointer rounded-lg"
-                  onClick={() =>
-                    setTheme(resolvedTheme === "dark" ? "light" : "dark")
-                  }
-                >
-                  {resolvedTheme === "dark" ? (
-                    <Sun className="h-4.5 w-4.5 text-amber-500" />
-                  ) : (
-                    <Moon className="h-4.5 w-4.5 text-zinc-700" />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="font-medium">
-                {resolvedTheme === "dark" ? "Light Mode" : "Dark Mode"}
-              </TooltipContent>
-            </Tooltip>
-          </div>
-        )}
+        <Button
+          asChild
+          variant="outline"
+          className="w-full cursor-pointer rounded-lg border-border/40"
+        >
+          <Link href="/fundi/dashboard/profile" className="flex items-center gap-2">
+            <User className="h-4 w-4" />
+            {!isCollapsed && <span>My Profile</span>}
+          </Link>
+        </Button>
       </SidebarFooter>
     </Sidebar>
   )
