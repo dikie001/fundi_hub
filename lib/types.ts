@@ -11,7 +11,7 @@ export interface ClientProfileData {
   projectLocation: string | null
   budgetRange: string | null
   urgency: string | null
-  image: string | null
+  image?: string
   createdAt?: Date
   updatedAt?: Date
 }
@@ -69,7 +69,7 @@ export interface SafeUser {
   email: string | null
   phone: string
   role: UserRole
-  image: string | null
+  image?: string
   createdAt?: Date
   updatedAt?: Date
   fundiProfile?: FundiProfileData | null
