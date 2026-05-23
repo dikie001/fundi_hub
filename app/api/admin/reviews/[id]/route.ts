@@ -26,7 +26,10 @@ export async function DELETE(
     })
     const count = reviews.length
     const avg =
-      count > 0 ? reviews.reduce((sum: number, review) => sum + review.rating, 0) / count : 5.0
+      count > 0
+        ? reviews.reduce((sum: number, review) => sum + review.rating, 0) /
+          count
+        : 5.0
 
     await db.fundiProfile.update({
       where: { id: fundiId },
