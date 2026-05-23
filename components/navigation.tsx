@@ -6,10 +6,11 @@ import { Menu, X, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { usePathname, useRouter } from "next/navigation"
 import { UserMenu } from "@/components/user-menu"
+import type { SafeUser } from "@/lib/types"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
-  const [authUser, setAuthUser] = useState<any>(null)
+  const [authUser, setAuthUser] = useState<SafeUser | null>(null)
   const pathname = usePathname()
   const router = useRouter()
   const isNotHome = pathname !== "/"

@@ -31,6 +31,39 @@ import {
   CheckCircle,
   ExternalLink,
 } from "lucide-react"
+import type { ReviewData } from "@/lib/types"
+
+type PortfolioItem = {
+  id: string
+  title: string
+  category: string
+  image: string
+  description?: string
+}
+
+type FundiPageData = {
+  id: string
+  name: string
+  title: string
+  category: string
+  rating: number
+  reviews: number
+  image: string
+  phone: string
+  whatsapp: string
+  premiumLevel: "none" | "verified" | "top"
+  isAvailable: boolean
+  isNearby: boolean
+  description: string
+  yearsExperience: string
+  serviceArea: string
+  skills: string[]
+  portfolio: PortfolioItem[]
+  jobsCompleted: number
+  successRate: number
+  jobEarnings: number
+  reviewsList: ReviewData[]
+}
 
 interface PageProps {
   params: Promise<{ name: string }>
@@ -88,15 +121,19 @@ export default async function FundiProfilePage({ params }: PageProps) {
     return cleanDbName === cleanParamName
   })
 
-  let fundiData: any = null
-  let clientReview: any = null
+  let fundiData: FundiPageData | null = null
+  let clientReview: {
+    reviewerName: string
+    rating: number
+    comment: string
+  } | null = null
 
   if (dbUser && dbUser.fundiProfile) {
     const profile = dbUser.fundiProfile
 
     // Find if current client IP already left a review
     const existingReview = (profile.reviewsList || []).find(
-      (r: any) => r.ip === clientIp
+      (r) => r.ip === clientIp
     )
     if (existingReview) {
       clientReview = {
@@ -105,10 +142,10 @@ export default async function FundiProfilePage({ params }: PageProps) {
         comment: existingReview.comment,
       }
     }
-    let parsedPortfolio = []
+    let parsedPortfolio: PortfolioItem[] = []
     if (typeof profile.portfolio === "string" && profile.portfolio.trim()) {
       try {
-        parsedPortfolio = JSON.parse(profile.portfolio)
+        parsedPortfolio = JSON.parse(profile.portfolio) as PortfolioItem[]
       } catch {
         parsedPortfolio = []
       }
@@ -143,7 +180,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
       jobsCompleted: profile.jobsCompleted,
       successRate: profile.successRate,
       jobEarnings: profile.jobEarnings,
-      reviewsList: (profile as any).reviewsList || [],
+      reviewsList: profile.reviewsList || [],
     }
   }
 
@@ -153,7 +190,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
 
   const initials = fundiData.name
     .split(" ")
-    .map((n: string) => n[0])
+    .map((n) => n[0])
     .join("")
     .toUpperCase()
 
@@ -347,7 +384,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
                     <div className="grid gap-4 sm:grid-cols-2">
                       {fundiData.portfolio
                         .slice(0, 1)
-                        .map((item: any, index: number) => (
+                        .map((item, index) => (
                           <div
                             key={item.id || index}
                             className="group overflow-hidden rounded-xl border border-border/50 bg-muted/20 transition-all hover:border-primary/30"

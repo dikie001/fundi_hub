@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useState, useEffect } from "react"
+import type { ClientProfileData, DashboardMenuItem, SafeUser } from "@/lib/types"
 
 export function ClientDashboardSidebar({
   isCollapsed,
@@ -26,10 +27,10 @@ export function ClientDashboardSidebar({
   profile,
 }: {
   isCollapsed: boolean
-  menuItems: any[]
+  menuItems: DashboardMenuItem[]
   pathname: string
-  user: any
-  profile: any
+  user: SafeUser | null
+  profile: ClientProfileData | null
 }) {
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -67,7 +68,7 @@ export function ClientDashboardSidebar({
             Workspace
           </SidebarGroupLabel>
           <SidebarMenu className="mt-2 space-y-1">
-            {menuItems.map((item: any) => {
+            {menuItems.map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href
               return (

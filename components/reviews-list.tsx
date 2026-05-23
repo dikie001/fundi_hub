@@ -72,8 +72,8 @@ export function ReviewsList({ fundiUserId, initialReviews, clientReview }: Revie
       setIsNameLocked(true)
       setSuccessMessage(isUpdate ? "Your review was updated successfully!" : "Review submitted successfully! Thank you.")
       setTimeout(() => setSuccessMessage(null), 5000)
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred.")
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "An unexpected error occurred.")
     } finally {
       setIsSubmitting(false)
     }

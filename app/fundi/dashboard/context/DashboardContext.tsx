@@ -1,6 +1,7 @@
 "use client"
 
 import React, { createContext, useContext, useState, useEffect } from "react"
+import type { FundiLead, FundiProfileData, SafeUser } from "@/lib/types"
 
 export type PortfolioItem = {
   id: string
@@ -23,8 +24,8 @@ export type Lead = {
 }
 
 type DashboardContextType = {
-  user: any
-  profile: any
+  user: SafeUser | null
+  profile: FundiProfileData | null
   isLoading: boolean
   isUpdating: boolean
   updateSuccess: string
@@ -117,8 +118,8 @@ function parsePortfolioItems(portfolio: unknown): PortfolioItem[] {
 }
 
 export function DashboardProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<any>(null)
-  const [profile, setProfile] = useState<any>(null)
+  const [user, setUser] = useState<SafeUser | null>(null)
+  const [profile, setProfile] = useState<FundiProfileData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isUpdating, setIsUpdating] = useState(false)
   const [updateSuccess, setUpdateSuccess] = useState("")
@@ -173,7 +174,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         return
       }
 
-      const data = await response.json()
+      const data = (await response.json()) as { user: SafeUser }
       if (!data.user || data.user.role !== "fundi") {
         window.location.href = "/"
         return
@@ -216,15 +217,13 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await fetch("/api/fundi/leads", { cache: "no-store" })
       if (!response.ok) return
-      const data = await response.json()
+      const data = (await response.json()) as FundiLead[]
       const deletedList =
         typeof window !== "undefined"
           ? JSON.parse(localStorage.getItem("deleted_leads") || "[]")
           : []
       setLeads(
-        (Array.isArray(data) ? data : []).filter(
-          (lead: Lead) => !deletedList.includes(lead.id)
-        )
+        data.filter((lead) => !deletedList.includes(lead.id))
       )
     } catch (error) {
       console.error("Failed to fetch matching leads:", error)
@@ -249,7 +248,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     const newVal = pendingAvailabilityValue
 
     try {
-      setProfile((prev: any) => ({ ...prev, isAvailable: newVal }))
+      setProfile((prev) => (prev ? { ...prev, isAvailable: newVal } : prev))
       setIsAvailabilityDialogOpen(false)
 
       await fetch("/api/fundi/profile", {
@@ -260,7 +259,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error("Failed to toggle availability status:", error)
       // Revert on error
-      setProfile((prev: any) => ({ ...prev, isAvailable: currentVal }))
+      setProfile((prev) => (prev ? { ...prev, isAvailable: currentVal } : prev))
     }
   }
 
@@ -290,7 +289,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         await fetchProfile()
         setTimeout(() => setUpdateSuccess(""), 4000)
       } else {
-        const data = await response.json()
+        const data = (await response.json()) as { error?: string }
         alert(data.error || "Failed to update profile details.")
       }
     } catch (error) {

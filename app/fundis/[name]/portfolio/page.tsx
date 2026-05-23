@@ -10,6 +10,14 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, Briefcase, Sparkles, ChevronLeft, ChevronRight } from "lucide-react"
 
+type PortfolioItem = {
+  id: string
+  title: string
+  category: string
+  image: string
+  description?: string
+}
+
 interface PageProps {
   params: Promise<{ name: string }>
   searchParams: Promise<{ page?: string }>
@@ -47,10 +55,10 @@ export default async function FundiPortfolioPage({ params, searchParams }: PageP
   }
 
   const profile = dbUser.fundiProfile
-  let portfolioItems: any[] = []
+  let portfolioItems: PortfolioItem[] = []
   if (typeof profile.portfolio === "string" && profile.portfolio.trim()) {
     try {
-      portfolioItems = JSON.parse(profile.portfolio)
+      portfolioItems = JSON.parse(profile.portfolio) as PortfolioItem[]
     } catch {
       portfolioItems = []
     }
@@ -106,7 +114,7 @@ export default async function FundiPortfolioPage({ params, searchParams }: PageP
         {/* Portfolio Grid */}
         {paginatedItems.length > 0 ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
-            {paginatedItems.map((item: any, index: number) => (
+            {paginatedItems.map((item, index) => (
               <Card 
                 key={item.id || index} 
                 className="group overflow-hidden border border-border/50 bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 rounded-xl flex flex-col justify-between"

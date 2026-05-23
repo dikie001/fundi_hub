@@ -3,9 +3,10 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Copy, Check, Users, DollarSign, Gift, Share2 } from "lucide-react"
+import type { SafeUser } from "@/lib/types"
 
 type ReferralsTabProps = {
-  user: any
+  user: SafeUser | null
   referralCount: number
   referralEarnings: number
   copyReferralLink: () => void

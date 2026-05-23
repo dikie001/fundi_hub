@@ -31,8 +31,17 @@ import { cn } from "@/lib/utils"
 import { User, CheckCircle2, XCircle } from "lucide-react"
 import Link from "next/link"
 import { useDashboard } from "../context/DashboardContext"
+import type { DashboardMenuItem, FundiProfileData } from "@/lib/types"
 
-export function DashboardSidebar(props: any) {
+type DashboardSidebarProps = {
+  isCollapsed: boolean
+  menuItems: DashboardMenuItem[]
+  pathname: string
+  profile: FundiProfileData | null
+  mounted: boolean
+}
+
+export function DashboardSidebar(props: DashboardSidebarProps) {
   const { isCollapsed, menuItems, pathname, profile, mounted } = props
 
   const {
@@ -78,7 +87,7 @@ export function DashboardSidebar(props: any) {
             Core Operations
           </SidebarGroupLabel>
           <SidebarMenu className="mt-2 space-y-2">
-            {menuItems.slice(0, 3).map((item: any) => {
+            {menuItems.slice(0, 3).map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href
               return (
@@ -110,7 +119,7 @@ export function DashboardSidebar(props: any) {
             Grow & Benefits
           </SidebarGroupLabel>
           <SidebarMenu className="mt-2 space-y-2">
-            {menuItems.slice(3).map((item: any) => {
+            {menuItems.slice(3).map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href
               return (

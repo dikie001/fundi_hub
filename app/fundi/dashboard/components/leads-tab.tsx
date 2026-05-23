@@ -5,25 +5,13 @@ import { AlertCircle, Calendar, Clock, MapPin, Phone, MessageSquare } from "luci
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
-
-type Lead = {
-  id: string
-  clientName: string
-  trade: string
-  title: string
-  location: string
-  budget: string
-  urgency: string
-  description: string
-  phone: string
-  createdAt: string
-}
+import type { FundiLead, FundiProfileData } from "@/lib/types"
 
 type LeadsTabProps = {
-  profile: any
-  matchingLeads: Lead[]
-  appliedLeads: Lead[]
-  archivedLeads: Lead[]
+  profile: FundiProfileData | null
+  matchingLeads: FundiLead[]
+  appliedLeads: FundiLead[]
+  archivedLeads: FundiLead[]
   handleApplyLead: (leadId: string) => void
   handleArchiveLead: (leadId: string) => void
   handleRestoreLead: (leadId: string) => void
@@ -73,7 +61,7 @@ export function LeadsTab({
           ].map(([tab, label]) => (
             <button
               key={tab}
-              onClick={() => setLeadSubTab(tab as any)}
+              onClick={() => setLeadSubTab(tab as "matching" | "applied" | "archived")}
               className={cn(
                 "cursor-pointer rounded-lg px-3.5 py-1.5 text-xs font-black uppercase transition-all hover:text-foreground",
                 leadSubTab === tab ? "bg-card text-foreground shadow-xs" : "text-muted-foreground"

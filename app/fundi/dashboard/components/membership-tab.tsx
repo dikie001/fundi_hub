@@ -3,9 +3,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Check, ShieldCheck } from "lucide-react"
+import type { FundiProfileData } from "@/lib/types"
 
 type MembershipTabProps = {
-  profile: any
+  profile: FundiProfileData | null
   openPremiumModal: (type: "verified" | "top") => void
 }
 
@@ -88,7 +89,7 @@ export function MembershipTab({ profile, openPremiumModal }: MembershipTabProps)
               </div>
               <CardFooter className="border-t border-border/25 bg-muted/10 px-6 py-4">
                 <Button
-                  onClick={() => !tier.isActive && openPremiumModal(tier.id as any)}
+                  onClick={() => !tier.isActive && openPremiumModal(tier.id as "verified" | "top")}
                   disabled={tier.isActive}
                   className={`w-full h-11 rounded-xl text-xs font-bold transition-all ${
                     tier.isActive
