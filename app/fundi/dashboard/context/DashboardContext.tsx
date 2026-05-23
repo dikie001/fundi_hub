@@ -181,7 +181,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
       }
 
       setUser(data.user)
-      setProfile(data.user.fundiProfile)
+      setProfile(data.user.fundiProfile ?? null)
       setEditName(data.user.name || "")
       setEditTitle(data.user.fundiProfile?.title || "")
       setEditTrades(
