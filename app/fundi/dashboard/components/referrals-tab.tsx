@@ -19,7 +19,10 @@ export function ReferralsTab({
   copyReferralLink,
   copiedReferral,
 }: ReferralsTabProps) {
-  const referralLink = user ? `${window.location.origin}/auth/signup?ref=${user.id}` : ""
+  const referralLink =
+    user && typeof window !== "undefined"
+      ? `${window.location.origin}/auth/signup?ref=${user.id}`
+      : ""
 
   return (
     <div className="animate-in space-y-6 duration-300 fade-in slide-in-from-bottom-2">

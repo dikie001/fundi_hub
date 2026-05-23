@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState, useEffect } from "react"
+import { Suspense, useState, useEffect } from "react"
 import { Eye, EyeOff, Loader2, Phone, Lock, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -16,7 +16,7 @@ const GOOGLE_ERRORS: Record<string, string> = {
   google_error: "An error occurred during Google sign-in.",
 }
 
-export default function LoginPage() {
+function LoginContent() {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
@@ -292,5 +292,19 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-background">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        </div>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   )
 }
