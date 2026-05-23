@@ -33,13 +33,7 @@ import Link from "next/link"
 import { useDashboard } from "../context/DashboardContext"
 
 export function DashboardSidebar(props: any) {
-  const {
-    isCollapsed,
-    menuItems,
-    pathname,
-    profile,
-    mounted,
-  } = props
+  const { isCollapsed, menuItems, pathname, profile, mounted } = props
 
   const {
     isAvailabilityDialogOpen,
@@ -238,7 +232,10 @@ export function DashboardSidebar(props: any) {
           </>
         )}
 
-        <Dialog open={isAvailabilityDialogOpen} onOpenChange={setIsAvailabilityDialogOpen}>
+        <Dialog
+          open={isAvailabilityDialogOpen}
+          onOpenChange={setIsAvailabilityDialogOpen}
+        >
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
@@ -247,21 +244,30 @@ export function DashboardSidebar(props: any) {
                 ) : (
                   <XCircle className="h-5 w-5 text-orange-500" />
                 )}
-                {pendingAvailabilityValue ? "Set as Available?" : "Set as Unavailable?"}
+                {pendingAvailabilityValue
+                  ? "Set as Available?"
+                  : "Set as Unavailable?"}
               </DialogTitle>
               <DialogDescription className="pt-2 text-sm leading-relaxed">
                 {pendingAvailabilityValue ? (
                   <>
-                    <p className="font-medium text-foreground">You will appear in client searches and receive job leads.</p>
+                    <p className="font-medium text-foreground">
+                      You will appear in client searches and receive job leads.
+                    </p>
                     <p className="mt-2 text-muted-foreground">
-                      Clients searching for fundis in your trade will be able to find and contact you.
+                      Clients searching for fundis in your trade will be able to
+                      find and contact you.
                     </p>
                   </>
                 ) : (
                   <>
-                    <p className="font-medium text-foreground">You will NOT appear in client searches and won't receive new leads.</p>
+                    <p className="font-medium text-foreground">
+                      You will NOT appear in client searches and won't receive
+                      new leads.
+                    </p>
                     <p className="mt-2 text-muted-foreground">
-                      You can turn this back on anytime to start receiving leads again.
+                      You can turn this back on anytime to start receiving leads
+                      again.
                     </p>
                   </>
                 )}
@@ -278,9 +284,15 @@ export function DashboardSidebar(props: any) {
               <Button
                 type="button"
                 onClick={confirmAvailabilityChange}
-                className={pendingAvailabilityValue ? "bg-green-600 hover:bg-green-700" : ""}
+                className={
+                  pendingAvailabilityValue
+                    ? "bg-green-600 hover:bg-green-700"
+                    : ""
+                }
               >
-                {pendingAvailabilityValue ? "Set as Available" : "Set as Unavailable"}
+                {pendingAvailabilityValue
+                  ? "Set as Available"
+                  : "Set as Unavailable"}
               </Button>
             </DialogFooter>
           </DialogContent>

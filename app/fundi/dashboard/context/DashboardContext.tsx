@@ -254,6 +254,8 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isAvailable: newVal }),
+      })
+    } catch (error) {
       console.error("Failed to toggle availability status:", error)
       // Revert on error
       setProfile((prev: any) => ({ ...prev, isAvailable: currentVal }))
