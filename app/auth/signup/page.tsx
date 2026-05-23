@@ -990,11 +990,15 @@ export default function SignupPage() {
 
               {/* Success */}
               {registrationSuccess && (
-                <div className="flex animate-in items-center gap-2 rounded-lg border border-green-500/20 bg-green-500/10 px-3.5 py-2.5 text-xs text-green-600 dark:text-green-400 duration-200 fade-in slide-in-from-top-1">
+                <div className="flex animate-in items-center gap-2 rounded-lg border border-green-500/20 bg-green-500/10 px-3.5 py-2.5 text-xs text-green-600 duration-200 fade-in slide-in-from-top-1 dark:text-green-400">
                   <CheckCircle2 className="h-5 w-5 shrink-0" />
                   <div className="flex-1">
-                    <p className="font-semibold">Account created successfully!</p>
-                    <p className="text-[10px] opacity-80">Redirecting to login...</p>
+                    <p className="font-semibold">
+                      Account created successfully!
+                    </p>
+                    <p className="text-[10px] opacity-80">
+                      Redirecting to login...
+                    </p>
                   </div>
                 </div>
               )}
