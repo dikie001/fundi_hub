@@ -17,7 +17,6 @@ export function FundiLoader() {
           {/* Animated wrench */}
           <div className="relative">
             <Wrench className="h-10 w-10 animate-pulse text-primary" />
-            <Zap className="absolute -top-1 -right-1 h-4 w-4 animate-bounce text-amber-500" />
           </div>
         </div>
       </div>
