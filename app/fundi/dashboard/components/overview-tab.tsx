@@ -37,6 +37,10 @@ export function OverviewTab(props: any) {
     copyReferralLink,
     copiedReferral,
   } = props
+  const referralLink =
+    user && typeof window !== "undefined"
+      ? `${window.location.origin}/auth/signup?ref=${user.id}`
+      : ""
 
   return (
     <div className="animate-in space-y-6 duration-300 fade-in slide-in-from-bottom-2">
@@ -231,11 +235,7 @@ export function OverviewTab(props: any) {
                 <input
                   type="text"
                   readOnly
-                  value={
-                    user
-                      ? `${window.location.origin}/auth/signup?ref=${user.id}`
-                      : ""
-                  }
+                  value={referralLink}
                   className="min-w-0 flex-1 rounded-lg border border-border/40 bg-muted/60 p-2.5 font-mono text-xs text-muted-foreground outline-hidden select-all"
                 />
                 <Button
