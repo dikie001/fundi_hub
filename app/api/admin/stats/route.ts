@@ -113,7 +113,7 @@ export async function GET() {
         b &&
         (row.role === "client" || row.role === "fundi" || row.role === "admin")
       ) {
-        b[row.role] += 1
+        b[row.role as "client" | "fundi" | "admin"] += 1
       }
     }
     const signupsTrend = Object.values(buckets)

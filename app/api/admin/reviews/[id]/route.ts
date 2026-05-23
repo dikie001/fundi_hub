@@ -24,9 +24,15 @@ export async function DELETE(
     const reviews = await db.review.findMany({
       where: { fundiProfileId: fundiId },
     })
+    type ReviewRow = Awaited<ReturnType<typeof db.review.findMany>>[number]
     const count = reviews.length
     const avg =
-      count > 0 ? reviews.reduce((s, r) => s + r.rating, 0) / count : 5.0
+      count > 0
+        ? reviews.reduce(
+            (sum: number, review: ReviewRow) => sum + review.rating,
+            0
+          ) / count
+        : 5.0
 
     await db.fundiProfile.update({
       where: { id: fundiId },

@@ -4,7 +4,7 @@ import { Shield, Crown, Sparkles } from "lucide-react"
 
 export function AdminLoader() {
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-background via-background to-purple-500/5">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-linear-to-br from-background via-background to-purple-500/5">
       <div className="relative flex items-center justify-center">
         {/* Rotating ring */}
         <div className="absolute h-32 w-32 animate-spin rounded-full border-4 border-purple-500/20 border-t-purple-500"></div>

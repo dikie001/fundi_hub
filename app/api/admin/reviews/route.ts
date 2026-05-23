@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import { Prisma } from "@prisma/client"
 import { db } from "@/lib/db"
 import { requireAdmin } from "@/lib/admin-auth"
 
@@ -11,8 +10,8 @@ export async function GET(request: Request) {
   try {
     const url = new URL(request.url)
     const q = url.searchParams.get("q")
-    const searchMode: Prisma.QueryMode = "insensitive"
-    const where: Prisma.ReviewWhereInput | undefined = q
+    const searchMode = "insensitive" as const
+    const where = q
       ? {
           OR: [
             { comment: { contains: q, mode: searchMode } },
