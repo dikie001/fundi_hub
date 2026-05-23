@@ -324,8 +324,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
                     </span>
                     <p className="text-sm font-bold text-foreground">
                       {fundiData.yearsExperience}{" "}
-                      {fundiData.yearsExperience === "1" ||
-                      fundiData.yearsExperience === 1
+                      {fundiData.yearsExperience.trim() === "1"
                         ? "year"
                         : "years"}
                     </p>
