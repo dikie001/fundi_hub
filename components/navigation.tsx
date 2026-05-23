@@ -37,7 +37,7 @@ export function Navigation() {
           <div className="flex items-center gap-3">
             <Link href="/#home" className="flex items-center gap-3">
               <img
-                src="/fundi_hub_logo.jpeg"
+                src="/fundi_hub_logo.jpg"
                 alt="FundiHub"
                 className="h-10 w-10 rounded-lg object-cover"
               />

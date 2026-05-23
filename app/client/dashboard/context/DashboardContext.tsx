@@ -65,7 +65,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean)
 
-  // Match fundis that provide any of the requested services (union),
+  // Match fundis that provide one or more requested services (union),
   // and sort by how many requested services they match (relevance).
   const matchedFundis = (() => {
     if (clientCats.length === 0) return []

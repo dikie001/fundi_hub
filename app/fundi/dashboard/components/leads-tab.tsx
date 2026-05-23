@@ -243,9 +243,9 @@ export function LeadsTab({
                 {leadSubTab === "matching" &&
                   `We match incoming projects based on your skill category (${profile?.trade || "General"}). Once a client submits a request, it will appear here.`}
                 {leadSubTab === "applied" &&
-                  "Any leads you apply for will be listed here with options to call or chat with them."}
+                  "Applied leads you use will be listed here with options to call or chat with them."}
                 {leadSubTab === "archived" &&
-                  "Archived leads are kept here. You can restore them at any time or remove them permanently."}
+                  "Archived leads are kept here. You can restore them later or remove them permanently."}
               </p>
             </Card>
           </div>

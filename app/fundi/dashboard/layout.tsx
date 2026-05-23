@@ -116,7 +116,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
           <UserMenu
             name={user?.name}
             phone={user?.phone}
-            image={profile?.image}
+            image={profile?.image ?? undefined}
             role="fundi"
             onLogout={handleLogout}
             variant="topbar"

@@ -48,14 +48,14 @@ export function ClientDashboardSidebar({
       <SidebarHeader className="flex h-16 flex-row items-center border-b border-border/25 px-4">
         {isCollapsed ? (
           <img
-            src="/fundi_hub_logo.jpeg"
+            src="/fundi_hub_logo.jpg"
             alt="FundiHub"
             className="mx-auto h-8 w-8 rounded-lg object-cover"
           />
         ) : (
           <div className="flex items-center gap-2">
             <img
-              src="/fundi_hub_logo.jpeg"
+              src="/fundi_hub_logo.jpg"
               alt="FundiHub"
               className="h-8 w-8 rounded-lg object-cover"
             />
