@@ -42,7 +42,7 @@ export function Navigation() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link href="/#home" className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-3">
               <img
                 src="/fundi_hub_logo.jpg"
                 alt="FundiHub"
@@ -64,30 +64,30 @@ export function Navigation() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden items-center gap-8 md:flex">
+          <div className="hidden items-center gap-6 md:flex">
             <Link
-              href="/#home"
+              href="/"
               className="text-sm font-medium transition-colors hover:text-primary"
             >
               Home
             </Link>
             <Link
-              href="/#categories"
+              href="/categories"
               className="text-sm font-medium transition-colors hover:text-primary"
             >
-              Search
+              Categories
             </Link>
             <Link
-              href="/#refer-earn"
-              className="text-sm font-medium transition-colors hover:text-primary"
-            >
-              Refer & Earn
-            </Link>
-            <Link
-              href="/#for-fundis"
+              href="/for-fundis"
               className="text-sm font-medium transition-colors hover:text-primary"
             >
               For Fundis
+            </Link>
+            <Link
+              href="/refer-earn"
+              className="text-sm font-medium transition-colors hover:text-primary"
+            >
+              Refer & Earn
             </Link>
             <div className="flex items-center gap-3 border-l border-border pl-8">
               {authUser ? (
@@ -135,34 +135,51 @@ export function Navigation() {
                 </SheetTitle>
               </SheetHeader>
 
-              <div className="space-y-2 px-4 py-4">
+              <div className="space-y-1 px-4 py-4">
                 <Link
-                  href="/#home"
+                  href="/"
                   onClick={() => setIsOpen(false)}
                   className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
                 >
                   Home
                 </Link>
                 <Link
-                  href="/#categories"
+                  href="/categories"
                   onClick={() => setIsOpen(false)}
                   className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
                 >
-                  Search
+                  Browse Categories
                 </Link>
                 <Link
-                  href="/#refer-earn"
+                  href="/for-fundis"
+                  onClick={() => setIsOpen(false)}
+                  className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
+                >
+                  For Fundis
+                </Link>
+                <Link
+                  href="/refer-earn"
                   onClick={() => setIsOpen(false)}
                   className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
                 >
                   Refer & Earn
                 </Link>
+                
+                <div className="my-2 border-t border-border"></div>
+                
                 <Link
-                  href="/#for-fundis"
+                  href="/privacy"
                   onClick={() => setIsOpen(false)}
                   className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
                 >
-                  For Fundis
+                  Privacy Policy
+                </Link>
+                <Link
+                  href="/terms"
+                  onClick={() => setIsOpen(false)}
+                  className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
+                >
+                  Terms of Service
                 </Link>
 
                 <div className="space-y-2 border-t border-border pt-3">

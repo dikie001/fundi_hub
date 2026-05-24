@@ -6,24 +6,8 @@ import { FundiCard } from "@/components/fundi-card"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { Fundi } from "@/lib/types"
-import {
-  TrendingUp,
-  MapPin,
-  Clock,
-  BarChart3,
-  Heart,
-  Search,
-  Sparkles,
-  Star,
-} from "lucide-react"
+import { Search, ChevronLeft, ChevronRight, Mail, Phone } from "lucide-react"
 import Link from "next/link"
 
 export default function Home() {
@@ -31,6 +15,8 @@ export default function Home() {
   const [isLoadingFundis, setIsLoadingFundis] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [checkingSession, setCheckingSession] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 12
 
   // Auto-redirect logged-in users to their dashboard
   useEffect(() => {
@@ -90,8 +76,8 @@ export default function Home() {
     }
   }, [])
 
-  const renderFundiSkeletons = () =>
-    Array.from({ length: 3 }).map((_, index) => (
+  const renderFundiSkeletons = (count = 12) =>
+    Array.from({ length: count }).map((_, index) => (
       <div
         key={index}
         className="overflow-hidden rounded-2xl border border-border/60 bg-card/70 p-5"
@@ -121,15 +107,9 @@ export default function Home() {
       </div>
     ))
 
-  const featuredFundis = fundis.filter((f) => f.isPremium).slice(0, 3)
-  const topRatedFundis = [...fundis]
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 3)
-  const nearbyFundis = fundis.filter((f) => f.isNearby).slice(0, 3)
-
   const filteredFundis = fundis.filter((f) => {
     const query = searchQuery.trim().toLowerCase()
-    if (query === "") return false
+    if (query === "") return true // Show all fundis when not searching
 
     return (
       f.name.toLowerCase().includes(query) ||
@@ -140,6 +120,17 @@ export default function Home() {
       (f.skills && f.skills.toLowerCase().includes(query))
     )
   })
+
+  // Pagination
+  const totalPages = Math.ceil(filteredFundis.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const currentFundis = filteredFundis.slice(startIndex, endIndex)
+
+  // Reset page when search changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchQuery])
 
   const hasSearch = searchQuery.trim() !== ""
 
@@ -155,10 +146,10 @@ export default function Home() {
     <div className="flex min-h-screen flex-col">
       <Navigation />
 
-      {/* Hero Section with Integrated Search */}
+      {/* Hero Section with Search */}
       <section
         id="home"
-        className="relative scroll-mt-24 overflow-hidden bg-linear-to-b from-primary/10 to-transparent px-4 pt-20 pb-8 sm:px-6 lg:px-8"
+        className="relative scroll-mt-24 overflow-hidden bg-linear-to-b from-primary/5 to-transparent px-4 pt-16 pb-6 sm:px-6 lg:px-8"
       >
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
@@ -168,7 +159,7 @@ export default function Home() {
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
               Kenya’s trusted platform for finding skilled fundis. Verified
               professionals.
-            </p> 
+            </p>
 
             {/* Integrated Search Bar */}
             <div
@@ -205,331 +196,259 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Dynamic Search Results Section */}
-      {hasSearch && (
-        <section className="animate-in border-b border-border bg-muted/10 px-4 pt-8 pb-16 duration-300 fade-in slide-in-from-top-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl space-y-6">
-            <div className="flex items-center justify-between border-b border-border/40 pb-4">
-              <h3 className="text-lg font-bold text-foreground">
-                Search Results for &quot;{searchQuery}&quot;
-              </h3>
-              <Badge
-                variant="outline"
-                className="border-primary/30 bg-primary/10 px-3 py-1 font-bold text-primary"
-              >
-                {filteredFundis.length} matching{" "}
-                {filteredFundis.length === 1 ? "expert" : "experts"}
-              </Badge>
-            </div>
-
-            {filteredFundis.length > 0 ? (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {filteredFundis.map((fundi) => (
-                  <FundiCard key={fundi.id} fundi={fundi} />
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-card py-20 text-center">
-                <p className="text-lg font-extrabold text-muted-foreground">
-                  No matching fundis found
-                </p>
-                <p className="mt-1.5 text-xs text-muted-foreground/60">
-                  Try searching for other trades, skills, or locations (e.g.
-                  Plumbers, Mombasa)
-                </p>
+      {/* Main Content - All Fundis with Pagination */}
+      <section className="flex-1 px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          {/* Results Header */}
+          <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="text-xl font-semibold">
+              {hasSearch ? (
+                <>
+                  Search Results
+                  <span className="ml-2 text-sm font-normal text-muted-foreground">
+                    ({filteredFundis.length} found)
+                  </span>
+                </>
+              ) : (
+                <>
+                  All Fundis
+                  <Badge variant="secondary" className="ml-2">
+                    {filteredFundis.length} available
+                  </Badge>
+                </>
+              )}
+            </h2>
+            {filteredFundis.length > itemsPerPage && (
+              <div className="text-sm text-muted-foreground">
+                Page {currentPage} of {totalPages}
               </div>
             )}
           </div>
-        </section>
-      )}
 
-      {/* Featured Fundis - Hidden when searching */}
-      {!hasSearch && (isLoadingFundis || featuredFundis.length > 0) && (
-        <section
-          id="featured"
-          className="scroll-mt-24 border-b border-border px-4 pt-8 pb-16 sm:px-6 lg:px-8"
-        >
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-8 flex items-center justify-between">
-              <div>
-                <h2 className="text-3xl font-bold">Featured Fundis</h2>
-                <p className="mt-2 text-muted-foreground">
-                  Top & Verified premium experts
-                </p>
+          {/* Fundis Grid */}
+          {isLoadingFundis ? (
+            <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {renderFundiSkeletons()}
+            </div>
+          ) : currentFundis.length > 0 ? (
+            <>
+              <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {currentFundis.map((fundi) => (
+                  <FundiCard key={fundi.id} fundi={fundi} />
+                ))}
               </div>
-            </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {isLoadingFundis
-                ? renderFundiSkeletons()
-                : featuredFundis.map((fundi) => (
-                    <FundiCard key={fundi.id} fundi={fundi} />
-                  ))}
-            </div>
-          </div>
-        </section>
-      )}
 
-      {/* Top Rated Experts - Hidden when searching */}
-      {!hasSearch && (isLoadingFundis || topRatedFundis.length > 0) && (
-        <section className="border-b border-border px-4 pt-8 pb-16 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold">Top Rated Experts</h2>
-              <p className="mt-2 text-muted-foreground">
-                Highest rated fundis on the platform
-              </p>
-            </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {isLoadingFundis
-                ? renderFundiSkeletons()
-                : topRatedFundis.map((fundi) => (
-                    <FundiCard key={fundi.id} fundi={fundi} />
-                  ))}
-            </div>
-          </div>
-        </section>
-      )}
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="w-full sm:w-auto"
+                  >
+                    <ChevronLeft className="mr-1 h-4 w-4" />
+                    Previous
+                  </Button>
 
-      {/* Nearby Fundis - Hidden when searching */}
-      {!hasSearch && (isLoadingFundis || nearbyFundis.length > 0) && (
-        <section className="border-b border-border px-4 pt-8 pb-16 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-8 flex items-center justify-between">
-              <div>
-                <h2 className="flex items-center gap-2 text-3xl font-bold">
-                  <MapPin className="text-primary" />
-                  Nearby Fundis
-                </h2>
-                <p className="mt-2 text-muted-foreground">
-                  Experts in your area
-                </p>
-              </div>
-            </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {isLoadingFundis
-                ? renderFundiSkeletons()
-                : nearbyFundis.map((fundi) => (
-                    <FundiCard key={fundi.id} fundi={fundi} />
-                  ))}
-            </div>
-          </div>
-        </section>
-      )}
+                  {/* Page Numbers */}
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      let pageNum
+                      if (totalPages <= 5) {
+                        pageNum = i + 1
+                      } else if (currentPage <= 3) {
+                        pageNum = i + 1
+                      } else if (currentPage >= totalPages - 2) {
+                        pageNum = totalPages - 4 + i
+                      } else {
+                        pageNum = currentPage - 2 + i
+                      }
+                      return (
+                        <Button
+                          key={pageNum}
+                          variant={
+                            currentPage === pageNum ? "default" : "outline"
+                          }
+                          size="sm"
+                          onClick={() => setCurrentPage(pageNum)}
+                          className="h-8 w-8 p-0 sm:h-9 sm:w-9"
+                        >
+                          {pageNum}
+                        </Button>
+                      )
+                    })}
+                  </div>
 
-      {/* Refer & Earn Banner */}
-      <section
-        id="refer-earn"
-        className="scroll-mt-24 border-b border-border px-4 py-16 sm:px-6 lg:px-8"
-      >
-        <div className="mx-auto max-w-7xl">
-          <Card className="border-2 border-primary/20 bg-linear-to-r from-primary/5 to-primary/10">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div>
-                  <CardTitle className="flex items-center gap-2 text-3xl">
-                    <TrendingUp className="text-primary" />
-                    Refer & Earn
-                  </CardTitle>
-                  <CardDescription className="mt-2 text-base">
-                    Earn Ksh 100 for each fundi you refer to FundiHub
-                  </CardDescription>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(totalPages, p + 1))
+                    }
+                    disabled={currentPage === totalPages}
+                    className="w-full sm:w-auto"
+                  >
+                    Next
+                    <ChevronRight className="ml-1 h-4 w-4" />
+                  </Button>
                 </div>
+              )}
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-card/50 py-16 text-center">
+              <p className="text-lg font-medium text-muted-foreground">
+                {hasSearch ? "No matching fundis found" : "No fundis available"}
+              </p>
+              <p className="mt-2 text-sm text-muted-foreground/70">
+                {hasSearch
+                  ? "Try different search terms"
+                  : "Check back later for new professionals"}
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Compact Footer - Mobile Optimized */}
+      <footer className="mt-auto border-t border-border bg-muted/30">
+        {/* Desktop Footer */}
+        <div className="hidden px-4 py-8 sm:block sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid gap-6 md:grid-cols-4">
+              <div>
+                <h3 className="font-semibold">FundiHub</h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Kenya's trusted skilled worker platform
+                </p>
               </div>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-6 text-muted-foreground">
-                Know skilled workers? Refer them to FundiHub and earn
-                commissions. It&apos;s easy, rewarding, and helps grow the
-                platform.
-              </p>
-              <Button asChild size="lg">
-                <Link href="/refer-earn">Start Referring Now</Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* Why Choose FundiHub */}
-      <section className="border-b border-border px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <h2 className="mb-12 text-center text-3xl font-bold">
-            Why Choose FundiHub?
-          </h2>
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <Card>
-              <CardHeader>
-                <Heart className="mb-2 h-8 w-8 text-primary" />
-                <CardTitle>Trusted Experts</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Verified profiles and ratings help you find the right expert
-                  for your needs.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <Clock className="mb-2 h-8 w-8 text-primary" />
-                <CardTitle>Direct Communication</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Chat via WhatsApp or call directly. No middleman, just fast
-                  connection.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <BarChart3 className="mb-2 h-8 w-8 text-primary" />
-                <CardTitle>Transparent Pricing</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Simple, affordable registration and monthly fees. No hidden
-                  charges.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Membership Plans */}
-      <section
-        id="for-fundis"
-        className="scroll-mt-24 border-b border-border px-4 py-16 sm:px-6 lg:px-8"
-      >
-        <div className="mx-auto max-w-7xl">
-          <h2 className="mb-4 text-center text-3xl font-bold">
-            Fundi Membership Plans
-          </h2>
-          <p className="mb-12 text-center text-muted-foreground">
-            Flexible pricing for every fundi
-          </p>
-          <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>One-Time Registration</CardTitle>
-                <CardDescription className="text-2xl font-bold text-primary">
-                  Ksh 200
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Account creation
+              <div>
+                <h4 className="text-sm font-medium">Quick Links</h4>
+                <ul className="mt-3 space-y-2 text-sm">
+                  <li>
+                    <Link
+                      href="/refer-earn"
+                      className="text-muted-foreground hover:text-primary"
+                    >
+                      Refer & Earn
+                    </Link>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Profile setup
+                  <li>
+                    <Link
+                      href="/for-fundis"
+                      className="text-muted-foreground hover:text-primary"
+                    >
+                      For Fundis
+                    </Link>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Listing activation
+                  <li>
+                    <Link
+                      href="/categories"
+                      className="text-muted-foreground hover:text-primary"
+                    >
+                      Categories
+                    </Link>
                   </li>
                 </ul>
-                <Button className="w-full">Get Started</Button>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Monthly Subscription</CardTitle>
-                <CardDescription className="text-2xl font-bold text-primary">
-                  Ksh 500/month
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Keep profile active
+              </div>
+              <div>
+                <h4 className="text-sm font-medium">Legal</h4>
+                <ul className="mt-3 space-y-2 text-sm">
+                  <li>
+                    <Link
+                      href="/privacy"
+                      className="text-muted-foreground hover:text-primary"
+                    >
+                      Privacy Policy
+                    </Link>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Remain searchable
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Get job leads
+                  <li>
+                    <Link
+                      href="/terms"
+                      className="text-muted-foreground hover:text-primary"
+                    >
+                      Terms of Service
+                    </Link>
                   </li>
                 </ul>
-                <Button className="w-full">Subscribe Now</Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-border bg-muted/50 px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-8 md:grid-cols-4">
-            <div>
-              <h3 className="text-lg font-bold">FundiHub</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Connecting skilled experts with clients across Africa.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Quick Links</h4>
-              <ul className="mt-4 space-y-2 text-sm">
-                <li>
-                  <Link href="#categories" className="hover:text-primary">
-                    Search Experts
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#refer-earn" className="hover:text-primary">
-                    Refer & Earn
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#for-fundis" className="hover:text-primary">
-                    For Fundis
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold">Support</h4>
-              <ul className="mt-4 space-y-2 text-sm">
-                <li>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium">Contact</h4>
+                <div className="mt-3 space-y-2 text-sm text-muted-foreground">
                   <a
                     href="mailto:calvincewise@gmail.com"
-                    className="hover:text-primary"
+                    className="flex items-center gap-2 hover:text-primary"
                   >
+                    <Mail className="h-3.5 w-3.5" />
                     Email Us
                   </a>
-                </li>
-                <li>
-                  <a href="tel:+254799112919" className="hover:text-primary">
-                    Call: +254799112919
+                  <a
+                    href="tel:+254799112919"
+                    className="flex items-center gap-2 hover:text-primary"
+                  >
+                    <Phone className="h-3.5 w-3.5" />
+                    +254 799 112 919
                   </a>
-                </li>
-              </ul>
+                </div>
+              </div>
             </div>
-            <div>
-              <h4 className="font-semibold">Contact</h4>
-              <p className="mt-4 text-sm text-muted-foreground">
-                <strong>Founder:</strong> Calvince Ouma
-              </p>
-              <p className="mt-2 text-sm text-muted-foreground">
-                <strong>Email:</strong> calvincewise@gmail.com
-              </p>
+            <div className="mt-6 border-t border-border pt-6 text-center text-sm text-muted-foreground">
+              © 2026 FundiHub. All rights reserved.
             </div>
           </div>
-          <div className="mt-8 border-t border-border pt-8 text-center text-sm text-muted-foreground">
-            <p>
-              &copy; 2026 FundiHub. All rights reserved. Africa&apos;s trusted
-              skilled worker platform.
-            </p>
+        </div>
+
+        {/* Mobile Footer - Compact */}
+        <div className="px-4 py-4 sm:hidden">
+          <div className="flex flex-col gap-3">
+            {/* Quick Links Row */}
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+              <Link
+                href="/refer-earn"
+                className="text-muted-foreground hover:text-primary"
+              >
+                Refer & Earn
+              </Link>
+              <Link
+                href="/for-fundis"
+                className="text-muted-foreground hover:text-primary"
+              >
+                For Fundis
+              </Link>
+              <Link
+                href="/privacy"
+                className="text-muted-foreground hover:text-primary"
+              >
+                Privacy
+              </Link>
+              <Link
+                href="/terms"
+                className="text-muted-foreground hover:text-primary"
+              >
+                Terms
+              </Link>
+            </div>
+
+            {/* Contact Row */}
+            <div className="flex gap-4 text-xs text-muted-foreground">
+              <a href="tel:+254799112919" className="flex items-center gap-1">
+                <Phone className="h-3 w-3" />
+                Call
+              </a>
+              <a
+                href="mailto:calvincewise@gmail.com"
+                className="flex items-center gap-1"
+              >
+                <Mail className="h-3 w-3" />
+                Email
+              </a>
+            </div>
+
+            {/* Copyright */}
+            <div className="text-center text-xs text-muted-foreground/70">
+              © 2026 FundiHub
+            </div>
           </div>
         </div>
       </footer>
