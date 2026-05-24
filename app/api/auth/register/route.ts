@@ -80,7 +80,7 @@ export async function POST(request: Request) {
                   serviceArea: serviceArea || "",
                   nationalId: nationalId || "",
                   preferredContact: preferredContact || "whatsapp",
-                  premiumLevel: "none",
+                  isPremium: false,
                   ...(googlePicture ? { image: googlePicture } : {}),
                 },
               },

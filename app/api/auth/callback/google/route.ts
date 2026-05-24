@@ -124,7 +124,7 @@ export async function GET(request: Request) {
                     nationalId: signupState.nationalId || "",
                     preferredContact:
                       (signupState.preferredContact as string) || "whatsapp",
-                    premiumLevel: "none",
+                    isPremium: false,
                     image: googleUser.picture || null,
                   },
                 },

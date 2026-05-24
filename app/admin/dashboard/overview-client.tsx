@@ -460,7 +460,9 @@ export function AdminOverview() {
                     {f.rating.toFixed(1)} ★ ({f.reviews})
                   </td>
                   <td className="p-3">{f.jobsCompleted}</td>
-                  <td className="p-3">{f.isPremium ? "Premium" : "Standard"}</td>
+                  <td className="p-3">
+                    {f.isPremium ? "Premium" : "Standard"}
+                  </td>
                 </tr>
               ))}
               {stats.topFundis.length === 0 && (

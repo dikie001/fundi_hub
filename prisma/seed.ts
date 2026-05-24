@@ -26,7 +26,7 @@ const fundis = [
     reviews: 287,
     image: "",
     phone: "+254712345678",
-    premiumLevel: "top" as const,
+    isPremium: true,
     isAvailable: true,
     isNearby: true,
     description:
@@ -42,7 +42,7 @@ const fundis = [
     reviews: 234,
     image: "",
     phone: "+254723456789",
-    premiumLevel: "verified" as const,
+    isPremium: true,
     isAvailable: true,
     isNearby: false,
     description:
@@ -58,7 +58,7 @@ const fundis = [
     reviews: 156,
     image: "",
     phone: "+254734567890",
-    premiumLevel: "none" as const,
+    isPremium: false,
     isAvailable: false,
     isNearby: true,
     description:
@@ -74,7 +74,7 @@ const fundis = [
     reviews: 198,
     image: "",
     phone: "+254745678901",
-    premiumLevel: "top" as const,
+    isPremium: true,
     isAvailable: false,
     isNearby: false,
     description:
@@ -90,7 +90,7 @@ const fundis = [
     reviews: 167,
     image: "",
     phone: "+254756789012",
-    premiumLevel: "none" as const,
+    isPremium: false,
     isAvailable: false,
     isNearby: true,
     description:
@@ -106,7 +106,7 @@ const fundis = [
     reviews: 312,
     image: "",
     phone: "+254767890123",
-    premiumLevel: "verified" as const,
+    isPremium: true,
     isAvailable: true,
     isNearby: false,
     description:
@@ -159,7 +159,7 @@ async function main() {
             serviceArea: fundi.serviceArea,
             nationalId: "12345678",
             preferredContact: "whatsapp",
-            premiumLevel: fundi.premiumLevel,
+            isPremium: fundi.isPremium,
             isAvailable: fundi.isAvailable,
             isNearby: fundi.isNearby,
             isRegistrationPaid: true,
