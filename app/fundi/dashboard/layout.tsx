@@ -75,7 +75,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       setPaymentSuccessState({
         title: params.get("paymentHeading") || "Payment successful",
         description:
-          "Your premium upgrade was verified and your dashboard has been updated.",
+          "Your gold verified badge is now active! You'll appear 5x higher in search results and receive priority leads from clients in your area.",
         amountLabel: params.get("paymentAmount") || "KSh 500",
         reference: params.get("paymentReference"),
       })

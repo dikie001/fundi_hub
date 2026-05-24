@@ -110,7 +110,7 @@ export async function GET(request: NextRequest) {
         purpose: "premium",
         reference,
         amount: "KSh 500",
-        heading: "Premium badge activated",
+        heading: "You're now a Premium Fundi!",
       })
 
       return NextResponse.redirect(redirectUrl)
@@ -137,7 +137,7 @@ export async function GET(request: NextRequest) {
         purpose: "registration",
         reference,
         amount: "KSh 200",
-        heading: "Profile activation complete",
+        heading: "Welcome to FundiHub!",
       })
       redirectUrl.searchParams.set(
         "continueTo",

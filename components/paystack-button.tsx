@@ -17,8 +17,9 @@ export function PaystackButton({
   disabled = false,
   children,
   className,
+  skipConfirmation,
   ...props
-}: PaystackButtonProps) {
+}: PaystackButtonProps & { skipConfirmation?: boolean }) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -38,6 +39,7 @@ export function PaystackButton({
       {...props}
       disabled={disabled}
       className={className}
+      skipConfirmation={skipConfirmation}
     >
       {children}
     </PaystackButtonClient>

@@ -157,9 +157,9 @@ export default function SignupPage() {
       params.get("paymentPurpose") === "registration"
     ) {
       setPaymentSuccessState({
-        title: params.get("paymentHeading") || "Profile activation complete",
+        title: params.get("paymentHeading") || "Welcome to FundiHub!",
         description:
-          "Your payment was verified and your fundi profile is now active.",
+          "Your profile is now live! Thousands of clients can find you, send you job leads, and connect with you directly via WhatsApp or phone.",
         amountLabel: params.get("paymentAmount") || "KSh 200",
         reference: params.get("paymentReference"),
       })
