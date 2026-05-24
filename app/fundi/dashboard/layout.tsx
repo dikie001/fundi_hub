@@ -221,80 +221,40 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
 
       <Dialog open={mounted && !!profile && !profile.isRegistrationPaid} onOpenChange={() => {}}>
         <DialogContent
-          className="w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-xl select-none"
+          className="w-full max-w-[340px] rounded-2xl border border-border bg-card p-6 shadow-xl select-none"
           showCloseButton={false}
           onPointerDownOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
         >
-          <DialogHeader className="space-y-1.5 text-left">
+          <DialogHeader className="space-y-1 text-left">
             <DialogTitle className="flex items-center gap-1.5 text-sm font-bold text-foreground">
-              <ShieldCheck className="h-4.5 w-4.5 text-primary" /> Profile Verification & Activation
+              <ShieldCheck className="h-4.5 w-4.5 text-primary" /> Activate Profile
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
-              Verify your trade profile to connect with clients and start receiving direct job leads.
+              A one-time verification fee is required to activate your partner profile.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="my-3 space-y-4 border-t border-b border-border/30 py-4">
-            {/* Price Box */}
-            <div className="relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-b from-primary/10 via-primary/5 to-transparent p-4 text-center">
-              <span className="text-[10px] font-black tracking-wider text-primary uppercase">
-                One-Time Payment
-              </span>
-              <div className="mt-1 flex items-baseline justify-center gap-1">
-                <span className="text-3.5xl font-extrabold text-foreground tracking-tight">KSh 200</span>
-                <span className="text-xs font-semibold text-muted-foreground">/once</span>
-              </div>
-              <p className="mt-2 text-[11px] text-muted-foreground leading-relaxed">
-                Covers setup costs, credentials check, and profile prioritization.
-              </p>
-            </div>
-
-            {/* Feature List */}
-            <div className="space-y-2.5 px-1 text-xs">
-              <div className="flex items-start gap-2.5">
-                <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Check className="h-3 w-3 stroke-[3]" />
-                </div>
-                <span className="text-muted-foreground">
-                  <strong className="font-semibold text-foreground">Background check</strong> and profile verification
-                </span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Check className="h-3 w-3 stroke-[3]" />
-                </div>
-                <span className="text-muted-foreground">
-                  <strong className="font-semibold text-foreground">Priority listing</strong> on search & discovery filters
-                </span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Check className="h-3 w-3 stroke-[3]" />
-                </div>
-                <span className="text-muted-foreground">
-                  <strong className="font-semibold text-foreground">Unlimited matching</strong> with direct client job leads
-                </span>
-              </div>
-            </div>
-
-            {registrationSuccess ? (
-              <div className="flex items-center gap-2.5 rounded-xl border border-green-500/20 bg-green-500/5 px-3.5 py-2.5 text-xs text-green-600 dark:text-green-400">
-                <CheckCircle2 className="h-5 w-5 shrink-0 text-green-500" />
-                <div>
-                  <p className="font-semibold">Payment successful!</p>
-                  <p className="text-[10px] opacity-80">Activating your account...</p>
-                </div>
-              </div>
-            ) : registrationError ? (
-              <div className="flex items-center gap-2.5 rounded-xl border border-destructive/20 bg-destructive/5 px-3.5 py-2.5 text-[11px] text-destructive">
-                <ShieldCheck className="h-4.5 w-4.5 shrink-0 rotate-180 text-destructive" />
-                <span>{registrationError}</span>
-              </div>
-            ) : null}
+          <div className="my-4 flex flex-col items-center justify-center border-t border-b border-border/30 py-4 text-center">
+            <span className="text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
+              One-Time Activation Fee
+            </span>
+            <span className="mt-1 text-3xl font-extrabold text-primary tracking-tight">KSh 200</span>
           </div>
 
-          <DialogFooter className="flex flex-col gap-2.5">
+          {registrationSuccess ? (
+            <div className="mb-4 flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/5 p-3 text-xs text-green-600 dark:text-green-400">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-green-500" />
+              <span className="font-semibold">Payment successful! Activating...</span>
+            </div>
+          ) : registrationError ? (
+            <div className="mb-4 flex items-center gap-2 rounded-xl border border-destructive/20 bg-destructive/5 p-3 text-[11px] text-destructive">
+              <ShieldCheck className="h-4.5 w-4.5 shrink-0 rotate-180 text-destructive" />
+              <span>{registrationError}</span>
+            </div>
+          ) : null}
+
+          <div className="flex flex-col gap-3">
             <PaystackButton
               amount={200}
               email={user?.email || `${user?.phone.replace(/[^0-9]/g, "")}@fundihub.com`}
@@ -328,16 +288,16 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
               }}
               onClose={() => {}}
               disabled={isVerifyingRegistration || registrationSuccess}
-              className="w-full h-10 cursor-pointer rounded-xl bg-gradient-to-r from-primary to-primary/95 text-xs font-bold text-primary-foreground shadow-md shadow-primary/10 transition-all hover:opacity-95 active:scale-[0.98]"
+              className="w-full h-10 cursor-pointer rounded-xl bg-primary text-xs font-bold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 active:scale-[0.98]"
             >
               Pay KSh 200 & Activate Profile
             </PaystackButton>
             
-            <div className="flex items-center justify-center gap-1 text-[10px] text-muted-foreground/60 select-none">
-              <Lock className="h-3 w-3" />
-              <span>Secured by Paystack • No recurring charges</span>
+            <div className="flex items-center justify-center gap-1.5 text-[10px] text-muted-foreground/60 select-none">
+              <Lock className="h-3.5 w-3.5" />
+              <span>Secured by Paystack • One-time payment</span>
             </div>
-          </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
     </>
