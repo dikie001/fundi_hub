@@ -53,7 +53,6 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     matchingLeads,
     isPremiumModalOpen,
     setIsPremiumModalOpen,
-    premiumModalType,
     handleLogout,
   } = useDashboard()
 
@@ -258,7 +257,6 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
               callbackPath="/api/payments/callback"
               callbackParams={{
                 purpose: "premium",
-                premiumLevel: premiumModalType,
                 returnTo: "/fundi/dashboard",
               }}
               skipConfirmation

@@ -194,7 +194,7 @@ export function ProfileTab({
                 <h2 className="text-xl font-extrabold text-foreground">
                   {editName || user?.name || "Fundi Partner"}
                 </h2>
-                {profile?.premiumLevel !== "none" && (
+                {profile?.isPremium && (
                   <ShieldCheck className="h-4.5 w-4.5 text-blue-500" />
                 )}
               </div>

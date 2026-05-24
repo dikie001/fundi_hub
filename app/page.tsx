@@ -123,7 +123,7 @@ export default function Home() {
     ))
 
   const featuredFundis = fundis
-    .filter((f) => f.premiumLevel === "top")
+    .filter((f) => f.isPremium)
     .slice(0, 3)
   const topRatedFundis = [...fundis]
     .sort((a, b) => b.rating - a.rating)

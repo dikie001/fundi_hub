@@ -13,12 +13,6 @@ enum UserType {
   admin
 }
 
-enum PremiumLevel {
-  none
-  verified
-  top
-}
-
 enum ReferralStatus {
   pending
   registered
@@ -68,7 +62,7 @@ model FundiProfile {
   serviceArea      String
   nationalId       String?
   preferredContact String       @default("whatsapp")
-  premiumLevel     PremiumLevel @default(none)
+  isPremium        Boolean      @default(false)
   isAvailable      Boolean      @default(true)
   isNearby         Boolean      @default(false)
   isRegistrationPaid Boolean    @default(false)

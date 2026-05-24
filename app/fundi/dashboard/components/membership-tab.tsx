@@ -14,18 +14,18 @@ import type { FundiProfileData } from "@/lib/types"
 
 type MembershipTabProps = {
   profile: FundiProfileData | null
-  openPremiumModal: (type: "verified" | "top") => void
+  openPremiumModal: () => void
 }
 
 export function MembershipTab({
   profile,
   openPremiumModal,
 }: MembershipTabProps) {
-  const currentLevel = profile?.premiumLevel || "none"
+  const isPremium = profile?.isPremium ?? false
 
   const tiers = [
     {
-      id: "top",
+      id: "premium",
       title: "Premium Badge",
       price: "Ksh 500 once",
       icon: ShieldCheck,
@@ -39,12 +39,9 @@ export function MembershipTab({
         "Verified Expert credentials tick mark",
         "Enable direct call and WhatsApp buttons on your cards",
       ],
-      isActive: currentLevel === "top" || currentLevel === "verified",
-      isCurrent: currentLevel === "top" || currentLevel === "verified",
-      buttonText:
-        currentLevel === "top" || currentLevel === "verified"
-          ? "Active"
-          : "Activate Premium Badge",
+      isActive: isPremium,
+      isCurrent: isPremium,
+      buttonText: isPremium ? "Active" : "Activate Premium Badge",
     },
   ]
 
@@ -111,10 +108,7 @@ export function MembershipTab({
               </div>
               <CardFooter className="border-t border-border/25 bg-muted/10 px-6 py-4">
                 <Button
-                  onClick={() =>
-                    !tier.isActive &&
-                    openPremiumModal(tier.id as "verified" | "top")
-                  }
+                  onClick={() => !tier.isActive && openPremiumModal()}
                   disabled={tier.isActive}
                   className={`h-11 w-full rounded-xl text-xs font-bold transition-all ${
                     tier.isActive

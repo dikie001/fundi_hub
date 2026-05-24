@@ -53,8 +53,7 @@ export function FundiCard({ fundi }: FundiCardProps) {
 
   const cardId = fundi.name.trim().replace(/\s+/g, "-")
   const profileLink = `/fundis/${encodeURIComponent(cardId)}`
-  const isVerified =
-    fundi.premiumLevel === "top" || fundi.premiumLevel === "verified"
+  const isVerified = fundi.isPremium
 
   const allSkills = fundi.skills
     ? fundi.skills

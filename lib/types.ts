@@ -1,7 +1,6 @@
 import type { ComponentType } from "react"
 
 export type UserRole = "client" | "fundi" | "admin"
-export type PremiumLevel = "none" | "verified" | "top"
 export type ReferralStatus = "pending" | "registered" | "paid"
 
 export interface ClientProfileData {
@@ -52,7 +51,7 @@ export interface FundiProfileData {
   serviceArea: string
   nationalId: string | null
   preferredContact: string
-  premiumLevel: PremiumLevel
+  isPremium: boolean
   isAvailable: boolean
   isNearby: boolean
   isRegistrationPaid: boolean
@@ -119,7 +118,7 @@ export interface Fundi {
   phone: string
   whatsapp: string
   verified: boolean
-  premiumLevel: "none" | "verified" | "top"
+  isPremium: boolean
   isAvailable: boolean
   isNearby: boolean
   description: string
