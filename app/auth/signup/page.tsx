@@ -41,7 +41,6 @@ import {
 } from "@/components/ui/multi-select"
 import type { GoogleProfileData } from "@/lib/types"
 import { PaystackButton } from "@/components/paystack-button"
-import { PaymentSuccessModal } from "@/components/payment-success-modal"
 import { PaymentSuccessToast } from "@/components/payment-success-toast"
 import {
   Dialog,
@@ -1156,22 +1155,41 @@ export default function SignupPage() {
 
             <div className="mt-3 space-y-3">
               <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 px-3.5 py-2.5">
-                <span className="text-xs text-muted-foreground">Activation fee</span>
-                <span className="text-base font-bold text-foreground">KSh 200</span>
+                <span className="text-xs text-muted-foreground">
+                  Activation fee
+                </span>
+                <span className="text-base font-bold text-foreground">
+                  KSh 200
+                </span>
               </div>
 
               <div className="space-y-2 text-xs">
                 <div className="flex items-center gap-2.5">
-                  <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
-                  <span className="text-muted-foreground">Profile visible to clients</span>
+                  <Check
+                    className="h-3.5 w-3.5 shrink-0 text-primary"
+                    strokeWidth={2.5}
+                  />
+                  <span className="text-muted-foreground">
+                    Profile visible to clients
+                  </span>
                 </div>
                 <div className="flex items-center gap-2.5">
-                  <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
-                  <span className="text-muted-foreground">Receive job leads in your area</span>
+                  <Check
+                    className="h-3.5 w-3.5 shrink-0 text-primary"
+                    strokeWidth={2.5}
+                  />
+                  <span className="text-muted-foreground">
+                    Receive job leads in your area
+                  </span>
                 </div>
                 <div className="flex items-center gap-2.5">
-                  <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
-                  <span className="text-muted-foreground">Direct client connections</span>
+                  <Check
+                    className="h-3.5 w-3.5 shrink-0 text-primary"
+                    strokeWidth={2.5}
+                  />
+                  <span className="text-muted-foreground">
+                    Direct client connections
+                  </span>
                 </div>
               </div>
             </div>
@@ -1214,20 +1232,10 @@ export default function SignupPage() {
             open={showPaymentToast}
             title={paymentSuccessState.title}
             description={paymentSuccessState.description}
-            amountLabel={paymentSuccessState.amountLabel}
-            reference={paymentSuccessState.reference}
-            onDismiss={() => setShowPaymentToast(false)}
-          />
-        ) : null}
-
-        {paymentSuccessState ? (
-          <PaymentSuccessModal
-            open={showPaymentSuccessModal}
-            title={paymentSuccessState.title}
-            description={paymentSuccessState.description}
-            amountLabel={paymentSuccessState.amountLabel}
-            reference={paymentSuccessState.reference}
-            onContinue={handleContinueAfterPayment}
+            onDismiss={() => {
+              setShowPaymentToast(false)
+              handleContinueAfterPayment()
+            }}
           />
         ) : null}
       </div>

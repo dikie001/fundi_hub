@@ -32,7 +32,6 @@ import { usePathname } from "next/navigation"
 import { useRouter } from "next/navigation"
 import { UserMenu } from "@/components/user-menu"
 import { PaystackButton } from "@/components/paystack-button"
-import { PaymentSuccessModal } from "@/components/payment-success-modal"
 import { PaymentSuccessToast } from "@/components/payment-success-toast"
 
 type PaymentSuccessState = {
@@ -207,27 +206,49 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
 
           <div className="mt-3 space-y-3">
             <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 px-3.5 py-2.5">
-              <span className="text-xs text-muted-foreground">One-time fee</span>
-              <span className="text-base font-bold text-foreground">KSh 500</span>
+              <span className="text-xs text-muted-foreground">
+                One-time fee
+              </span>
+              <span className="text-base font-bold text-foreground">
+                KSh 500
+              </span>
             </div>
 
             <div className="space-y-2 text-xs">
               <div className="flex items-center gap-2.5">
-                <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
+                <Check
+                  className="h-3.5 w-3.5 shrink-0 text-primary"
+                  strokeWidth={2.5}
+                />
                 <span className="text-muted-foreground">
-                  <span className="font-medium text-foreground">Gold badge</span> on your profile
+                  <span className="font-medium text-foreground">
+                    Gold badge
+                  </span>{" "}
+                  on your profile
                 </span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
+                <Check
+                  className="h-3.5 w-3.5 shrink-0 text-primary"
+                  strokeWidth={2.5}
+                />
                 <span className="text-muted-foreground">
-                  <span className="font-medium text-foreground">5x search boost</span> in results
+                  <span className="font-medium text-foreground">
+                    5x search boost
+                  </span>{" "}
+                  in results
                 </span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
+                <Check
+                  className="h-3.5 w-3.5 shrink-0 text-primary"
+                  strokeWidth={2.5}
+                />
                 <span className="text-muted-foreground">
-                  <span className="font-medium text-foreground">Priority leads</span> before others
+                  <span className="font-medium text-foreground">
+                    Priority leads
+                  </span>{" "}
+                  before others
                 </span>
               </div>
             </div>
@@ -272,20 +293,10 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
           open={showPaymentToast}
           title={paymentSuccessState.title}
           description={paymentSuccessState.description}
-          amountLabel={paymentSuccessState.amountLabel}
-          reference={paymentSuccessState.reference}
-          onDismiss={() => setShowPaymentToast(false)}
-        />
-      ) : null}
-
-      {paymentSuccessState ? (
-        <PaymentSuccessModal
-          open={showPaymentSuccess}
-          title={paymentSuccessState.title}
-          description={paymentSuccessState.description}
-          amountLabel={paymentSuccessState.amountLabel}
-          reference={paymentSuccessState.reference}
-          onContinue={clearPaymentQuery}
+          onDismiss={() => {
+            setShowPaymentToast(false)
+            clearPaymentQuery()
+          }}
         />
       ) : null}
 
@@ -310,22 +321,41 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
 
           <div className="mt-3 space-y-3">
             <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 px-3.5 py-2.5">
-              <span className="text-xs text-muted-foreground">Activation fee</span>
-              <span className="text-base font-bold text-foreground">KSh 200</span>
+              <span className="text-xs text-muted-foreground">
+                Activation fee
+              </span>
+              <span className="text-base font-bold text-foreground">
+                KSh 200
+              </span>
             </div>
 
             <div className="space-y-2 text-xs">
               <div className="flex items-center gap-2.5">
-                <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
-                <span className="text-muted-foreground">Profile visible to clients</span>
+                <Check
+                  className="h-3.5 w-3.5 shrink-0 text-primary"
+                  strokeWidth={2.5}
+                />
+                <span className="text-muted-foreground">
+                  Profile visible to clients
+                </span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
-                <span className="text-muted-foreground">Receive job leads in your area</span>
+                <Check
+                  className="h-3.5 w-3.5 shrink-0 text-primary"
+                  strokeWidth={2.5}
+                />
+                <span className="text-muted-foreground">
+                  Receive job leads in your area
+                </span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
-                <span className="text-muted-foreground">Direct client connections</span>
+                <Check
+                  className="h-3.5 w-3.5 shrink-0 text-primary"
+                  strokeWidth={2.5}
+                />
+                <span className="text-muted-foreground">
+                  Direct client connections
+                </span>
               </div>
             </div>
           </div>

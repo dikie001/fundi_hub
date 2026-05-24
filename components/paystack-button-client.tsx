@@ -148,7 +148,10 @@ export function PaystackButtonClient({
             <div className="space-y-1.5">
               {valuePoints.map((point, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
+                  <Check
+                    className="h-3.5 w-3.5 shrink-0 text-primary"
+                    strokeWidth={2.5}
+                  />
                   <span className="text-xs text-muted-foreground">{point}</span>
                 </div>
               ))}

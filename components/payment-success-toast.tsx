@@ -6,8 +6,6 @@ type PaymentSuccessToastProps = {
   open: boolean
   title: string
   description: string
-  amountLabel: string
-  reference?: string | null
   onDismiss: () => void
 }
 
@@ -15,7 +13,6 @@ export function PaymentSuccessToast({
   open,
   title,
   description,
-  amountLabel,
   onDismiss,
 }: PaymentSuccessToastProps) {
   if (!open) return null
@@ -40,9 +37,6 @@ export function PaymentSuccessToast({
             </div>
             <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
               {description}
-            </p>
-            <p className="mt-1.5 text-xs font-semibold text-foreground">
-              {amountLabel}
             </p>
           </div>
         </div>

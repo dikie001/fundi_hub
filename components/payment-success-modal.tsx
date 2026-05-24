@@ -40,7 +40,7 @@ export function PaymentSuccessModal({
               <Check className="h-5 w-5 text-emerald-500" strokeWidth={2.5} />
             </div>
             <DialogHeader className="space-y-1 text-left">
-              <DialogTitle className="text-base font-bold leading-tight text-foreground">
+              <DialogTitle className="text-base leading-tight font-bold text-foreground">
                 {title}
               </DialogTitle>
               <DialogDescription className="text-xs leading-relaxed text-muted-foreground">
@@ -53,7 +53,9 @@ export function PaymentSuccessModal({
           <div className="space-y-2.5 rounded-lg border border-border/60 bg-muted/30 p-4">
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">Amount paid</span>
-              <span className="text-sm font-bold text-foreground">{amountLabel}</span>
+              <span className="text-sm font-bold text-foreground">
+                {amountLabel}
+              </span>
             </div>
             <div className="h-px bg-border/50" />
             <div className="flex items-center justify-between">
@@ -66,7 +68,9 @@ export function PaymentSuccessModal({
               <>
                 <div className="h-px bg-border/50" />
                 <div className="flex items-start justify-between gap-4">
-                  <span className="shrink-0 text-xs text-muted-foreground">Reference</span>
+                  <span className="shrink-0 text-xs text-muted-foreground">
+                    Reference
+                  </span>
                   <span className="text-right text-[11px] font-medium break-all text-foreground">
                     {reference}
                   </span>
