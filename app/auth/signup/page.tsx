@@ -136,6 +136,7 @@ export default function SignupPage() {
   const [checkingSession, setCheckingSession] = useState(true)
   const [isGoogleSignup, setIsGoogleSignup] = useState(false)
   const [googleData, setGoogleData] = useState<GoogleProfileData | null>(null)
+  const [googleAvatarFailed, setGoogleAvatarFailed] = useState(false)
   const [registrationSuccess, setRegistrationSuccess] = useState(false)
   const [showPaymentToast, setShowPaymentToast] = useState(false)
   const [continueTo, setContinueTo] = useState("/auth/login?registered=true")
@@ -166,6 +167,15 @@ export default function SignupPage() {
     setPaymentSuccessState(null)
     router.replace(continueTo)
   }
+
+  const googleAvatarFallback = useMemo(() => {
+    const seed = googleData?.name || name || "User"
+    return `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(seed)}`
+  }, [googleData?.name, name])
+
+  useEffect(() => {
+    setGoogleAvatarFailed(false)
+  }, [googleData?.picture])
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -966,11 +976,17 @@ export default function SignupPage() {
                 <div className="animate-in space-y-5 duration-300 fade-in slide-in-from-bottom-2">
                   <div className="rounded-lg border border-border/50 bg-muted/20 p-4">
                     <div className="flex items-center gap-3">
-                      {googleData?.picture && (
+                      {(googleData?.picture || googleAvatarFallback) && (
                         <img
-                          src={googleData.picture}
+                          src={
+                            googleAvatarFailed || !googleData?.picture
+                              ? googleAvatarFallback
+                              : googleData.picture
+                          }
                           alt={googleData.name}
                           className="h-12 w-12 rounded-full"
+                          referrerPolicy="no-referrer"
+                          onError={() => setGoogleAvatarFailed(true)}
                         />
                       )}
                       <div>
