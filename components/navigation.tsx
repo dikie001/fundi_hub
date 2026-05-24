@@ -2,10 +2,17 @@
 
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import { Menu, X, ArrowLeft } from "lucide-react"
+import { Menu, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { usePathname, useRouter } from "next/navigation"
 import { UserMenu } from "@/components/user-menu"
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 import type { SafeUser } from "@/lib/types"
 
 export function Navigation() {
@@ -109,76 +116,90 @@ export function Navigation() {
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            className="md:hidden"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden"
+                aria-label="Open menu"
+              >
+                <Menu size={24} />
+              </Button>
+            </SheetTrigger>
 
-        {/* Mobile Navigation */}
-        {isOpen && (
-          <div className="animate-in border-t border-border duration-200 fade-in slide-in-from-top-2 md:hidden">
-            <div className="space-y-2 px-2 py-4">
-              <Link
-                href="/#home"
-                onClick={() => setIsOpen(false)}
-                className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
-              >
-                Home
-              </Link>
-              <Link
-                href="/#categories"
-                onClick={() => setIsOpen(false)}
-                className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
-              >
-                Search
-              </Link>
-              <Link
-                href="/#refer-earn"
-                onClick={() => setIsOpen(false)}
-                className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
-              >
-                Refer & Earn
-              </Link>
-              <Link
-                href="/#for-fundis"
-                onClick={() => setIsOpen(false)}
-                className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
-              >
-                For Fundis
-              </Link>
-              <div className="space-y-2 border-t border-border pt-2">
-                {authUser ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full"
-                    onClick={handleLogout}
-                  >
-                    Sign Out
-                  </Button>
-                ) : (
-                  <>
+            <SheetContent side="right" className="w-[86vw] max-w-xs p-0">
+              <SheetHeader className="border-b border-border px-5 py-4 text-left">
+                <SheetTitle className="text-base font-semibold">Menu</SheetTitle>
+              </SheetHeader>
+
+              <div className="space-y-2 px-4 py-4">
+                <Link
+                  href="/#home"
+                  onClick={() => setIsOpen(false)}
+                  className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
+                >
+                  Home
+                </Link>
+                <Link
+                  href="/#categories"
+                  onClick={() => setIsOpen(false)}
+                  className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
+                >
+                  Search
+                </Link>
+                <Link
+                  href="/#refer-earn"
+                  onClick={() => setIsOpen(false)}
+                  className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
+                >
+                  Refer & Earn
+                </Link>
+                <Link
+                  href="/#for-fundis"
+                  onClick={() => setIsOpen(false)}
+                  className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
+                >
+                  For Fundis
+                </Link>
+
+                <div className="space-y-2 border-t border-border pt-3">
+                  {authUser ? (
                     <Button
                       variant="outline"
                       size="sm"
-                      asChild
                       className="w-full"
+                      onClick={async () => {
+                        await handleLogout()
+                        setIsOpen(false)
+                      }}
                     >
-                      <Link href="/auth/login">Sign In</Link>
+                      Sign Out
                     </Button>
-                    <Button size="sm" asChild className="w-full">
-                      <Link href="/auth/signup">Sign Up</Link>
-                    </Button>
-                  </>
-                )}
+                  ) : (
+                    <>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        asChild
+                        className="w-full"
+                      >
+                        <Link href="/auth/login" onClick={() => setIsOpen(false)}>
+                          Sign In
+                        </Link>
+                      </Button>
+                      <Button size="sm" asChild className="w-full">
+                        <Link href="/auth/signup" onClick={() => setIsOpen(false)}>
+                          Sign Up
+                        </Link>
+                      </Button>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-          </div>
-        )}
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </nav>
   )
