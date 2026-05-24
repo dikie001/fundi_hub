@@ -137,14 +137,11 @@ export default function SignupPage() {
   const [isGoogleSignup, setIsGoogleSignup] = useState(false)
   const [googleData, setGoogleData] = useState<GoogleProfileData | null>(null)
   const [registrationSuccess, setRegistrationSuccess] = useState(false)
-  const [showPaymentSuccessModal, setShowPaymentSuccessModal] = useState(false)
   const [showPaymentToast, setShowPaymentToast] = useState(false)
   const [continueTo, setContinueTo] = useState("/auth/login?registered=true")
   const [paymentSuccessState, setPaymentSuccessState] = useState<{
     title: string
     description: string
-    amountLabel: string
-    reference?: string | null
   } | null>(null)
 
   useEffect(() => {
@@ -159,16 +156,12 @@ export default function SignupPage() {
         title: params.get("paymentHeading") || "Welcome to FundiHub!",
         description:
           "Your profile is now live! Thousands of clients can find you, send you job leads, and connect with you directly via WhatsApp or phone.",
-        amountLabel: params.get("paymentAmount") || "KSh 200",
-        reference: params.get("paymentReference"),
       })
-      setShowPaymentSuccessModal(true)
       setShowPaymentToast(true)
     }
   }, [])
 
   const handleContinueAfterPayment = () => {
-    setShowPaymentSuccessModal(false)
     setShowPaymentToast(false)
     setPaymentSuccessState(null)
     router.replace(continueTo)
