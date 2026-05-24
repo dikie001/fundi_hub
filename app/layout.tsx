@@ -1,5 +1,5 @@
 import "./globals.css"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 
@@ -29,7 +29,6 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-  themeColor: "#c84f14",
   openGraph: {
     type: "website",
     url: "/",
@@ -53,6 +52,10 @@ export const metadata: Metadata = {
       "FundiHub helps fundis grow their business, manage leads, and connect with clients, while giving clients a trusted way to find verified local experts.",
     images: ["/opengraph-image"],
   },
+}
+
+export const viewport: Viewport = {
+  themeColor: "#c84f14",
 }
 
 export default function RootLayout({
