@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     template: "%s | FundiHub",
   },
   description:
-    "Find trusted local fundis, compare reviews, and book verified service professionals on FundiHub.",
+    "FundiHub helps fundis grow their business, manage leads, and connect with clients, while giving clients a trusted way to find verified local experts.",
   applicationName: "FundiHub",
   authors: [{ name: "FundiHub" }],
   creator: "FundiHub",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     siteName: "FundiHub",
     title: "FundiHub",
     description:
-      "Find trusted local fundis, compare reviews, and book verified service professionals on FundiHub.",
+      "FundiHub helps fundis grow their business, manage leads, and connect with clients, while giving clients a trusted way to find verified local experts.",
     images: [
       {
         url: "/opengraph-image",
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "FundiHub",
     description:
-      "Find trusted local fundis, compare reviews, and book verified service professionals on FundiHub.",
+      "FundiHub helps fundis grow their business, manage leads, and connect with clients, while giving clients a trusted way to find verified local experts.",
     images: ["/opengraph-image"],
   },
 }
@@ -72,13 +72,11 @@ export default function RootLayout({
         ["--font-serif" as string]:
           'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
       }}
-      className="antialiased font-sans"
+      className="font-sans antialiased"
     >
       <body>
         <ThemeProvider>
-          <TooltipProvider>
-            {children}
-          </TooltipProvider>
+          <TooltipProvider>{children}</TooltipProvider>
         </ThemeProvider>
       </body>
     </html>
