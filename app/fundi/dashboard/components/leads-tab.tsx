@@ -128,7 +128,7 @@ export function LeadsTab({
                           {lead.title}
                         </CardTitle>
                       </div>
-                      <span className="shrink-0 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                      <span className="shrink-0 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
                         {lead.budget}
                       </span>
                     </div>
@@ -166,14 +166,14 @@ export function LeadsTab({
                         variant="outline"
                         size="sm"
                         onClick={() => handleArchiveLead(lead.id)}
-                        className="h-8 cursor-pointer rounded-lg px-3.5 text-xs font-medium border-border/60 text-muted-foreground hover:bg-muted/50 transition-colors"
+                        className="h-8 cursor-pointer rounded-lg px-3.5 text-xs font-medium"
                       >
                         Archive
                       </Button>
                       <Button
                         size="sm"
                         onClick={() => handleApplyLead(lead.id)}
-                        className="h-8 cursor-pointer rounded-lg px-3.5 text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/95 transition-colors"
+                        className="h-8 cursor-pointer rounded-lg px-3.5 text-xs font-medium"
                       >
                         Apply Now
                       </Button>
@@ -197,7 +197,7 @@ export function LeadsTab({
                         size="sm"
                         variant="outline"
                         asChild
-                        className="h-8 cursor-pointer rounded-lg px-3.5 text-xs font-medium border-border/60 text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors"
+                        className="h-8 cursor-pointer rounded-lg px-3.5 text-xs font-medium"
                       >
                         <a
                           href={`tel:${lead.phone}`}
@@ -209,7 +209,7 @@ export function LeadsTab({
                       <Button
                         size="sm"
                         asChild
-                        className="h-8 cursor-pointer rounded-lg px-3.5 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white border-0 shadow-xs flex items-center gap-1.5 transition-colors"
+                        className="h-8 cursor-pointer rounded-lg px-3.5 text-xs font-medium"
                       >
                         <a
                           href={`https://wa.me/${lead.phone.replace(/[^0-9]/g, "")}?text=Hello%20${lead.clientName},%2520I%2520saw%2520your%2520lead%2520on%2520FundiHub%252520for%252520'${encodeURIComponent(lead.title)}'%20and%252520I%252520am%252520available.`}
@@ -240,15 +240,15 @@ export function LeadsTab({
                         variant="outline"
                         size="sm"
                         onClick={() => handleRestoreLead(lead.id)}
-                        className="h-8 cursor-pointer rounded-lg px-3.5 text-xs font-medium border-border/60 text-muted-foreground hover:bg-muted/50 transition-colors"
+                        className="h-8 cursor-pointer rounded-lg px-3.5 text-xs font-medium"
                       >
                         Restore
                       </Button>
                       <Button
-                        variant="outline"
+                        variant="destructive"
                         size="sm"
                         onClick={() => handleDeleteLeadPermanently(lead.id)}
-                        className="h-8 cursor-pointer rounded-lg px-3.5 text-xs font-medium bg-destructive/10 hover:bg-destructive/20 text-destructive border-0 transition-colors"
+                        className="h-8 cursor-pointer rounded-lg px-3.5 text-xs font-medium"
                       >
                         Delete
                       </Button>

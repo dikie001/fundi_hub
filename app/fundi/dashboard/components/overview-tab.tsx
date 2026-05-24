@@ -125,7 +125,7 @@ export function OverviewTab(props: OverviewTabProps) {
                             {lead.title}
                           </CardTitle>
                         </div>
-                        <span className="shrink-0 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                        <span className="shrink-0 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
                           {lead.budget}
                         </span>
                       </div>
@@ -159,7 +159,7 @@ export function OverviewTab(props: OverviewTabProps) {
                             size="sm"
                             variant="outline"
                             asChild
-                            className="h-8 cursor-pointer rounded-lg px-3.5 text-xs font-medium border-border/60 text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors"
+                            className="h-8 cursor-pointer rounded-lg px-3.5 text-xs font-medium"
                           >
                             <a
                               href={`tel:${lead.phone}`}
@@ -171,7 +171,7 @@ export function OverviewTab(props: OverviewTabProps) {
                           <Button
                             size="sm"
                             asChild
-                            className="h-8 cursor-pointer rounded-lg px-3.5 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white border-0 shadow-xs flex items-center gap-1.5 transition-colors"
+                            className="h-8 cursor-pointer rounded-lg px-3.5 text-xs font-medium"
                           >
                             <a
                               href={`https://wa.me/${lead.phone.replace(/[^0-9]/g, "")}?text=Hello%20${lead.clientName},%2520I%2520saw%2520your%2520lead%2520on%2520FundiHub%252520for%252520'${encodeURIComponent(lead.title)}'%20and%252520I%252520am%252520available.`}
@@ -204,7 +204,13 @@ export function OverviewTab(props: OverviewTabProps) {
           )}
         </div>
 
-        <div className="space-y-5">
+        <div className="space-y-4">
+          <div className="flex h-5 items-center">
+            <h2 className="text-[11px] font-semibold tracking-wider text-muted-foreground/80 uppercase">
+              Account Status
+            </h2>
+          </div>
+
           <Card className="border border-border/40 bg-card">
             <CardHeader className="pb-1">
               <CardTitle className="text-[11px] font-semibold tracking-wider text-muted-foreground/80 uppercase">
@@ -252,38 +258,6 @@ export function OverviewTab(props: OverviewTabProps) {
               >
                 Manage Portfolio
               </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="border border-border/40 bg-card">
-            <CardHeader className="pb-1">
-              <CardTitle className="text-[11px] font-semibold tracking-wider text-muted-foreground/80 uppercase">
-                Refer & Earn Link
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 p-5 pt-3">
-              <p className="text-xs leading-normal text-muted-foreground/80">
-                Earn KES 100 instantly for every partner who signs up using your
-                unique link.
-              </p>
-              <div className="relative flex items-center justify-between rounded-lg border border-border/50 bg-muted/40 p-2 pl-3">
-                <span className="truncate font-mono text-[11px] text-muted-foreground select-all pr-8">
-                  {referralLink}
-                </span>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={copyReferralLink}
-                  className={cn(
-                    "h-7 shrink-0 rounded-md px-2.5 text-[11px] font-medium transition-all cursor-pointer",
-                    copiedReferral
-                      ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                      : "hover:bg-muted text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  {copiedReferral ? "Copied!" : "Copy"}
-                </Button>
-              </div>
             </CardContent>
           </Card>
 
