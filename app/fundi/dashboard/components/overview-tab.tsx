@@ -28,7 +28,7 @@ type OverviewTabProps = {
   referralEarnings: number
   jobEarnings: number
   setActiveTab: (tab: string) => void
-  openPremiumModal: (type: "verified" | "top") => void
+  openPremiumModal: () => void
   portfolioItems: PortfolioItem[]
   setIsAddPortfolioOpen: (open: boolean) => void
   copyReferralLink: () => void

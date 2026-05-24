@@ -75,7 +75,7 @@ type ProfileTabProps = {
   isUpdating: boolean
   updateSuccess: string
   handleUpdateProfile: (e: React.FormEvent) => void
-  openPremiumModal: (type: "verified" | "top") => void
+  openPremiumModal: () => void
   newPortfolioTitle: string
   setNewPortfolioTitle: (val: string) => void
   newPortfolioCategory: string

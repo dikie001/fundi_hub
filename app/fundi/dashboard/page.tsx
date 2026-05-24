@@ -19,7 +19,6 @@ export default function FundiDashboard() {
     copyReferralLink,
     copiedReferral,
     setIsPremiumModalOpen,
-    setPremiumModalType,
   } = useDashboard()
 
   const navigateToTab = (tab: string) => {
@@ -40,10 +39,7 @@ export default function FundiDashboard() {
       referralEarnings={referralEarnings}
       jobEarnings={jobEarnings}
       setActiveTab={navigateToTab}
-      openPremiumModal={(type: "verified" | "top") => {
-        setPremiumModalType(type)
-        setIsPremiumModalOpen(true)
-      }}
+      openPremiumModal={() => setIsPremiumModalOpen(true)}
       portfolioItems={portfolioItems}
       setIsAddPortfolioOpen={setIsAddPortfolioOpen}
       copyReferralLink={copyReferralLink}

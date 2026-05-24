@@ -21,7 +21,7 @@ export async function PUT(request: Request) {
       description,
       isAvailable,
       preferredContact,
-      premiumLevel,
+      isPremium,
       image,
       skills,
       portfolio,
@@ -71,10 +71,10 @@ export async function PUT(request: Request) {
           preferredContact !== undefined
             ? preferredContact
             : user.fundiProfile?.preferredContact,
-        premiumLevel:
-          premiumLevel !== undefined
-            ? premiumLevel
-            : user.fundiProfile?.premiumLevel,
+        isPremium:
+          isPremium !== undefined
+            ? isPremium
+            : user.fundiProfile?.isPremium,
         image: image !== undefined ? image : user.fundiProfile?.image,
         skills: skills !== undefined ? skills : user.fundiProfile?.skills,
         portfolio:

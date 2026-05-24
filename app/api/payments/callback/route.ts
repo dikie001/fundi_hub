@@ -40,12 +40,7 @@ export async function GET(request: NextRequest) {
     const purpose = searchParams.get("purpose") as PaymentPurpose | null
     const returnTo = searchParams.get("returnTo") || undefined
     const continueTo = searchParams.get("continueTo") || undefined
-    const premiumLevel = searchParams.get("premiumLevel")
     const userId = searchParams.get("userId")
-    const validPremiumLevel =
-      premiumLevel === "verified" || premiumLevel === "top"
-        ? premiumLevel
-        : null
 
     if (!reference || !purpose) {
       return NextResponse.redirect(buildReturnUrl(origin, returnTo, "/"))
@@ -90,18 +85,18 @@ export async function GET(request: NextRequest) {
         include: { fundiProfile: true },
       })
 
-      if (!user || user.role !== "fundi" || !validPremiumLevel) {
+      if (!user || user.role !== "fundi") {
         return NextResponse.redirect(buildReturnUrl(origin, returnTo, "/"))
       }
 
       await db.fundiProfile.update({
         where: { userId: user.id },
-        data: { premiumLevel: validPremiumLevel },
+        data: { isPremium: true },
       })
 
       await logAudit({
         action: "PREMIUM_UPGRADE",
-        details: `User ${user.name} upgraded to ${validPremiumLevel} tier (Payment Ref: ${reference})`,
+        details: `User ${user.name} upgraded to premium (Payment Ref: ${reference})`,
         userId: user.id,
       })
 

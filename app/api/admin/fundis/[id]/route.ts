@@ -14,7 +14,7 @@ const ALLOWED_FIELDS = [
   "description",
   "skills",
   "preferredContact",
-  "premiumLevel",
+  "isPremium",
   "isAvailable",
   "isNearby",
   "rating",
