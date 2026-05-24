@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { DashboardProvider, useDashboard } from "./context/DashboardContext"
 import {
   SidebarInset,
@@ -20,7 +19,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Check, Loader2, Zap, Lock, CheckCircle2 } from "lucide-react"
+import { Check, Zap, Lock } from "lucide-react"
 import {
   LayoutDashboard,
   Wrench,
@@ -46,16 +45,8 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     isPremiumModalOpen,
     setIsPremiumModalOpen,
     premiumModalType,
-    isProcessingPayment,
-    setIsProcessingPayment,
     handleLogout,
-    handleActivateBadge,
-    fetchProfile,
   } = useDashboard()
-
-  const [isVerifyingRegistration, setIsVerifyingRegistration] = useState(false)
-  const [registrationError, setRegistrationError] = useState("")
-  const [registrationSuccess, setRegistrationSuccess] = useState(false)
 
   const menuItems = [
     {
@@ -146,7 +137,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
           </DialogHeader>
           <div className="my-3 space-y-4 border-t border-b border-border/30 py-4">
             {/* Price Box */}
-            <div className="relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-b from-primary/10 via-primary/5 to-transparent p-4 text-center">
+            <div className="relative overflow-hidden rounded-xl border border-primary/20 bg-linear-to-b from-primary/10 via-primary/5 to-transparent p-4 text-center">
               <span className="text-[10px] font-black tracking-wider text-primary uppercase">
                 Premium Upgrade
               </span>
@@ -163,7 +154,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
             <div className="space-y-2.5 px-1 text-xs">
               <div className="flex items-start gap-2.5">
                 <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Check className="h-3 w-3 stroke-[3]" />
+                  <Check className="h-3 w-3 stroke-3" />
                 </div>
                 <span className="text-muted-foreground">
                   <strong className="font-semibold text-foreground">Gold-verified badge</strong> displayed on search and profile pages
@@ -171,7 +162,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
               </div>
               <div className="flex items-start gap-2.5">
                 <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Check className="h-3 w-3 stroke-[3]" />
+                  <Check className="h-3 w-3 stroke-3" />
                 </div>
                 <span className="text-muted-foreground">
                   <strong className="font-semibold text-foreground">5x search boost</strong> in customer searches
@@ -179,7 +170,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
               </div>
               <div className="flex items-start gap-2.5">
                 <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Check className="h-3 w-3 stroke-[3]" />
+                  <Check className="h-3 w-3 stroke-3" />
                 </div>
                 <span className="text-muted-foreground">
                   <strong className="font-semibold text-foreground">Priority lead dispatch</strong> before standard profiles
@@ -202,10 +193,13 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
                 email={user?.email || user?.phone + "@fundihub.com"}
                 name={user?.name || "User"}
                 phone={user?.phone || ""}
-                onSuccess={(reference) => handleActivateBadge(reference)}
-                onClose={() => setIsProcessingPayment(false)}
-                disabled={isProcessingPayment}
-                className="h-10 flex-1 cursor-pointer rounded-xl bg-gradient-to-r from-primary to-primary/95 text-xs font-bold text-primary-foreground shadow-md shadow-primary/10 transition-all hover:opacity-95 active:scale-[0.98]"
+                callbackPath="/api/payments/callback"
+                callbackParams={{
+                  purpose: "premium",
+                  premiumLevel: premiumModalType,
+                  returnTo: "/fundi/dashboard",
+                }}
+                className="h-10 flex-1 cursor-pointer rounded-xl bg-linear-to-r from-primary to-primary/95 text-xs font-bold text-primary-foreground shadow-md shadow-primary/10 transition-all hover:opacity-95 active:scale-[0.98]"
               >
                 Pay KSh 500
               </PaystackButton>
@@ -221,7 +215,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
 
       <Dialog open={mounted && !!profile && !profile.isRegistrationPaid} onOpenChange={() => {}}>
         <DialogContent
-          className="w-full max-w-[340px] rounded-2xl border border-border bg-card p-6 shadow-xl select-none"
+          className="w-full max-w-85 rounded-2xl border border-border bg-card p-6 shadow-xl select-none"
           showCloseButton={false}
           onPointerDownOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
@@ -242,52 +236,18 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
             <span className="mt-1 text-3xl font-extrabold text-primary tracking-tight">KSh 200</span>
           </div>
 
-          {registrationSuccess ? (
-            <div className="mb-4 flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/5 p-3 text-xs text-green-600 dark:text-green-400">
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-green-500" />
-              <span className="font-semibold">Payment successful! Activating...</span>
-            </div>
-          ) : registrationError ? (
-            <div className="mb-4 flex items-center gap-2 rounded-xl border border-destructive/20 bg-destructive/5 p-3 text-[11px] text-destructive">
-              <ShieldCheck className="h-4.5 w-4.5 shrink-0 rotate-180 text-destructive" />
-              <span>{registrationError}</span>
-            </div>
-          ) : null}
-
           <div className="flex flex-col gap-3">
             <PaystackButton
               amount={200}
               email={user?.email || `${user?.phone.replace(/[^0-9]/g, "")}@fundihub.com`}
               name={user?.name || "Fundi Partner"}
               phone={user?.phone || ""}
-              onSuccess={async (ref) => {
-                setIsVerifyingRegistration(true)
-                setRegistrationError("")
-                try {
-                  const response = await fetch("/api/payments/verify-registration", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      reference: ref,
-                      userId: user?.id,
-                    }),
-                  })
-                  const data = await response.json()
-                  if (response.ok && data.success) {
-                    setRegistrationSuccess(true)
-                    await fetchProfile()
-                  } else {
-                    setRegistrationError(data.error || "Payment verification failed. Please try again.")
-                  }
-                } catch (err) {
-                  console.error("Payment verification error:", err)
-                  setRegistrationError("An error occurred during verification. Please try again.")
-                } finally {
-                  setIsVerifyingRegistration(false)
-                }
+              callbackPath="/api/payments/callback"
+              callbackParams={{
+                purpose: "registration",
+                userId: user?.id || "",
+                returnTo: "/fundi/dashboard",
               }}
-              onClose={() => {}}
-              disabled={isVerifyingRegistration || registrationSuccess}
               className="w-full h-10 cursor-pointer rounded-xl bg-primary text-xs font-bold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 active:scale-[0.98]"
             >
               Pay KSh 200 & Activate Profile

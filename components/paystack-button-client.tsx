@@ -1,6 +1,6 @@
 "use client"
 
-import { usePaystackPayment } from "react-paystack"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 
@@ -9,8 +9,8 @@ export interface PaystackButtonProps {
   email: string
   name: string
   phone: string
-  onSuccess: (reference: string) => void
-  onClose?: () => void
+  callbackPath: string
+  callbackParams?: Record<string, string>
   disabled?: boolean
   children: React.ReactNode
   className?: string
@@ -21,55 +21,64 @@ export function PaystackButtonClient({
   email,
   name,
   phone,
-  onSuccess,
-  onClose,
+  callbackPath,
+  callbackParams,
   disabled,
   children,
   className,
 }: PaystackButtonProps) {
-  const config = {
-    reference: new Date().getTime().toString(),
-    email: email || "user@fundihub.com",
-    amount: amount * 100,
-    publicKey:
-      process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY ||
-      "pk_test_6a8606451e2f7083cdae07b87efb2f8c6b70eeae",
-    currency: "KES",
-    metadata: {
-      custom_fields: [
-        {
-          display_name: "Name",
-          variable_name: "name",
-          value: name,
-        },
-        {
-          display_name: "Phone",
-          variable_name: "phone",
-          value: phone,
-        },
-      ],
-    },
-  }
+  const [isRedirecting, setIsRedirecting] = useState(false)
 
-  const initializePayment = usePaystackPayment(config)
+  const handlePayment = async () => {
+    if (disabled || isRedirecting) return
 
-  const handlePayment = () => {
-    initializePayment({
-      onSuccess: (reference: { reference: string }) => {
-        onSuccess(reference.reference)
-      },
-      onClose: () => {
-        onClose?.()
-      },
-    })
+    setIsRedirecting(true)
+
+    try {
+      const response = await fetch("/api/payments/initialize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount,
+          email: email || "user@fundihub.com",
+          name,
+          phone,
+          callbackPath,
+          callbackParams,
+        }),
+      })
+
+      const data = (await response.json()) as {
+        authorizationUrl?: string
+        error?: string
+      }
+
+      if (!response.ok || !data.authorizationUrl) {
+        throw new Error(data.error || "Unable to start Paystack checkout")
+      }
+
+      window.location.assign(data.authorizationUrl)
+    } catch (error) {
+      console.error("Paystack initialization failed:", error)
+      setIsRedirecting(false)
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Unable to start Paystack checkout. Please try again."
+      )
+    }
   }
 
   return (
-    <Button onClick={handlePayment} disabled={disabled} className={className}>
-      {disabled ? (
+    <Button
+      onClick={handlePayment}
+      disabled={disabled || isRedirecting}
+      className={className}
+    >
+      {disabled || isRedirecting ? (
         <>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          Processing...
+          Redirecting...
         </>
       ) : (
         children
