@@ -38,6 +38,7 @@ import {
   MultiSelect,
   type MultiSelectOption,
 } from "@/components/ui/multi-select"
+import type { GoogleProfileData } from "@/lib/types"
 
 type UserType = "client" | "fundi"
 
@@ -119,7 +120,7 @@ export default function SignupPage() {
   >("whatsapp")
   const [checkingSession, setCheckingSession] = useState(true)
   const [isGoogleSignup, setIsGoogleSignup] = useState(false)
-  const [googleData, setGoogleData] = useState<any>(null)
+  const [googleData, setGoogleData] = useState<GoogleProfileData | null>(null)
   const [registrationSuccess, setRegistrationSuccess] = useState(false)
 
   useEffect(() => {

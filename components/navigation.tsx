@@ -6,10 +6,11 @@ import { Menu, X, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { usePathname, useRouter } from "next/navigation"
 import { UserMenu } from "@/components/user-menu"
+import type { SafeUser } from "@/lib/types"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
-  const [authUser, setAuthUser] = useState<any>(null)
+  const [authUser, setAuthUser] = useState<SafeUser | null>(null)
   const pathname = usePathname()
   const router = useRouter()
   const isNotHome = pathname !== "/"
@@ -36,7 +37,7 @@ export function Navigation() {
           <div className="flex items-center gap-3">
             <Link href="/#home" className="flex items-center gap-3">
               <img
-                src="/fundi_hub_logo.jpeg"
+                src="/fundi_hub_logo.jpg"
                 alt="FundiHub"
                 className="h-10 w-10 rounded-lg object-cover"
               />

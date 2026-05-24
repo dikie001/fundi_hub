@@ -31,8 +31,17 @@ import { cn } from "@/lib/utils"
 import { User, CheckCircle2, XCircle } from "lucide-react"
 import Link from "next/link"
 import { useDashboard } from "../context/DashboardContext"
+import type { DashboardMenuItem, FundiProfileData } from "@/lib/types"
 
-export function DashboardSidebar(props: any) {
+type DashboardSidebarProps = {
+  isCollapsed: boolean
+  menuItems: DashboardMenuItem[]
+  pathname: string
+  profile: FundiProfileData | null
+  mounted: boolean
+}
+
+export function DashboardSidebar(props: DashboardSidebarProps) {
   const { isCollapsed, menuItems, pathname, profile, mounted } = props
 
   const {
@@ -51,14 +60,14 @@ export function DashboardSidebar(props: any) {
       <SidebarHeader className="flex h-16 flex-row items-center border-b border-border/25 px-6">
         {isCollapsed ? (
           <img
-            src="/fundi_hub_logo.jpeg"
+            src="/fundi_hub_logo.jpg"
             alt="FundiHub"
             className="mx-auto h-8 w-8 rounded-lg object-cover"
           />
         ) : (
           <div className="flex items-center gap-2">
             <img
-              src="/fundi_hub_logo.jpeg"
+              src="/fundi_hub_logo.jpg"
               alt="FundiHub"
               className="h-8 w-8 rounded-lg object-cover"
             />
@@ -78,7 +87,7 @@ export function DashboardSidebar(props: any) {
             Core Operations
           </SidebarGroupLabel>
           <SidebarMenu className="mt-2 space-y-2">
-            {menuItems.slice(0, 3).map((item: any) => {
+            {menuItems.slice(0, 3).map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href
               return (
@@ -110,7 +119,7 @@ export function DashboardSidebar(props: any) {
             Grow & Benefits
           </SidebarGroupLabel>
           <SidebarMenu className="mt-2 space-y-2">
-            {menuItems.slice(3).map((item: any) => {
+            {menuItems.slice(3).map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href
               return (
@@ -149,7 +158,7 @@ export function DashboardSidebar(props: any) {
                       id="availability-toggle-collapsed"
                       checked={profile?.isAvailable || false}
                       onCheckedChange={() =>
-                        handleToggleAvailability(profile?.isAvailable)
+                        handleToggleAvailability(profile?.isAvailable ?? false)
                       }
                       className="scale-85 cursor-pointer"
                     />
@@ -210,7 +219,7 @@ export function DashboardSidebar(props: any) {
                 id="availability-toggle"
                 checked={profile?.isAvailable || false}
                 onCheckedChange={() =>
-                  handleToggleAvailability(profile?.isAvailable)
+                  handleToggleAvailability(profile?.isAvailable ?? false)
                 }
                 className="cursor-pointer"
               />

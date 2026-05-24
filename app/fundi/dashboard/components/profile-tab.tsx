@@ -25,6 +25,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { EditProfileDialog } from "./edit-profile-dialog"
 import { AddPortfolioDialog } from "./add-portfolio-dialog"
+import type { FundiProfileData, SafeUser } from "@/lib/types"
 
 const FUNDI_TRADES = [
   "Plumber",
@@ -47,8 +48,8 @@ type PortfolioItem = {
 }
 
 type ProfileTabProps = {
-  user: any
-  profile: any
+  user: SafeUser | null
+  profile: FundiProfileData | null
   editName: string
   setEditName: (val: string) => void
   editTitle: string

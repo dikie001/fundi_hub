@@ -31,6 +31,40 @@ import {
   CheckCircle,
   ExternalLink,
 } from "lucide-react"
+import type { ReviewData } from "@/lib/types"
+
+type PortfolioItem = {
+  id: string
+  title: string
+  category: string
+  image: string
+  description?: string
+}
+
+type FundiPageData = {
+  id: string
+  name: string
+  title: string
+  category: string
+  rating: number
+  reviews: number
+  image: string
+  phone: string
+  whatsapp: string
+  premiumLevel: "none" | "verified" | "top"
+  isAvailable: boolean
+  isNearby: boolean
+  preferredContact: string
+  description: string
+  yearsExperience: string
+  serviceArea: string
+  skills: string[]
+  portfolio: PortfolioItem[]
+  jobsCompleted: number
+  successRate: number
+  jobEarnings: number
+  reviewsList: ReviewData[]
+}
 
 interface PageProps {
   params: Promise<{ name: string }>
@@ -88,15 +122,19 @@ export default async function FundiProfilePage({ params }: PageProps) {
     return cleanDbName === cleanParamName
   })
 
-  let fundiData: any = null
-  let clientReview: any = null
+  let fundiData: FundiPageData | null = null
+  let clientReview: {
+    reviewerName: string
+    rating: number
+    comment: string
+  } | null = null
 
   if (dbUser && dbUser.fundiProfile) {
     const profile = dbUser.fundiProfile
 
     // Find if current client IP already left a review
     const existingReview = (profile.reviewsList || []).find(
-      (r: any) => r.ip === clientIp
+      (r) => r.ip === clientIp
     )
     if (existingReview) {
       clientReview = {
@@ -105,10 +143,10 @@ export default async function FundiProfilePage({ params }: PageProps) {
         comment: existingReview.comment,
       }
     }
-    let parsedPortfolio = []
+    let parsedPortfolio: PortfolioItem[] = []
     if (typeof profile.portfolio === "string" && profile.portfolio.trim()) {
       try {
-        parsedPortfolio = JSON.parse(profile.portfolio)
+        parsedPortfolio = JSON.parse(profile.portfolio) as PortfolioItem[]
       } catch {
         parsedPortfolio = []
       }
@@ -135,6 +173,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
       premiumLevel: profile.premiumLevel,
       isAvailable: profile.isAvailable,
       isNearby: profile.isNearby,
+      preferredContact: profile.preferredContact || "whatsapp",
       description: profile.description || "No bio description provided.",
       yearsExperience: profile.yearsExperience || "N/A",
       serviceArea: profile.serviceArea || "N/A",
@@ -143,7 +182,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
       jobsCompleted: profile.jobsCompleted,
       successRate: profile.successRate,
       jobEarnings: profile.jobEarnings,
-      reviewsList: (profile as any).reviewsList || [],
+      reviewsList: profile.reviewsList || [],
     }
   }
 
@@ -153,7 +192,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
 
   const initials = fundiData.name
     .split(" ")
-    .map((n: string) => n[0])
+    .map((n) => n[0])
     .join("")
     .toUpperCase()
 
@@ -287,8 +326,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
                     </span>
                     <p className="text-sm font-bold text-foreground">
                       {fundiData.yearsExperience}{" "}
-                      {fundiData.yearsExperience === "1" ||
-                      fundiData.yearsExperience === 1
+                      {fundiData.yearsExperience.trim() === "1"
                         ? "year"
                         : "years"}
                     </p>
@@ -345,38 +383,36 @@ export default async function FundiProfilePage({ params }: PageProps) {
                 {fundiData.portfolio && fundiData.portfolio.length > 0 ? (
                   <div className="space-y-4">
                     <div className="grid gap-4 sm:grid-cols-2">
-                      {fundiData.portfolio
-                        .slice(0, 1)
-                        .map((item: any, index: number) => (
-                          <div
-                            key={item.id || index}
-                            className="group overflow-hidden rounded-xl border border-border/50 bg-muted/20 transition-all hover:border-primary/30"
-                          >
-                            <div className="relative aspect-video w-full overflow-hidden bg-muted/60">
-                              {item.image ? (
-                                <Image
-                                  src={item.image}
-                                  alt={item.title}
-                                  fill
-                                  unoptimized
-                                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                />
-                              ) : (
-                                <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-                                  <Sparkles className="h-8 w-8 opacity-40" />
-                                </div>
-                              )}
-                            </div>
-                            <div className="p-3">
-                              <h4 className="truncate text-xs font-bold text-foreground">
-                                {item.title}
-                              </h4>
-                              <span className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
-                                {item.category}
-                              </span>
-                            </div>
+                      {fundiData.portfolio.slice(0, 1).map((item, index) => (
+                        <div
+                          key={item.id || index}
+                          className="group overflow-hidden rounded-xl border border-border/50 bg-muted/20 transition-all hover:border-primary/30"
+                        >
+                          <div className="relative aspect-video w-full overflow-hidden bg-muted/60">
+                            {item.image ? (
+                              <Image
+                                src={item.image}
+                                alt={item.title}
+                                fill
+                                unoptimized
+                                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                              />
+                            ) : (
+                              <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                                <Sparkles className="h-8 w-8 opacity-40" />
+                              </div>
+                            )}
                           </div>
-                        ))}
+                          <div className="p-3">
+                            <h4 className="truncate text-xs font-bold text-foreground">
+                              {item.title}
+                            </h4>
+                            <span className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+                              {item.category}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                     {fundiData.portfolio.length > 1 && (
                       <div className="border-t border-border/15 pt-2">
@@ -462,9 +498,9 @@ export default async function FundiProfilePage({ params }: PageProps) {
                       {fundiData.preferredContact}
                     </span>
                     .
-                    {fundiData.isEmergency
-                      ? " Available 24/7 for urgent call-outs."
-                      : " Generally available during normal working hours."}
+                    {fundiData.isAvailable
+                      ? " Currently available for new bookings."
+                      : " Currently unavailable for new bookings."}
                   </p>
                 </div>
 

@@ -17,6 +17,11 @@ import { Button } from "@/components/ui/button"
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useState, useEffect } from "react"
+import type {
+  ClientProfileData,
+  DashboardMenuItem,
+  SafeUser,
+} from "@/lib/types"
 
 export function ClientDashboardSidebar({
   isCollapsed,
@@ -26,10 +31,10 @@ export function ClientDashboardSidebar({
   profile,
 }: {
   isCollapsed: boolean
-  menuItems: any[]
+  menuItems: DashboardMenuItem[]
   pathname: string
-  user: any
-  profile: any
+  user: SafeUser | null
+  profile: ClientProfileData | null
 }) {
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -43,14 +48,14 @@ export function ClientDashboardSidebar({
       <SidebarHeader className="flex h-16 flex-row items-center border-b border-border/25 px-4">
         {isCollapsed ? (
           <img
-            src="/fundi_hub_logo.jpeg"
+            src="/fundi_hub_logo.jpg"
             alt="FundiHub"
             className="mx-auto h-8 w-8 rounded-lg object-cover"
           />
         ) : (
           <div className="flex items-center gap-2">
             <img
-              src="/fundi_hub_logo.jpeg"
+              src="/fundi_hub_logo.jpg"
               alt="FundiHub"
               className="h-8 w-8 rounded-lg object-cover"
             />
@@ -67,7 +72,7 @@ export function ClientDashboardSidebar({
             Workspace
           </SidebarGroupLabel>
           <SidebarMenu className="mt-2 space-y-1">
-            {menuItems.map((item: any) => {
+            {menuItems.map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href
               return (

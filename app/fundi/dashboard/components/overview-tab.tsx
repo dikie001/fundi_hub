@@ -1,12 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   AlertCircle,
   Calendar,
@@ -18,10 +13,28 @@ import {
   MapPin,
   MessageSquare,
   Phone,
-  Wrench
+  Wrench,
 } from "lucide-react"
+import type { FundiLead, FundiProfileData, SafeUser } from "@/lib/types"
+import type { PortfolioItem } from "../context/DashboardContext"
 
-export function OverviewTab(props: any) {
+type OverviewTabProps = {
+  user: SafeUser | null
+  profile: FundiProfileData | null
+  matchingLeads: FundiLead[]
+  completionScore: number
+  totalEarnings: number
+  referralEarnings: number
+  jobEarnings: number
+  setActiveTab: (tab: string) => void
+  openPremiumModal: (type: "verified" | "top") => void
+  portfolioItems: PortfolioItem[]
+  setIsAddPortfolioOpen: (open: boolean) => void
+  copyReferralLink: () => void
+  copiedReferral: boolean
+}
+
+export function OverviewTab(props: OverviewTabProps) {
   const {
     user,
     profile,
@@ -75,7 +88,7 @@ export function OverviewTab(props: any) {
 
           {matchingLeads.length > 0 ? (
             <div className="space-y-4">
-              {matchingLeads.slice(0, 2).map((lead: any) => (
+              {matchingLeads.slice(0, 2).map((lead) => (
                 <Card
                   key={lead.id}
                   className="group overflow-hidden border-border bg-card shadow-2xs transition-all duration-300 hover:border-primary/45"

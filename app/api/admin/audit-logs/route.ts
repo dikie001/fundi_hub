@@ -41,7 +41,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       logs,
-      actions: distinctActions.map((a) => a.action),
+      actions: distinctActions.map((a: { action: string }) => a.action),
     })
   } catch (err) {
     console.error(err)

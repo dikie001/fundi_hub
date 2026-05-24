@@ -1,22 +1,14 @@
 "use client"
 
 import React, { createContext, useContext, useState, useEffect } from "react"
-
-export type ClientProfile = {
-  id: string
-  projectCategory: string | null
-  projectLocation: string | null
-  budgetRange: string | null
-  urgency: string | null
-  image: string | null
-}
+import type { ClientProfileData, Fundi, SafeUser } from "@/lib/types"
 
 export type DashboardContextType = {
-  user: any
-  profile: ClientProfile | null
+  user: SafeUser | null
+  profile: ClientProfileData | null
   isLoading: boolean
-  allFundis: any[]
-  matchedFundis: any[]
+  allFundis: Fundi[]
+  matchedFundis: Fundi[]
   fetchData: () => Promise<void>
   handleLogout: () => Promise<void>
 }
@@ -26,10 +18,10 @@ const DashboardContext = createContext<DashboardContextType | undefined>(
 )
 
 export function DashboardProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<any>(null)
-  const [profile, setProfile] = useState<ClientProfile | null>(null)
+  const [user, setUser] = useState<SafeUser | null>(null)
+  const [profile, setProfile] = useState<ClientProfileData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [allFundis, setAllFundis] = useState<any[]>([])
+  const [allFundis, setAllFundis] = useState<Fundi[]>([])
 
   const fetchData = async () => {
     setIsLoading(true)
@@ -39,10 +31,10 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         window.location.href = "/auth/login"
         return
       }
-      const meData = await meRes.json()
+      const meData = (await meRes.json()) as { user?: SafeUser }
       if (meData.user?.role === "client") {
         setUser(meData.user)
-        setProfile(meData.user.clientProfile)
+        setProfile(meData.user.clientProfile ?? null)
       } else {
         window.location.href = "/"
         return
@@ -50,7 +42,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
 
       const fundisRes = await fetch("/api/fundis")
       if (fundisRes.ok) {
-        setAllFundis(await fundisRes.json())
+        setAllFundis((await fundisRes.json()) as Fundi[])
       }
     } catch (err) {
       console.error("Client dashboard load error:", err)
@@ -73,7 +65,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean)
 
-  // Match fundis that provide any of the requested services (union),
+  // Match fundis that provide one or more requested services (union),
   // and sort by how many requested services they match (relevance).
   const matchedFundis = (() => {
     if (clientCats.length === 0) return []

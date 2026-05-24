@@ -1,4 +1,10 @@
 declare module "@imagekit/next" {
+  export type ImageKitUploadResponse = {
+    url: string
+    fileId: string
+    name: string
+  }
+
   export default class ImageKit {
     constructor(config: {
       publicKey?: string
@@ -9,6 +15,6 @@ declare module "@imagekit/next" {
       file: string
       fileName?: string
       folder?: string
-    }): Promise<any>
+    }): Promise<ImageKitUploadResponse>
   }
 }

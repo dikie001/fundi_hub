@@ -67,7 +67,7 @@ function getClientIp(request: NextRequest): string {
   if (realIp) {
     return realIp.trim()
   }
-  return (request as any).ip || "127.0.0.1"
+  return "127.0.0.1"
 }
 
 export async function POST(
