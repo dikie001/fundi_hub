@@ -28,7 +28,9 @@ type DashboardContextType = {
   profile: FundiProfileData | null
   isLoading: boolean
   isUpdating: boolean
+  isAvatarUploading: boolean
   updateSuccess: string
+  updateError: string
   copiedReferral: boolean
   mounted: boolean
   portfolioItems: PortfolioItem[]
@@ -81,8 +83,8 @@ type DashboardContextType = {
   fetchProfile: () => Promise<void>
   fetchLeads: () => Promise<void>
   handleToggleAvailability: (currentVal: boolean) => Promise<void>
-  handleUpdateProfile: (e: React.FormEvent) => Promise<void>
-  handleAvatarChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  handleUpdateProfile: (e: React.FormEvent) => Promise<boolean>
+  handleAvatarUpload: (file: File) => Promise<boolean>
   handlePortfolioUpload: (e: React.FormEvent) => void
   handleApplyLead: (leadId: string) => void
   handleArchiveLead: (leadId: string) => void
@@ -120,7 +122,9 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<FundiProfileData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isUpdating, setIsUpdating] = useState(false)
+  const [isAvatarUploading, setIsAvatarUploading] = useState(false)
   const [updateSuccess, setUpdateSuccess] = useState("")
+  const [updateError, setUpdateError] = useState("")
   const [copiedReferral, setCopiedReferral] = useState(false)
   const [mounted, setMounted] = useState(false)
 
@@ -152,6 +156,17 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
   const [portfolioFile, setPortfolioFile] = useState<File | null>(null)
   const [isPortfolioUploading, setIsPortfolioUploading] = useState(false)
   const [portfolioProgress, setPortfolioProgress] = useState(0)
+
+  const showSuccess = (message: string) => {
+    setUpdateError("")
+    setUpdateSuccess(message)
+    setTimeout(() => setUpdateSuccess(""), 4000)
+  }
+
+  const showError = (message: string) => {
+    setUpdateSuccess("")
+    setUpdateError(message)
+  }
 
   useEffect(() => {
     setMounted(true)
@@ -260,6 +275,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     e.preventDefault()
     setIsUpdating(true)
     setUpdateSuccess("")
+    setUpdateError("")
 
     try {
       const response = await fetch("/api/fundi/profile", {
@@ -278,53 +294,83 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
       })
 
       if (response.ok) {
-        setUpdateSuccess("Profile details saved successfully!")
+        showSuccess("Profile details saved successfully!")
         await fetchProfile()
-        setTimeout(() => setUpdateSuccess(""), 4000)
+        return true
       } else {
         const data = (await response.json()) as { error?: string }
-        alert(data.error || "Failed to update profile details.")
+        showError(data.error || "Failed to update profile details.")
+        return false
       }
     } catch (error) {
       console.error("Error updating profile details:", error)
+      showError("Unable to save profile details. Please try again.")
+      return false
     } finally {
       setIsUpdating(false)
     }
   }
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    const reader = new FileReader()
-    reader.onload = async (event) => {
-      try {
-        const base64String = event.target?.result as string
-        const uploadResponse = await fetch("/api/upload", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            image: base64String,
-            fileName: file.name,
-            folder: "fundi_hub/profile_pics",
-          }),
-        })
-        if (!uploadResponse.ok) throw new Error("Upload failed")
-        const uploadData = await uploadResponse.json()
-        const imageUrl = uploadData.url || uploadData.data?.url || ""
-        if (!imageUrl) throw new Error("No image URL returned")
-        await fetch("/api/fundi/profile", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image: imageUrl }),
-        })
-        setAvatarUrl(imageUrl)
-        await fetchProfile()
-      } catch (error) {
-        console.error("Avatar upload failed:", error)
-      }
+  const handleAvatarUpload = async (file: File) => {
+    if (file.size > 5 * 1024 * 1024) {
+      showError("Image must be 5 MB or smaller.")
+      return false
     }
-    reader.readAsDataURL(file)
+
+    setIsAvatarUploading(true)
+    setUpdateSuccess("")
+    setUpdateError("")
+
+    try {
+      const base64String = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = (event) => resolve((event.target?.result as string) || "")
+        reader.onerror = () => reject(new Error("Unable to read image file"))
+        reader.readAsDataURL(file)
+      })
+
+      const uploadResponse = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          image: base64String,
+          fileName: file.name,
+          folder: "fundi_hub/profile_pics",
+        }),
+      })
+
+      if (!uploadResponse.ok) {
+        throw new Error("Upload failed")
+      }
+
+      const uploadData = await uploadResponse.json()
+      const imageUrl = uploadData.url || uploadData.data?.url || ""
+
+      if (!imageUrl) {
+        throw new Error("No image URL returned")
+      }
+
+      const profileResponse = await fetch("/api/fundi/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: imageUrl }),
+      })
+
+      if (!profileResponse.ok) {
+        throw new Error("Failed to save profile image")
+      }
+
+      setAvatarUrl(imageUrl)
+      await fetchProfile()
+      showSuccess("Profile photo updated successfully!")
+      return true
+    } catch (error) {
+      console.error("Avatar upload failed:", error)
+      showError("Failed to upload profile photo. Please try again.")
+      return false
+    } finally {
+      setIsAvatarUploading(false)
+    }
   }
 
   const handlePortfolioUpload = (e: React.FormEvent) => {
@@ -332,6 +378,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     if (!newPortfolioTitle.trim()) return
 
     setIsPortfolioUploading(true)
+    setUpdateError("")
     setPortfolioProgress(0)
 
     const finalizeUpload = async (imgUrl: string) => {
@@ -354,6 +401,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
       setPortfolioFile(null)
       setIsPortfolioUploading(false)
       setIsAddPortfolioOpen(false)
+      showSuccess("Portfolio item saved successfully!")
     }
 
     let progress = 0
@@ -382,6 +430,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
               await finalizeUpload(uploadData.url || "")
             } catch (error) {
               console.error("Portfolio upload failed:", error)
+              showError("Portfolio upload failed. Saving without image.")
               await finalizeUpload("")
             }
           }
@@ -504,7 +553,9 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         profile,
         isLoading,
         isUpdating,
+        isAvatarUploading,
         updateSuccess,
+        updateError,
         copiedReferral,
         mounted,
         portfolioItems,
@@ -558,7 +609,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         fetchLeads,
         handleToggleAvailability,
         handleUpdateProfile,
-        handleAvatarChange,
+        handleAvatarUpload,
         handlePortfolioUpload,
         handleApplyLead,
         handleArchiveLead,

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   Camera,
   ShieldCheck,
@@ -13,6 +13,8 @@ import {
   CheckCircle2,
   Loader2,
   X,
+  Check,
+  AlertCircle,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -23,6 +25,14 @@ import {
   CardDescription,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { EditProfileDialog } from "./edit-profile-dialog"
 import { AddPortfolioDialog } from "./add-portfolio-dialog"
 import type { FundiProfileData, SafeUser } from "@/lib/types"
@@ -67,14 +77,16 @@ type ProfileTabProps = {
   skills: string[]
   setSkills: (val: string[]) => void
   avatarUrl: string
-  handleAvatarChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  isAvatarUploading: boolean
+  handleAvatarUpload: (file: File) => Promise<boolean>
   portfolioItems: PortfolioItem[]
   isAddPortfolioOpen: boolean
   setIsAddPortfolioOpen: (val: boolean) => void
   completionScore: number
   isUpdating: boolean
   updateSuccess: string
-  handleUpdateProfile: (e: React.FormEvent) => void
+  updateError: string
+  handleUpdateProfile: (e: React.FormEvent) => Promise<boolean>
   openPremiumModal: () => void
   newPortfolioTitle: string
   setNewPortfolioTitle: (val: string) => void
@@ -107,13 +119,15 @@ export function ProfileTab({
   skills,
   setSkills,
   avatarUrl,
-  handleAvatarChange,
+  isAvatarUploading,
+  handleAvatarUpload,
   portfolioItems,
   isAddPortfolioOpen,
   setIsAddPortfolioOpen,
   completionScore,
   isUpdating,
   updateSuccess,
+  updateError,
   handleUpdateProfile,
   openPremiumModal,
   newPortfolioTitle,
@@ -128,11 +142,30 @@ export function ProfileTab({
 }: ProfileTabProps) {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false)
   const [skillsInputValue, setSkillsInputValue] = useState(skills.join(", "))
+  const [isAvatarPreviewOpen, setIsAvatarPreviewOpen] = useState(false)
+  const [pendingAvatarFile, setPendingAvatarFile] = useState<File | null>(null)
+  const [avatarPreviewUrl, setAvatarPreviewUrl] = useState("")
 
-  const onEditProfileSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!pendingAvatarFile) {
+      setAvatarPreviewUrl("")
+      return
+    }
+
+    const objectUrl = URL.createObjectURL(pendingAvatarFile)
+    setAvatarPreviewUrl(objectUrl)
+
+    return () => {
+      URL.revokeObjectURL(objectUrl)
+    }
+  }, [pendingAvatarFile])
+
+  const onEditProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    handleUpdateProfile(e)
-    setIsEditProfileOpen(false)
+    const success = await handleUpdateProfile(e)
+    if (success) {
+      setIsEditProfileOpen(false)
+    }
   }
 
   const handleSkillsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,6 +178,23 @@ export function ProfileTab({
         .filter(Boolean)
     )
   }
+
+    const onSelectAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0]
+      if (!file) return
+      setPendingAvatarFile(file)
+      setIsAvatarPreviewOpen(true)
+      e.target.value = ""
+    }
+
+    const onConfirmAvatarUpload = async () => {
+      if (!pendingAvatarFile) return
+      const success = await handleAvatarUpload(pendingAvatarFile)
+      if (success) {
+        setIsAvatarPreviewOpen(false)
+        setPendingAvatarFile(null)
+      }
+    }
 
   return (
     <div className="animate-in space-y-6 duration-300 fade-in slide-in-from-bottom-2">
@@ -159,6 +209,27 @@ export function ProfileTab({
         </div>
       </div>
 
+      {(isUpdating || isAvatarUploading || isPortfolioUploading) && (
+        <div className="flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/10 px-3.5 py-2 text-xs text-primary">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Saving your profile updates...
+        </div>
+      )}
+
+      {updateSuccess && (
+        <div className="flex items-center gap-2 rounded-lg border border-emerald-500/25 bg-emerald-500/10 px-3.5 py-2 text-xs text-emerald-500">
+          <Check className="h-4 w-4" />
+          {updateSuccess}
+        </div>
+      )}
+
+      {updateError && (
+        <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-3.5 py-2 text-xs text-destructive">
+          <AlertCircle className="h-4 w-4" />
+          {updateError}
+        </div>
+      )}
+
       <Card className="border border-border/40 bg-card p-6 shadow-xs">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
           <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-start sm:text-left">
@@ -168,7 +239,7 @@ export function ProfileTab({
                 id="avatar-upload-profile"
                 accept="image/*"
                 className="hidden"
-                onChange={handleAvatarChange}
+                onChange={onSelectAvatar}
               />
               <label
                 htmlFor="avatar-upload-profile"
@@ -183,10 +254,20 @@ export function ProfileTab({
                 ) : (
                   user?.name?.[0]?.toUpperCase()
                 )}
-                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/0 transition-all group-hover:bg-black/40">
-                  <Camera className="h-5 w-5 text-white opacity-0 transition-opacity group-hover:opacity-100" />
+                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/0 transition-all group-hover:bg-black/35">
+                  <Camera className="h-5 w-5 text-white opacity-85 transition-opacity group-hover:opacity-100" />
                 </div>
               </label>
+              <button
+                type="button"
+                onClick={() =>
+                  document.getElementById("avatar-upload-profile")?.click()
+                }
+                className="absolute -right-1 -bottom-1 inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary px-2 py-1 text-[10px] font-semibold text-primary-foreground shadow-md"
+              >
+                <Camera className="h-3 w-3" />
+                Edit
+              </button>
             </div>
 
             <div className="space-y-2">
@@ -226,15 +307,19 @@ export function ProfileTab({
             <Button
               onClick={() => setIsEditProfileOpen(true)}
               variant="outline"
+              disabled={isUpdating}
               className="flex h-10 w-full cursor-pointer items-center gap-2 rounded-lg border-border/60 px-4 text-sm font-semibold shadow-xs hover:bg-muted md:w-auto"
             >
-              <PenLine className="h-4 w-4" /> Edit Profile
+              {isUpdating ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" /> Saving...
+                </>
+              ) : (
+                <>
+                  <PenLine className="h-4 w-4" /> Edit Profile
+                </>
+              )}
             </Button>
-            {updateSuccess && (
-              <span className="text-[11px] font-medium text-emerald-500">
-                {updateSuccess}
-              </span>
-            )}
           </div>
         </div>
       </Card>
@@ -430,6 +515,63 @@ export function ProfileTab({
         portfolioProgress={portfolioProgress}
         onSubmit={handlePortfolioUpload}
       />
+
+      <Dialog open={isAvatarPreviewOpen} onOpenChange={setIsAvatarPreviewOpen}>
+        <DialogContent className="w-full max-w-xs rounded-xl border border-border bg-card p-5 shadow-lg">
+          <DialogHeader>
+            <DialogTitle className="text-sm font-bold text-foreground">
+              Preview Profile Photo
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              Review your new photo before uploading it.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex justify-center py-2">
+            {avatarPreviewUrl ? (
+              <img
+                src={avatarPreviewUrl}
+                alt="New profile preview"
+                className="h-28 w-28 rounded-full border-2 border-border object-cover"
+              />
+            ) : (
+              <div className="flex h-28 w-28 items-center justify-center rounded-full border-2 border-border bg-muted text-muted-foreground">
+                No preview
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="gap-2 pt-2">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                setIsAvatarPreviewOpen(false)
+                setPendingAvatarFile(null)
+              }}
+              disabled={isAvatarUploading}
+              className="h-9"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={onConfirmAvatarUpload}
+              disabled={isAvatarUploading || !pendingAvatarFile}
+              className="h-9"
+            >
+              {isAvatarUploading ? (
+                <>
+                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                "Confirm Upload"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
