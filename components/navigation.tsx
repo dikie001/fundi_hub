@@ -72,12 +72,6 @@ export function Navigation() {
               Home
             </Link>
             <Link
-              href="/categories"
-              className="text-sm font-medium transition-colors hover:text-primary"
-            >
-              Categories
-            </Link>
-            <Link
               href="/for-fundis"
               className="text-sm font-medium transition-colors hover:text-primary"
             >
@@ -88,6 +82,18 @@ export function Navigation() {
               className="text-sm font-medium transition-colors hover:text-primary"
             >
               Refer & Earn
+            </Link>
+            <Link
+              href="/about"
+              className="text-sm font-medium transition-colors hover:text-primary"
+            >
+              About
+            </Link>
+            <Link
+              href="/contact"
+              className="text-sm font-medium transition-colors hover:text-primary"
+            >
+              Contact
             </Link>
             <div className="flex items-center gap-3 border-l border-border pl-8">
               {authUser ? (
@@ -105,10 +111,10 @@ export function Navigation() {
               ) : (
                 <>
                   <Button variant="outline" size="sm" asChild>
-                    <Link href="/auth/login">Sign In</Link>
+                    <Link href="/auth/login">Log In</Link>
                   </Button>
                   <Button size="sm" asChild>
-                    <Link href="/auth/signup">Sign Up</Link>
+                    <Link href="/auth/signup">Get Started</Link>
                   </Button>
                 </>
               )}
@@ -144,13 +150,6 @@ export function Navigation() {
                   Home
                 </Link>
                 <Link
-                  href="/categories"
-                  onClick={() => setIsOpen(false)}
-                  className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
-                >
-                  Browse Categories
-                </Link>
-                <Link
                   href="/for-fundis"
                   onClick={() => setIsOpen(false)}
                   className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
@@ -164,22 +163,19 @@ export function Navigation() {
                 >
                   Refer & Earn
                 </Link>
-                
-                <div className="my-2 border-t border-border"></div>
-                
                 <Link
-                  href="/privacy"
+                  href="/about"
                   onClick={() => setIsOpen(false)}
                   className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
                 >
-                  Privacy Policy
+                  About
                 </Link>
                 <Link
-                  href="/terms"
+                  href="/contact"
                   onClick={() => setIsOpen(false)}
                   className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
                 >
-                  Terms of Service
+                  Contact
                 </Link>
 
                 <div className="space-y-2 border-t border-border pt-3">
@@ -193,7 +189,7 @@ export function Navigation() {
                         setIsOpen(false)
                       }}
                     >
-                      Sign Out
+                      Log Out
                     </Button>
                   ) : (
                     <>
@@ -207,7 +203,7 @@ export function Navigation() {
                           href="/auth/login"
                           onClick={() => setIsOpen(false)}
                         >
-                          Sign In
+                          Log In
                         </Link>
                       </Button>
                       <Button size="sm" asChild className="w-full">
@@ -215,7 +211,7 @@ export function Navigation() {
                           href="/auth/signup"
                           onClick={() => setIsOpen(false)}
                         >
-                          Sign Up
+                          Get Started
                         </Link>
                       </Button>
                     </>

@@ -21,7 +21,8 @@ export default function ForFundisPage() {
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
             <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Join FundiHub as a <span className="text-primary">Professional</span>
+              Join FundiHub as a{" "}
+              <span className="text-primary">Professional</span>
             </h1>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
               Grow your business by connecting with clients across Kenya
@@ -68,7 +69,9 @@ export default function ForFundisPage() {
 
           {/* Pricing */}
           <div className="mt-16">
-            <h2 className="mb-8 text-center text-2xl font-bold">Simple Pricing</h2>
+            <h2 className="mb-8 text-center text-2xl font-bold">
+              Simple Pricing
+            </h2>
             <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
               <Card>
                 <CardHeader>
@@ -76,7 +79,9 @@ export default function ForFundisPage() {
                   <CardDescription className="text-2xl font-bold text-primary">
                     Ksh 200
                   </CardDescription>
-                  <p className="text-sm text-muted-foreground">One-time payment</p>
+                  <p className="text-sm text-muted-foreground">
+                    One-time payment
+                  </p>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2 text-sm">
@@ -102,7 +107,9 @@ export default function ForFundisPage() {
                   <CardDescription className="text-2xl font-bold text-primary">
                     Ksh 500/month
                   </CardDescription>
-                  <p className="text-sm text-muted-foreground">Cancel anytime</p>
+                  <p className="text-sm text-muted-foreground">
+                    Cancel anytime
+                  </p>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2 text-sm">

@@ -30,18 +30,23 @@ export default function ReferEarnPage() {
 
           {/* How it Works */}
           <div className="mt-16">
-            <h2 className="mb-8 text-center text-2xl font-bold">How It Works</h2>
+            <h2 className="mb-8 text-center text-2xl font-bold">
+              How It Works
+            </h2>
             <div className="grid gap-8 md:grid-cols-3">
               <Card>
                 <CardHeader>
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
                     <span className="text-lg font-bold">1</span>
                   </div>
-                  <CardTitle className="mt-4">Identify Skilled Workers</CardTitle>
+                  <CardTitle className="mt-4">
+                    Identify Skilled Workers
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
-                    Find plumbers, electricians, painters, and other skilled workers who could benefit from FundiHub
+                    Find plumbers, electricians, painters, and other skilled
+                    workers who could benefit from FundiHub
                   </p>
                 </CardContent>
               </Card>
@@ -55,7 +60,8 @@ export default function ReferEarnPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
-                    Share your unique referral link with them and help them sign up on FundiHub
+                    Share your unique referral link with them and help them sign
+                    up on FundiHub
                   </p>
                 </CardContent>
               </Card>
@@ -69,7 +75,8 @@ export default function ReferEarnPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
-                    Earn Ksh 100 for each successful referral when they complete registration
+                    Earn Ksh 100 for each successful referral when they complete
+                    registration
                   </p>
                 </CardContent>
               </Card>
