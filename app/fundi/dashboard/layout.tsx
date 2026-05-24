@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useMemo, useState } from "react"
 import { DashboardProvider, useDashboard } from "./context/DashboardContext"
 import {
   SidebarInset,
@@ -19,7 +20,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Check, Loader2, Zap } from "lucide-react"
+import { Check, Lock } from "lucide-react"
 import {
   LayoutDashboard,
   Wrench,
@@ -28,13 +29,21 @@ import {
   ShieldCheck,
 } from "lucide-react"
 import { usePathname } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { UserMenu } from "@/components/user-menu"
 import { PaystackButton } from "@/components/paystack-button"
+import { PaymentSuccessToast } from "@/components/payment-success-toast"
+
+type PaymentSuccessState = {
+  title: string
+  description: string
+}
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
   const { state } = useSidebar()
   const isCollapsed = state === "collapsed"
   const pathname = usePathname()
+  const router = useRouter()
 
   const {
     user,
@@ -45,11 +54,54 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     isPremiumModalOpen,
     setIsPremiumModalOpen,
     premiumModalType,
-    isProcessingPayment,
-    setIsProcessingPayment,
     handleLogout,
-    handleActivateBadge,
   } = useDashboard()
+
+  const [showPaymentToast, setShowPaymentToast] = useState(false)
+  const [paymentSuccessState, setPaymentSuccessState] =
+    useState<PaymentSuccessState | null>(null)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+
+    if (params.get("payment") === "success") {
+      const purpose = params.get("paymentPurpose")
+      const heading = params.get("paymentHeading")
+
+      if (purpose === "premium") {
+        setPaymentSuccessState({
+          title: heading || "You're now a Premium Fundi!",
+          description:
+            "Your gold verified badge is now active! You'll appear 5x higher in search results and receive priority leads from clients in your area.",
+        })
+      } else if (purpose === "registration") {
+        setPaymentSuccessState({
+          title: heading || "Welcome to FundiHub!",
+          description:
+            "Your profile is now live! Clients across Kenya can find you, send you job leads, and connect with you directly via WhatsApp or phone call.",
+        })
+      } else {
+        setPaymentSuccessState({
+          title: heading || "Payment Successful",
+          description:
+            "Your payment has been verified and your account has been updated.",
+        })
+      }
+      setShowPaymentToast(true)
+    }
+  }, [])
+
+  const clearPaymentQuery = () => {
+    setShowPaymentToast(false)
+    setPaymentSuccessState(null)
+    const url = new URL(window.location.href)
+    url.searchParams.delete("payment")
+    url.searchParams.delete("paymentPurpose")
+    url.searchParams.delete("paymentReference")
+    url.searchParams.delete("paymentAmount")
+    url.searchParams.delete("paymentHeading")
+    window.history.replaceState({}, "", url.pathname)
+  }
 
   const menuItems = [
     {
@@ -105,7 +157,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       />
 
       <SidebarInset className="flex min-h-screen flex-1 flex-col">
-        <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between bg-background px-6">
+        <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-sidebar-border bg-sidebar px-6">
           <div className="flex items-center gap-3">
             <SidebarTrigger />
             <Separator orientation="vertical" className="h-4" />
@@ -129,46 +181,72 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       </SidebarInset>
 
       <Dialog open={isPremiumModalOpen} onOpenChange={setIsPremiumModalOpen}>
-        <DialogContent className="w-full max-w-sm rounded-xl border border-border bg-card p-5 shadow-lg">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-1.5 text-sm font-bold text-foreground">
-              <ShieldCheck className="h-4 w-4 text-primary" /> Activate Premium
-              Badge
+        <DialogContent className="w-full max-w-xs rounded-xl border border-border bg-card p-5 shadow-lg">
+          <DialogHeader className="space-y-1 text-left">
+            <DialogTitle className="text-sm font-bold text-foreground">
+              Upgrade to Premium
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
-              Boost your profile discovery rating and gain customer trust.
+              Stand out and get more clients.
             </DialogDescription>
           </DialogHeader>
-          <div className="my-2 space-y-4 border-t border-b border-border/30 py-4">
-            <div className="space-y-1.5 rounded-xl border border-border bg-muted/40 p-3.5 text-center">
-              <span className="text-[9px] font-black tracking-wider text-muted-foreground uppercase">
-                Premium Badge
+
+          <div className="mt-3 space-y-3">
+            <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 px-3.5 py-2.5">
+              <span className="text-xs text-muted-foreground">
+                One-time fee
               </span>
-              <div className="text-2xl font-black text-primary">
-                Ksh 500 once
-              </div>
-              <p className="text-xs leading-normal text-muted-foreground">
-                Verified trust tick, top search rankings, and 5x priority queue
-                dispatch for customer leads.
-              </p>
+              <span className="text-base font-bold text-foreground">
+                KSh 500
+              </span>
             </div>
-            <div className="space-y-2 rounded-lg border border-primary/10 bg-primary/5 p-3 text-xs leading-normal text-muted-foreground">
-              <div className="flex gap-1.5 font-medium">
-                <Check className="h-3.5 w-3.5 shrink-0 text-primary" />
-                <span>Immediate badge activation on profile search</span>
+
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center gap-2.5">
+                <Check
+                  className="h-3.5 w-3.5 shrink-0 text-primary"
+                  strokeWidth={2.5}
+                />
+                <span className="text-muted-foreground">
+                  <span className="font-medium text-foreground">
+                    Gold badge
+                  </span>{" "}
+                  on your profile
+                </span>
               </div>
-              <div className="flex gap-1.5 font-medium">
-                <Check className="h-3.5 w-3.5 shrink-0 text-primary" />
-                <span>One-time activation fee</span>
+              <div className="flex items-center gap-2.5">
+                <Check
+                  className="h-3.5 w-3.5 shrink-0 text-primary"
+                  strokeWidth={2.5}
+                />
+                <span className="text-muted-foreground">
+                  <span className="font-medium text-foreground">
+                    5x search boost
+                  </span>{" "}
+                  in results
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Check
+                  className="h-3.5 w-3.5 shrink-0 text-primary"
+                  strokeWidth={2.5}
+                />
+                <span className="text-muted-foreground">
+                  <span className="font-medium text-foreground">
+                    Priority leads
+                  </span>{" "}
+                  before others
+                </span>
               </div>
             </div>
           </div>
-          <DialogFooter className="flex items-center justify-end gap-2">
+
+          <div className="mt-4 flex items-center gap-2">
             <Button
               type="button"
               variant="ghost"
               onClick={() => setIsPremiumModalOpen(false)}
-              className="h-9.5 cursor-pointer rounded-lg px-4 text-xs text-muted-foreground"
+              className="h-9 flex-1 cursor-pointer rounded-lg text-xs font-medium text-muted-foreground"
             >
               Cancel
             </Button>
@@ -177,14 +255,124 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
               email={user?.email || user?.phone + "@fundihub.com"}
               name={user?.name || "User"}
               phone={user?.phone || ""}
-              onSuccess={(reference) => handleActivateBadge(reference)}
-              onClose={() => setIsProcessingPayment(false)}
-              disabled={isProcessingPayment}
-              className="h-9.5 cursor-pointer rounded-lg bg-primary px-4 text-xs font-bold text-primary-foreground"
+              callbackPath="/api/payments/callback"
+              callbackParams={{
+                purpose: "premium",
+                premiumLevel: premiumModalType,
+                returnTo: "/fundi/dashboard",
+              }}
+              skipConfirmation
+              className="h-9 flex-1 cursor-pointer rounded-lg text-xs font-semibold transition-colors"
             >
-              Pay Ksh 500 & Activate
+              Pay KSh 500
             </PaystackButton>
-          </DialogFooter>
+          </div>
+
+          <p className="mt-2 flex items-center justify-center gap-1 text-[10px] text-muted-foreground/50 select-none">
+            <Lock className="h-3 w-3" />
+            Secured by Paystack
+          </p>
+        </DialogContent>
+      </Dialog>
+
+      {paymentSuccessState ? (
+        <PaymentSuccessToast
+          open={showPaymentToast}
+          title={paymentSuccessState.title}
+          description={paymentSuccessState.description}
+          onDismiss={() => {
+            setShowPaymentToast(false)
+            clearPaymentQuery()
+          }}
+        />
+      ) : null}
+
+      <Dialog
+        open={mounted && !!profile && !profile.isRegistrationPaid}
+        onOpenChange={() => {}}
+      >
+        <DialogContent
+          className="w-full max-w-xs rounded-xl border border-border bg-card p-5 shadow-lg select-none"
+          showCloseButton={false}
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onEscapeKeyDown={(e) => e.preventDefault()}
+        >
+          <DialogHeader className="space-y-1 text-left">
+            <DialogTitle className="text-sm font-bold text-foreground">
+              Activate Your Profile
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              A one-time fee to go live and start receiving leads.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-3 space-y-3">
+            <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 px-3.5 py-2.5">
+              <span className="text-xs text-muted-foreground">
+                Activation fee
+              </span>
+              <span className="text-base font-bold text-foreground">
+                KSh 200
+              </span>
+            </div>
+
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center gap-2.5">
+                <Check
+                  className="h-3.5 w-3.5 shrink-0 text-primary"
+                  strokeWidth={2.5}
+                />
+                <span className="text-muted-foreground">
+                  Profile visible to clients
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Check
+                  className="h-3.5 w-3.5 shrink-0 text-primary"
+                  strokeWidth={2.5}
+                />
+                <span className="text-muted-foreground">
+                  Receive job leads in your area
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Check
+                  className="h-3.5 w-3.5 shrink-0 text-primary"
+                  strokeWidth={2.5}
+                />
+                <span className="text-muted-foreground">
+                  Direct client connections
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 flex flex-col gap-2">
+            <PaystackButton
+              amount={200}
+              email={
+                user?.email ||
+                `${user?.phone.replace(/[^0-9]/g, "")}@fundihub.com`
+              }
+              name={user?.name || "Fundi Partner"}
+              phone={user?.phone || ""}
+              callbackPath="/api/payments/callback"
+              callbackParams={{
+                purpose: "registration",
+                userId: user?.id || "",
+                returnTo: "/fundi/dashboard",
+              }}
+              skipConfirmation
+              className="h-9 w-full cursor-pointer rounded-lg text-xs font-semibold transition-colors"
+            >
+              Pay KSh 200 & Activate
+            </PaystackButton>
+
+            <p className="flex items-center justify-center gap-1 text-[10px] text-muted-foreground/50 select-none">
+              <Lock className="h-3 w-3" />
+              Secured by Paystack
+            </p>
+          </div>
         </DialogContent>
       </Dialog>
     </>

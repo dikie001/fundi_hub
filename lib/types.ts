@@ -55,6 +55,7 @@ export interface FundiProfileData {
   premiumLevel: PremiumLevel
   isAvailable: boolean
   isNearby: boolean
+  isRegistrationPaid: boolean
   description: string | null
   skills: string
   portfolio: string

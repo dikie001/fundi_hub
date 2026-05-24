@@ -71,6 +71,7 @@ model FundiProfile {
   premiumLevel     PremiumLevel @default(none)
   isAvailable      Boolean      @default(true)
   isNearby         Boolean      @default(false)
+  isRegistrationPaid Boolean    @default(false)
   description      String?      @db.Text
   skills           String       @default("")
   portfolio        String       @default("[]")

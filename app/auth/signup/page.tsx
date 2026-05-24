@@ -1,6 +1,7 @@
-﻿"use client"
+"use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useMemo, useState, useEffect } from "react"
 import {
   Eye,
@@ -39,6 +40,17 @@ import {
   type MultiSelectOption,
 } from "@/components/ui/multi-select"
 import type { GoogleProfileData } from "@/lib/types"
+import { PaystackButton } from "@/components/paystack-button"
+import { PaymentSuccessToast } from "@/components/payment-success-toast"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { cn } from "@/lib/utils"
 
 type UserType = "client" | "fundi"
 
@@ -91,6 +103,7 @@ const STEP_LABELS = [
 ]
 
 export default function SignupPage() {
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -99,6 +112,8 @@ export default function SignupPage() {
   const [currentStep, setCurrentStep] = useState(1)
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [stepError, setStepError] = useState("")
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [registeredUserId, setRegisteredUserId] = useState("")
 
   // Multi-select
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
@@ -122,6 +137,35 @@ export default function SignupPage() {
   const [isGoogleSignup, setIsGoogleSignup] = useState(false)
   const [googleData, setGoogleData] = useState<GoogleProfileData | null>(null)
   const [registrationSuccess, setRegistrationSuccess] = useState(false)
+  const [showPaymentToast, setShowPaymentToast] = useState(false)
+  const [continueTo, setContinueTo] = useState("/auth/login?registered=true")
+  const [paymentSuccessState, setPaymentSuccessState] = useState<{
+    title: string
+    description: string
+  } | null>(null)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    setContinueTo(params.get("continueTo") || "/auth/login?registered=true")
+
+    if (
+      params.get("payment") === "success" &&
+      params.get("paymentPurpose") === "registration"
+    ) {
+      setPaymentSuccessState({
+        title: params.get("paymentHeading") || "Welcome to FundiHub!",
+        description:
+          "Your profile is now live! Thousands of clients can find you, send you job leads, and connect with you directly via WhatsApp or phone.",
+      })
+      setShowPaymentToast(true)
+    }
+  }, [])
+
+  const handleContinueAfterPayment = () => {
+    setShowPaymentToast(false)
+    setPaymentSuccessState(null)
+    router.replace(continueTo)
+  }
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -398,20 +442,20 @@ export default function SignupPage() {
       if (!res.ok) {
         setStepError(data.error || "An error occurred. Please try again.")
       } else {
-        // Show success message
-        setRegistrationSuccess(true)
         setStepError("")
-        // Redirect after showing success message
-        setTimeout(() => {
-          if (isGoogleSignup) {
-            // Direct Google users to their dashboard (auto-login via Google flow expected)
-            const dest =
-              userType === "fundi" ? "/fundi/dashboard" : "/client/dashboard"
-            window.location.href = dest
-          } else {
-            window.location.href = "/auth/login?registered=true"
-          }
-        }, 2500)
+        if (userType === "fundi") {
+          setRegisteredUserId(data.userId)
+          setShowPaymentModal(true)
+        } else {
+          setRegistrationSuccess(true)
+          setTimeout(() => {
+            if (isGoogleSignup) {
+              window.location.href = "/client/dashboard"
+            } else {
+              window.location.href = "/auth/login?registered=true"
+            }
+          }, 2500)
+        }
       }
     } catch {
       setStepError("Network error. Please try again.")
@@ -1085,6 +1129,108 @@ export default function SignupPage() {
             </Link>
           </div>
         </div>
+
+        <Dialog open={showPaymentModal} onOpenChange={() => {}}>
+          <DialogContent
+            className="w-full max-w-xs rounded-xl border border-border bg-card p-5 shadow-lg select-none"
+            showCloseButton={false}
+            onPointerDownOutside={(e) => e.preventDefault()}
+            onEscapeKeyDown={(e) => e.preventDefault()}
+          >
+            <DialogHeader className="space-y-1 text-left">
+              <DialogTitle className="text-sm font-bold text-foreground">
+                Activate Your Profile
+              </DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground">
+                A one-time fee to go live and start receiving leads.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="mt-3 space-y-3">
+              <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 px-3.5 py-2.5">
+                <span className="text-xs text-muted-foreground">
+                  Activation fee
+                </span>
+                <span className="text-base font-bold text-foreground">
+                  KSh 200
+                </span>
+              </div>
+
+              <div className="space-y-2 text-xs">
+                <div className="flex items-center gap-2.5">
+                  <Check
+                    className="h-3.5 w-3.5 shrink-0 text-primary"
+                    strokeWidth={2.5}
+                  />
+                  <span className="text-muted-foreground">
+                    Profile visible to clients
+                  </span>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <Check
+                    className="h-3.5 w-3.5 shrink-0 text-primary"
+                    strokeWidth={2.5}
+                  />
+                  <span className="text-muted-foreground">
+                    Receive job leads in your area
+                  </span>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <Check
+                    className="h-3.5 w-3.5 shrink-0 text-primary"
+                    strokeWidth={2.5}
+                  />
+                  <span className="text-muted-foreground">
+                    Direct client connections
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 flex flex-col gap-2">
+              <PaystackButton
+                amount={200}
+                email={
+                  googleData?.email ||
+                  `${phone.replace(/[^0-9]/g, "")}@fundihub.com`
+                }
+                name={name || "Fundi Partner"}
+                phone={phone || ""}
+                callbackPath="/api/payments/callback"
+                callbackParams={{
+                  purpose: "registration",
+                  userId: registeredUserId,
+                  returnTo: "/auth/signup",
+                  continueTo: isGoogleSignup
+                    ? "/fundi/dashboard"
+                    : "/auth/login?registered=true",
+                }}
+                disabled={!registeredUserId}
+                skipConfirmation
+                className="h-9 w-full cursor-pointer rounded-lg text-xs font-semibold transition-colors"
+              >
+                Pay KSh 200 & Activate
+              </PaystackButton>
+
+              <p className="flex items-center justify-center gap-1 text-[10px] text-muted-foreground/50 select-none">
+                <Lock className="h-3 w-3" />
+                Secured by Paystack
+              </p>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {paymentSuccessState ? (
+          <PaymentSuccessToast
+            open={showPaymentToast}
+            title={paymentSuccessState.title}
+            description={paymentSuccessState.description}
+            onDismiss={() => {
+              setShowPaymentToast(false)
+              handleContinueAfterPayment()
+            }}
+          />
+        ) : null}
       </div>
     </div>
   )

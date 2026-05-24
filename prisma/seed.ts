@@ -162,6 +162,7 @@ async function main() {
             premiumLevel: fundi.premiumLevel,
             isAvailable: fundi.isAvailable,
             isNearby: fundi.isNearby,
+            isRegistrationPaid: true,
             description: fundi.description,
             skills: fundi.skills,
           },
