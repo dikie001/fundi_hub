@@ -1,15 +1,28 @@
 import ImageKit from "imagekit"
 import { NextResponse } from "next/server"
 
-// Initialize ImageKit
-const imagekit = new ImageKit({
-  publicKey: process.env.IMAGE_KIT_PUBLIC_KEY || "",
-  privateKey: process.env.IMAGE_KIT_SECRET_KEY || "",
-  urlEndpoint: process.env.IMAGE_KIT_ENDPOINT || "",
-})
+function getImageKitClient() {
+  const publicKey =
+    process.env.IMAGE_KIT_PUBLIC_KEY ?? process.env.IMAGEKIT_PUBLIC_KEY ?? ""
+  const privateKey =
+    process.env.IMAGE_KIT_SECRET_KEY ?? process.env.IMAGEKIT_PRIVATE_KEY ?? ""
+  const urlEndpoint =
+    process.env.IMAGE_KIT_ENDPOINT ?? process.env.IMAGEKIT_URL_ENDPOINT ?? ""
+
+  if (!publicKey || !privateKey || !urlEndpoint) {
+    throw new Error("Missing ImageKit configuration")
+  }
+
+  return new ImageKit({
+    publicKey,
+    privateKey,
+    urlEndpoint,
+  })
+}
 
 export async function POST(request: Request) {
   try {
+    const imagekit = getImageKitClient()
     const { image, fileName, folder } = await request.json()
 
     if (!image) {
