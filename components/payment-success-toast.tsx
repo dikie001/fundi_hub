@@ -26,7 +26,7 @@ export function PaymentSuccessToast({
 
   return (
     <div className="fixed right-4 bottom-4 z-70 w-[min(90vw,360px)] animate-in duration-200 fade-in slide-in-from-bottom-1">
-      <div className="rounded-lg border border-primary/40 bg-card shadow-lg shadow-primary/20 ring-1 ring-primary/20">
+      <div className="rounded-lg border border-primary/40 bg-card shadow-lg ring-1 shadow-primary/20 ring-primary/20">
         <div className="flex items-start gap-3 p-3.5">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/15">
             <Check className="h-4 w-4 text-primary" strokeWidth={2.5} />

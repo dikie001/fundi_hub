@@ -29,7 +29,7 @@ export function PaymentSuccessModal({
 }: PaymentSuccessModalProps) {
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && onContinue()}>
-      <DialogContent className="w-full max-w-sm rounded-xl border border-primary/40 bg-card p-0 shadow-lg shadow-primary/20 ring-1 ring-primary/20">
+      <DialogContent className="w-full max-w-sm rounded-xl border border-primary/40 bg-card p-0 shadow-lg ring-1 shadow-primary/20 ring-primary/20">
         {/* Top accent bar */}
         <div className="h-1 w-full rounded-t-xl bg-primary" />
 
