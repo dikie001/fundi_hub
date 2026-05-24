@@ -29,17 +29,24 @@ import {
   ShieldCheck,
 } from "lucide-react"
 import { usePathname } from "next/navigation"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { UserMenu } from "@/components/user-menu"
 import { PaystackButton } from "@/components/paystack-button"
 import { PaymentSuccessModal } from "@/components/payment-success-modal"
+import { PaymentSuccessToast } from "@/components/payment-success-toast"
+
+type PaymentSuccessState = {
+  title: string
+  description: string
+  amountLabel: string
+  reference?: string | null
+}
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
   const { state } = useSidebar()
   const isCollapsed = state === "collapsed"
   const pathname = usePathname()
   const router = useRouter()
-  const searchParams = useSearchParams()
 
   const {
     user,
@@ -54,42 +61,28 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   } = useDashboard()
 
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false)
-
-  const paymentPurpose = searchParams.get("paymentPurpose")
-  const paymentStatus = searchParams.get("payment")
-  const paymentReference = searchParams.get("paymentReference")
-  const paymentAmount = searchParams.get("paymentAmount")
-  const paymentHeading = searchParams.get("paymentHeading")
-
-  const successModalState = useMemo(() => {
-    if (paymentStatus !== "success" || paymentPurpose !== "premium") {
-      return null
-    }
-
-    return {
-      title: paymentHeading || "Payment successful",
-      description:
-        "Your premium upgrade was verified and your dashboard has been updated.",
-      amountLabel: paymentAmount || "KSh 500",
-      reference: paymentReference,
-    }
-  }, [
-    paymentAmount,
-    paymentHeading,
-    paymentPurpose,
-    paymentReference,
-    paymentStatus,
-  ])
+  const [showPaymentToast, setShowPaymentToast] = useState(false)
+  const [paymentSuccessState, setPaymentSuccessState] =
+    useState<PaymentSuccessState | null>(null)
 
   useEffect(() => {
-    setShowPaymentSuccess(Boolean(successModalState))
-  }, [successModalState])
+    const params = new URLSearchParams(window.location.search)
 
-  const clearPaymentQuery = () => {
-    setShowPaymentSuccess(false)
-    router.replace("/fundi/dashboard")
-  }
-
+    if (
+      params.get("payment") === "success" &&
+      params.get("paymentPurpose") === "premium"
+    ) {
+      setPaymentSuccessState({
+        title: params.get("paymentHeading") || "Payment successful",
+        description:
+          "Your premium upgrade was verified and your dashboard has been updated.",
+        amountLabel: params.get("paymentAmount") || "KSh 500",
+        reference: params.get("paymentReference"),
+      })
+      setShowPaymentSuccess(true)
+      setShowPaymentToast(true)
+    }
+  }, [])
   const menuItems = [
     {
       id: "overview",
@@ -269,13 +262,24 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
         </DialogContent>
       </Dialog>
 
-      {successModalState ? (
+      {paymentSuccessState ? (
+        <PaymentSuccessToast
+          open={showPaymentToast}
+          title={paymentSuccessState.title}
+          description={paymentSuccessState.description}
+          amountLabel={paymentSuccessState.amountLabel}
+          reference={paymentSuccessState.reference}
+          onDismiss={() => setShowPaymentToast(false)}
+        />
+      ) : null}
+
+      {paymentSuccessState ? (
         <PaymentSuccessModal
           open={showPaymentSuccess}
-          title={successModalState.title}
-          description={successModalState.description}
-          amountLabel={successModalState.amountLabel}
-          reference={successModalState.reference}
+          title={paymentSuccessState.title}
+          description={paymentSuccessState.description}
+          amountLabel={paymentSuccessState.amountLabel}
+          reference={paymentSuccessState.reference}
           onContinue={clearPaymentQuery}
         />
       ) : null}

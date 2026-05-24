@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useMemo, useState, useEffect } from "react"
 import {
   Eye,
@@ -42,6 +42,7 @@ import {
 import type { GoogleProfileData } from "@/lib/types"
 import { PaystackButton } from "@/components/paystack-button"
 import { PaymentSuccessModal } from "@/components/payment-success-modal"
+import { PaymentSuccessToast } from "@/components/payment-success-toast"
 import {
   Dialog,
   DialogContent,
@@ -104,7 +105,6 @@ const STEP_LABELS = [
 
 export default function SignupPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -139,41 +139,40 @@ export default function SignupPage() {
   const [googleData, setGoogleData] = useState<GoogleProfileData | null>(null)
   const [registrationSuccess, setRegistrationSuccess] = useState(false)
   const [showPaymentSuccessModal, setShowPaymentSuccessModal] = useState(false)
-
-  const paymentStatus = searchParams.get("payment")
-  const paymentPurpose = searchParams.get("paymentPurpose")
-  const paymentReference = searchParams.get("paymentReference")
-  const paymentAmount = searchParams.get("paymentAmount")
-  const paymentHeading = searchParams.get("paymentHeading")
-  const continueTo = searchParams.get("continueTo")
-
-  const successModalState = useMemo(() => {
-    if (paymentStatus !== "success" || paymentPurpose !== "registration") {
-      return null
-    }
-
-    return {
-      title: paymentHeading || "Profile activation complete",
-      description:
-        "Your payment was verified and your fundi profile is now active.",
-      amountLabel: paymentAmount || "KSh 200",
-      reference: paymentReference,
-    }
-  }, [
-    paymentAmount,
-    paymentHeading,
-    paymentPurpose,
-    paymentReference,
-    paymentStatus,
-  ])
+  const [showPaymentToast, setShowPaymentToast] = useState(false)
+  const [continueTo, setContinueTo] = useState("/auth/login?registered=true")
+  const [paymentSuccessState, setPaymentSuccessState] = useState<{
+    title: string
+    description: string
+    amountLabel: string
+    reference?: string | null
+  } | null>(null)
 
   useEffect(() => {
-    setShowPaymentSuccessModal(Boolean(successModalState))
-  }, [successModalState])
+    const params = new URLSearchParams(window.location.search)
+    setContinueTo(params.get("continueTo") || "/auth/login?registered=true")
+
+    if (
+      params.get("payment") === "success" &&
+      params.get("paymentPurpose") === "registration"
+    ) {
+      setPaymentSuccessState({
+        title: params.get("paymentHeading") || "Profile activation complete",
+        description:
+          "Your payment was verified and your fundi profile is now active.",
+        amountLabel: params.get("paymentAmount") || "KSh 200",
+        reference: params.get("paymentReference"),
+      })
+      setShowPaymentSuccessModal(true)
+      setShowPaymentToast(true)
+    }
+  }, [])
 
   const handleContinueAfterPayment = () => {
     setShowPaymentSuccessModal(false)
-    router.replace(continueTo || "/auth/login?registered=true")
+    setShowPaymentToast(false)
+    setPaymentSuccessState(null)
+    router.replace(continueTo)
   }
 
   useEffect(() => {
@@ -1198,13 +1197,24 @@ export default function SignupPage() {
           </DialogContent>
         </Dialog>
 
-        {successModalState ? (
+        {paymentSuccessState ? (
+          <PaymentSuccessToast
+            open={showPaymentToast}
+            title={paymentSuccessState.title}
+            description={paymentSuccessState.description}
+            amountLabel={paymentSuccessState.amountLabel}
+            reference={paymentSuccessState.reference}
+            onDismiss={() => setShowPaymentToast(false)}
+          />
+        ) : null}
+
+        {paymentSuccessState ? (
           <PaymentSuccessModal
             open={showPaymentSuccessModal}
-            title={successModalState.title}
-            description={successModalState.description}
-            amountLabel={successModalState.amountLabel}
-            reference={successModalState.reference}
+            title={paymentSuccessState.title}
+            description={paymentSuccessState.description}
+            amountLabel={paymentSuccessState.amountLabel}
+            reference={paymentSuccessState.reference}
             onContinue={handleContinueAfterPayment}
           />
         ) : null}
