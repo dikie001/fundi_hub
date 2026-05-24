@@ -981,9 +981,9 @@ export default function SignupPage() {
                           src={
                             googleAvatarFailed || !googleData?.picture
                               ? googleAvatarFallback
-                              : googleData.picture
+                              : (googleData?.picture ?? googleAvatarFallback)
                           }
-                          alt={googleData.name}
+                          alt={googleData?.name || name || "Profile"}
                           className="h-12 w-12 rounded-full"
                           referrerPolicy="no-referrer"
                           onError={() => setGoogleAvatarFailed(true)}
