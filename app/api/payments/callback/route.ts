@@ -15,12 +15,31 @@ function buildReturnUrl(origin: string, returnTo?: string, fallback = "/") {
   return new URL(target, origin)
 }
 
+function addPaymentSuccessParams(
+  url: URL,
+  params: {
+    purpose: string
+    reference: string
+    amount: string
+    heading: string
+  }
+) {
+  url.searchParams.set("payment", "success")
+  url.searchParams.set("paymentPurpose", params.purpose)
+  url.searchParams.set("paymentReference", params.reference)
+  url.searchParams.set("paymentAmount", params.amount)
+  url.searchParams.set("paymentHeading", params.heading)
+  return url
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams, origin } = new URL(request.url)
-    const reference = searchParams.get("reference") || searchParams.get("trxref")
+    const reference =
+      searchParams.get("reference") || searchParams.get("trxref")
     const purpose = searchParams.get("purpose") as PaymentPurpose | null
     const returnTo = searchParams.get("returnTo") || undefined
+    const continueTo = searchParams.get("continueTo") || undefined
     const premiumLevel = searchParams.get("premiumLevel")
     const userId = searchParams.get("userId")
 
@@ -82,9 +101,15 @@ export async function GET(request: NextRequest) {
         userId: user.id,
       })
 
-      return NextResponse.redirect(
-        buildReturnUrl(origin, returnTo, "/fundi/dashboard")
-      )
+      const redirectUrl = buildReturnUrl(origin, returnTo, "/fundi/dashboard")
+      addPaymentSuccessParams(redirectUrl, {
+        purpose: "premium",
+        reference,
+        amount: "KSh 500",
+        heading: "Premium badge activated",
+      })
+
+      return NextResponse.redirect(redirectUrl)
     }
 
     if (purpose === "registration") {
@@ -103,9 +128,23 @@ export async function GET(request: NextRequest) {
         userId,
       })
 
-      return NextResponse.redirect(
-        buildReturnUrl(origin, returnTo, "/auth/login?registered=true")
+      const redirectUrl = buildReturnUrl(
+        origin,
+        returnTo,
+        "/auth/signup"
       )
+      addPaymentSuccessParams(redirectUrl, {
+        purpose: "registration",
+        reference,
+        amount: "KSh 200",
+        heading: "Profile activation complete",
+      })
+      redirectUrl.searchParams.set(
+        "continueTo",
+        continueTo || "/auth/login?registered=true"
+      )
+
+      return NextResponse.redirect(redirectUrl)
     }
 
     return NextResponse.redirect(buildReturnUrl(origin, returnTo, "/"))

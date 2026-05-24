@@ -86,8 +86,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error:
-            initializeData.message ||
-            "Unable to initialize Paystack checkout",
+            initializeData.message || "Unable to initialize Paystack checkout",
         },
         { status: 400 }
       )

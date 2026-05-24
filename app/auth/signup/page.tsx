@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useMemo, useState, useEffect } from "react"
 import {
   Eye,
@@ -40,6 +41,7 @@ import {
 } from "@/components/ui/multi-select"
 import type { GoogleProfileData } from "@/lib/types"
 import { PaystackButton } from "@/components/paystack-button"
+import { PaymentSuccessModal } from "@/components/payment-success-modal"
 import {
   Dialog,
   DialogContent,
@@ -101,6 +103,8 @@ const STEP_LABELS = [
 ]
 
 export default function SignupPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -134,6 +138,37 @@ export default function SignupPage() {
   const [isGoogleSignup, setIsGoogleSignup] = useState(false)
   const [googleData, setGoogleData] = useState<GoogleProfileData | null>(null)
   const [registrationSuccess, setRegistrationSuccess] = useState(false)
+  const [showPaymentSuccessModal, setShowPaymentSuccessModal] = useState(false)
+
+  const paymentStatus = searchParams.get("payment")
+  const paymentPurpose = searchParams.get("paymentPurpose")
+  const paymentReference = searchParams.get("paymentReference")
+  const paymentAmount = searchParams.get("paymentAmount")
+  const paymentHeading = searchParams.get("paymentHeading")
+  const continueTo = searchParams.get("continueTo")
+
+  const successModalState = useMemo(() => {
+    if (paymentStatus !== "success" || paymentPurpose !== "registration") {
+      return null
+    }
+
+    return {
+      title: paymentHeading || "Profile activation complete",
+      description:
+        "Your payment was verified and your fundi profile is now active.",
+      amountLabel: paymentAmount || "KSh 200",
+      reference: paymentReference,
+    }
+  }, [paymentAmount, paymentHeading, paymentPurpose, paymentReference, paymentStatus])
+
+  useEffect(() => {
+    setShowPaymentSuccessModal(Boolean(successModalState))
+  }, [successModalState])
+
+  const handleContinueAfterPayment = () => {
+    setShowPaymentSuccessModal(false)
+    router.replace(continueTo || "/auth/login?registered=true")
+  }
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -1095,58 +1130,79 @@ export default function SignupPage() {
             >
               Sign in
             </Link>
+          </div>
         </div>
-      </div>
 
-      <Dialog open={showPaymentModal} onOpenChange={() => {}}>
-        <DialogContent
-          className="w-full max-w-85 rounded-2xl border border-border bg-card p-6 shadow-xl select-none"
-          showCloseButton={false}
-          onPointerDownOutside={(e) => e.preventDefault()}
-          onEscapeKeyDown={(e) => e.preventDefault()}
-        >
-          <DialogHeader className="space-y-1 text-left">
-            <DialogTitle className="flex items-center gap-1.5 text-sm font-bold text-foreground">
-              <ShieldCheck className="h-4.5 w-4.5 text-primary" /> Activate Profile
-            </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
-              A one-time verification fee is required to activate your partner profile.
-            </DialogDescription>
-          </DialogHeader>
+        <Dialog open={showPaymentModal} onOpenChange={() => {}}>
+          <DialogContent
+            className="w-full max-w-85 rounded-2xl border border-border bg-card p-6 shadow-xl select-none"
+            showCloseButton={false}
+            onPointerDownOutside={(e) => e.preventDefault()}
+            onEscapeKeyDown={(e) => e.preventDefault()}
+          >
+            <DialogHeader className="space-y-1 text-left">
+              <DialogTitle className="flex items-center gap-1.5 text-sm font-bold text-foreground">
+                <ShieldCheck className="h-4.5 w-4.5 text-primary" /> Activate
+                Profile
+              </DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground">
+                A one-time verification fee is required to activate your partner
+                profile.
+              </DialogDescription>
+            </DialogHeader>
 
-          <div className="my-4 flex flex-col items-center justify-center border-t border-b border-border/30 py-4 text-center">
-            <span className="text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
-              One-Time Activation Fee
-            </span>
-            <span className="mt-1 text-3xl font-extrabold text-primary tracking-tight">KSh 200</span>
-          </div>
-
-          <div className="flex flex-col gap-3">
-            <PaystackButton
-              amount={200}
-              email={googleData?.email || `${phone.replace(/[^0-9]/g, "")}@fundihub.com`}
-              name={name || "Fundi Partner"}
-              phone={phone || ""}
-              callbackPath="/api/payments/callback"
-              callbackParams={{
-                purpose: "registration",
-                userId: registeredUserId,
-                returnTo: isGoogleSignup ? "/fundi/dashboard" : "/auth/login?registered=true",
-              }}
-              disabled={!registeredUserId}
-              className="w-full h-10 cursor-pointer rounded-xl bg-primary text-xs font-bold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 active:scale-[0.98]"
-            >
-              Pay KSh 200 & Activate Profile
-            </PaystackButton>
-            
-            <div className="flex items-center justify-center gap-1.5 text-[10px] text-muted-foreground/60 select-none">
-              <Lock className="h-3.5 w-3.5" />
-              <span>Secured by Paystack • One-time payment</span>
+            <div className="my-4 flex flex-col items-center justify-center border-t border-b border-border/30 py-4 text-center">
+              <span className="text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
+                One-Time Activation Fee
+              </span>
+              <span className="mt-1 text-3xl font-extrabold tracking-tight text-primary">
+                KSh 200
+              </span>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+
+            <div className="flex flex-col gap-3">
+              <PaystackButton
+                amount={200}
+                email={
+                  googleData?.email ||
+                  `${phone.replace(/[^0-9]/g, "")}@fundihub.com`
+                }
+                name={name || "Fundi Partner"}
+                phone={phone || ""}
+                callbackPath="/api/payments/callback"
+                callbackParams={{
+                  purpose: "registration",
+                  userId: registeredUserId,
+                  returnTo: "/auth/signup",
+                  continueTo: isGoogleSignup
+                    ? "/fundi/dashboard"
+                    : "/auth/login?registered=true",
+                }}
+                disabled={!registeredUserId}
+                className="h-10 w-full cursor-pointer rounded-xl bg-primary text-xs font-bold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 active:scale-[0.98]"
+              >
+                Pay KSh 200 & Activate Profile
+              </PaystackButton>
+
+              <div className="flex items-center justify-center gap-1.5 text-[10px] text-muted-foreground/60 select-none">
+                <Lock className="h-3.5 w-3.5" />
+                <span>Secured by Paystack • One-time payment</span>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {successModalState ? (
+          <PaymentSuccessModal
+            open={showPaymentSuccessModal}
+            title={successModalState.title}
+            description={successModalState.description}
+            amountLabel={successModalState.amountLabel}
+            reference={successModalState.reference}
+            onContinue={handleContinueAfterPayment}
+          />
+        ) : null}
+      </div>
     </div>
-  </div>
   )
 }
