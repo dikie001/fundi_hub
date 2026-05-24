@@ -130,7 +130,9 @@ export function Navigation() {
 
             <SheetContent side="right" className="w-[86vw] max-w-xs p-0">
               <SheetHeader className="border-b border-border px-5 py-4 text-left">
-                <SheetTitle className="text-base font-semibold">Menu</SheetTitle>
+                <SheetTitle className="text-base font-semibold">
+                  Menu
+                </SheetTitle>
               </SheetHeader>
 
               <div className="space-y-2 px-4 py-4">
@@ -184,12 +186,18 @@ export function Navigation() {
                         asChild
                         className="w-full"
                       >
-                        <Link href="/auth/login" onClick={() => setIsOpen(false)}>
+                        <Link
+                          href="/auth/login"
+                          onClick={() => setIsOpen(false)}
+                        >
                           Sign In
                         </Link>
                       </Button>
                       <Button size="sm" asChild className="w-full">
-                        <Link href="/auth/signup" onClick={() => setIsOpen(false)}>
+                        <Link
+                          href="/auth/signup"
+                          onClick={() => setIsOpen(false)}
+                        >
                           Sign Up
                         </Link>
                       </Button>
