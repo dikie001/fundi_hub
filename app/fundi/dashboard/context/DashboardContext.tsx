@@ -324,7 +324,8 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     try {
       const base64String = await new Promise<string>((resolve, reject) => {
         const reader = new FileReader()
-        reader.onload = (event) => resolve((event.target?.result as string) || "")
+        reader.onload = (event) =>
+          resolve((event.target?.result as string) || "")
         reader.onerror = () => reject(new Error("Unable to read image file"))
         reader.readAsDataURL(file)
       })

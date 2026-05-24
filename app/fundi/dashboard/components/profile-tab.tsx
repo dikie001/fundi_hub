@@ -179,22 +179,22 @@ export function ProfileTab({
     )
   }
 
-    const onSelectAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0]
-      if (!file) return
-      setPendingAvatarFile(file)
-      setIsAvatarPreviewOpen(true)
-      e.target.value = ""
-    }
+  const onSelectAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setPendingAvatarFile(file)
+    setIsAvatarPreviewOpen(true)
+    e.target.value = ""
+  }
 
-    const onConfirmAvatarUpload = async () => {
-      if (!pendingAvatarFile) return
-      const success = await handleAvatarUpload(pendingAvatarFile)
-      if (success) {
-        setIsAvatarPreviewOpen(false)
-        setPendingAvatarFile(null)
-      }
+  const onConfirmAvatarUpload = async () => {
+    if (!pendingAvatarFile) return
+    const success = await handleAvatarUpload(pendingAvatarFile)
+    if (success) {
+      setIsAvatarPreviewOpen(false)
+      setPendingAvatarFile(null)
     }
+  }
 
   return (
     <div className="animate-in space-y-6 duration-300 fade-in slide-in-from-bottom-2">

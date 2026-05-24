@@ -17,7 +17,6 @@ import { Fundi } from "@/lib/types"
 import {
   TrendingUp,
   MapPin,
-  AlertCircle,
   Clock,
   BarChart3,
   Heart,
@@ -127,7 +126,6 @@ export default function Home() {
     .sort((a, b) => b.rating - a.rating)
     .slice(0, 3)
   const nearbyFundis = fundis.filter((f) => f.isNearby).slice(0, 3)
-  const availableFundis = fundis.filter((f) => f.isAvailable).slice(0, 3)
 
   const filteredFundis = fundis.filter((f) => {
     const query = searchQuery.trim().toLowerCase()
@@ -246,7 +244,7 @@ export default function Home() {
       )}
 
       {/* Featured Fundis - Hidden when searching */}
-      {!hasSearch && (
+      {!hasSearch && (isLoadingFundis || featuredFundis.length > 0) && (
         <section
           id="featured"
           className="scroll-mt-24 border-b border-border px-4 pt-8 pb-16 sm:px-6 lg:px-8"
@@ -272,7 +270,7 @@ export default function Home() {
       )}
 
       {/* Top Rated Experts - Hidden when searching */}
-      {!hasSearch && (
+      {!hasSearch && (isLoadingFundis || topRatedFundis.length > 0) && (
         <section className="border-b border-border px-4 pt-8 pb-16 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <div className="mb-8">
@@ -293,7 +291,7 @@ export default function Home() {
       )}
 
       {/* Nearby Fundis - Hidden when searching */}
-      {!hasSearch && (
+      {!hasSearch && (isLoadingFundis || nearbyFundis.length > 0) && (
         <section className="border-b border-border px-4 pt-8 pb-16 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <div className="mb-8 flex items-center justify-between">
@@ -311,32 +309,6 @@ export default function Home() {
               {isLoadingFundis
                 ? renderFundiSkeletons()
                 : nearbyFundis.map((fundi) => (
-                    <FundiCard key={fundi.id} fundi={fundi} />
-                  ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Available Services - Hidden when searching */}
-      {!hasSearch && (
-        <section className="border-b border-border px-4 pt-8 pb-16 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-8 flex items-center justify-between">
-              <div>
-                <h2 className="flex items-center gap-2 text-3xl font-bold">
-                  <AlertCircle className="text-red-500" />
-                  24/7 Emergency Services
-                </h2>
-                <p className="mt-2 text-muted-foreground">
-                  Always available when you need help
-                </p>
-              </div>
-            </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {isLoadingFundis
-                ? renderFundiSkeletons()
-                : availableFundis.map((fundi) => (
                     <FundiCard key={fundi.id} fundi={fundi} />
                   ))}
             </div>
