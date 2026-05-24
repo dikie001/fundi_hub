@@ -1,33 +1,15 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { cookies } from "next/headers"
 import { logAudit } from "@/lib/audit"
 
 export async function POST(request: NextRequest) {
   try {
-    // Get user from session
-    const cookieStore = await cookies()
-    const sessionCookie = cookieStore.get("user_session")
-    if (!sessionCookie) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    const userId = sessionCookie.value
-    const user = await db.user.findUnique({
-      where: { id: userId },
-      include: { fundiProfile: true },
-    })
-
-    if (!user || user.role !== "fundi") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
     const body = await request.json()
-    const { reference, premiumLevel } = body
+    const { reference, userId } = body
 
-    if (!reference || !premiumLevel) {
+    if (!reference || !userId) {
       return NextResponse.json(
-        { error: "Reference and premium level are required" },
+        { error: "Reference and user ID are required" },
         { status: 400 }
       )
     }
@@ -61,17 +43,26 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Payment verified, update user's premium level
+    // Double check transaction amount is KES 200 (Paystack returns amount in kobo/cents, so 200 * 100 = 20000)
+    const expectedAmountInCents = 200 * 100
+    if (verifyData.data.amount < expectedAmountInCents) {
+      return NextResponse.json(
+        { error: "Incorrect payment amount" },
+        { status: 400 }
+      )
+    }
+
+    // Update user's registration status
     const updatedProfile = await db.fundiProfile.update({
-      where: { userId: user.id },
-      data: { premiumLevel },
+      where: { userId },
+      data: { isRegistrationPaid: true },
     })
 
-    // Log the upgrade
+    // Log registration payment success
     await logAudit({
-      action: "PREMIUM_UPGRADE",
-      details: `User ${user.name} upgraded to ${premiumLevel} tier (Payment Ref: ${reference})`,
-      userId: user.id,
+      action: "REGISTRATION_PAYMENT",
+      details: `User registration fee paid successfully (Payment Ref: ${reference})`,
+      userId,
     })
 
     return NextResponse.json({
@@ -79,7 +70,7 @@ export async function POST(request: NextRequest) {
       profile: updatedProfile,
     })
   } catch (error) {
-    console.error("Error verifying payment:", error)
+    console.error("Error verifying registration payment:", error)
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

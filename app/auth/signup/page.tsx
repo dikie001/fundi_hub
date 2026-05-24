@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import Link from "next/link"
 import { useMemo, useState, useEffect } from "react"
@@ -39,6 +39,16 @@ import {
   type MultiSelectOption,
 } from "@/components/ui/multi-select"
 import type { GoogleProfileData } from "@/lib/types"
+import { PaystackButton } from "@/components/paystack-button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { cn } from "@/lib/utils"
 
 type UserType = "client" | "fundi"
 
@@ -99,6 +109,11 @@ export default function SignupPage() {
   const [currentStep, setCurrentStep] = useState(1)
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [stepError, setStepError] = useState("")
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [registeredUserId, setRegisteredUserId] = useState("")
+  const [isVerifyingPayment, setIsVerifyingPayment] = useState(false)
+  const [paymentSuccess, setPaymentSuccess] = useState(false)
+  const [paymentError, setPaymentError] = useState("")
 
   // Multi-select
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
@@ -398,25 +413,59 @@ export default function SignupPage() {
       if (!res.ok) {
         setStepError(data.error || "An error occurred. Please try again.")
       } else {
-        // Show success message
-        setRegistrationSuccess(true)
         setStepError("")
-        // Redirect after showing success message
-        setTimeout(() => {
-          if (isGoogleSignup) {
-            // Direct Google users to their dashboard (auto-login via Google flow expected)
-            const dest =
-              userType === "fundi" ? "/fundi/dashboard" : "/client/dashboard"
-            window.location.href = dest
-          } else {
-            window.location.href = "/auth/login?registered=true"
-          }
-        }, 2500)
+        if (userType === "fundi") {
+          setRegisteredUserId(data.userId)
+          setShowPaymentModal(true)
+        } else {
+          setRegistrationSuccess(true)
+          setTimeout(() => {
+            if (isGoogleSignup) {
+              window.location.href = "/client/dashboard"
+            } else {
+              window.location.href = "/auth/login?registered=true"
+            }
+          }, 2500)
+        }
       }
     } catch {
       setStepError("Network error. Please try again.")
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handlePaymentSuccess = async (reference: string) => {
+    setIsVerifyingPayment(true)
+    setPaymentError("")
+    try {
+      const response = await fetch("/api/payments/verify-registration", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reference,
+          userId: registeredUserId,
+        }),
+      })
+      const data = await response.json()
+      if (response.ok && data.success) {
+        setPaymentSuccess(true)
+        setTimeout(() => {
+          setShowPaymentModal(false)
+          if (isGoogleSignup) {
+            window.location.href = "/fundi/dashboard"
+          } else {
+            window.location.href = "/auth/login?registered=true"
+          }
+        }, 2500)
+      } else {
+        setPaymentError(data.error || "Payment verification failed. Please contact support.")
+      }
+    } catch (err) {
+      console.error("Payment verification error:", err)
+      setPaymentError("An error occurred during verification. Please try again.")
+    } finally {
+      setIsVerifyingPayment(false)
     }
   }
 
@@ -1083,9 +1132,71 @@ export default function SignupPage() {
             >
               Sign in
             </Link>
-          </div>
         </div>
       </div>
+
+      <Dialog open={showPaymentModal} onOpenChange={() => {}}>
+        <DialogContent
+          className="w-full max-w-sm rounded-xl border border-border bg-card p-5 shadow-lg select-none"
+          showCloseButton={false}
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onEscapeKeyDown={(e) => e.preventDefault()}
+        >
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-1.5 text-sm font-bold text-foreground">
+              <ShieldCheck className="h-4 w-4 text-primary" /> One-Time Registration Fee
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              To activate your expert partner profile, a one-time registration fee is required.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="my-2 space-y-4 border-t border-b border-border/30 py-4">
+            <div className="space-y-1.5 rounded-xl border border-border bg-muted/40 p-3.5 text-center">
+              <span className="text-[9px] font-black tracking-wider text-muted-foreground uppercase">
+                One-Time Activation Fee
+              </span>
+              <div className="text-2xl font-black text-primary">
+                Ksh 200 once
+              </div>
+              <p className="text-xs leading-normal text-muted-foreground">
+                This fee activates your profile for background checks, trade credentials verification, and priority search listings.
+              </p>
+            </div>
+
+            {paymentSuccess ? (
+              <div className="flex items-center gap-2 rounded-lg border border-green-500/20 bg-green-500/10 px-3.5 py-2.5 text-xs text-green-600 dark:text-green-400">
+                <CheckCircle2 className="h-5 w-5 shrink-0" />
+                <div>
+                  <p className="font-semibold">Payment successful!</p>
+                  <p className="text-[10px] opacity-80">Activating your account...</p>
+                </div>
+              </div>
+            ) : paymentError ? (
+              <div className="flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 px-3.5 py-2 text-[11px] text-destructive">
+                <ShieldCheck className="h-4 w-4 shrink-0 rotate-180" />
+                <span>{paymentError}</span>
+              </div>
+            ) : null}
+          </div>
+
+          <DialogFooter className="flex items-center justify-end">
+            <PaystackButton
+              amount={200}
+              email={googleData?.email || `${phone.replace(/[^0-9]/g, "")}@fundihub.com`}
+              name={name || "Fundi Partner"}
+              phone={phone || ""}
+              onSuccess={(ref) => handlePaymentSuccess(ref)}
+              onClose={() => {}}
+              disabled={isVerifyingPayment || paymentSuccess}
+              className="w-full h-9.5 cursor-pointer rounded-lg bg-primary text-xs font-bold text-primary-foreground"
+            >
+              Pay Ksh 200 & Activate Profile
+            </PaystackButton>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
+  </div>
   )
 }

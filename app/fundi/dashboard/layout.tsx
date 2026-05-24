@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { DashboardProvider, useDashboard } from "./context/DashboardContext"
 import {
   SidebarInset,
@@ -49,7 +50,12 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     setIsProcessingPayment,
     handleLogout,
     handleActivateBadge,
+    fetchProfile,
   } = useDashboard()
+
+  const [isVerifyingRegistration, setIsVerifyingRegistration] = useState(false)
+  const [registrationError, setRegistrationError] = useState("")
+  const [registrationSuccess, setRegistrationSuccess] = useState(false)
 
   const menuItems = [
     {
@@ -183,6 +189,93 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
               className="h-9.5 cursor-pointer rounded-lg bg-primary px-4 text-xs font-bold text-primary-foreground"
             >
               Pay Ksh 500 & Activate
+            </PaystackButton>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={mounted && !!profile && !profile.isRegistrationPaid} onOpenChange={() => {}}>
+        <DialogContent
+          className="w-full max-w-sm rounded-xl border border-border bg-card p-5 shadow-lg select-none"
+          showCloseButton={false}
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onEscapeKeyDown={(e) => e.preventDefault()}
+        >
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-1.5 text-sm font-bold text-foreground">
+              <ShieldCheck className="h-4 w-4 text-primary" /> Activate Account
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              A one-time registration fee is required to verify and activate your profile.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="my-2 space-y-4 border-t border-b border-border/30 py-4">
+            <div className="space-y-1.5 rounded-xl border border-border bg-muted/40 p-3.5 text-center">
+              <span className="text-[9px] font-black tracking-wider text-muted-foreground uppercase">
+                One-Time Activation Fee
+              </span>
+              <div className="text-2xl font-black text-primary">
+                Ksh 200 once
+              </div>
+              <p className="text-xs leading-normal text-muted-foreground">
+                This fee activates your profile for background checks, trade credentials verification, and priority search listings.
+              </p>
+            </div>
+
+            {registrationSuccess ? (
+              <div className="flex items-center gap-2 rounded-lg border border-green-500/20 bg-green-500/10 px-3.5 py-2.5 text-xs text-green-600 dark:text-green-400">
+                <Check className="h-5 w-5 shrink-0" />
+                <div>
+                  <p className="font-semibold">Payment successful!</p>
+                  <p className="text-[10px] opacity-80">Activating your account...</p>
+                </div>
+              </div>
+            ) : registrationError ? (
+              <div className="flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 px-3.5 py-2 text-[11px] text-destructive">
+                <ShieldCheck className="h-4 w-4 shrink-0 rotate-180" />
+                <span>{registrationError}</span>
+              </div>
+            ) : null}
+          </div>
+
+          <DialogFooter className="flex items-center justify-end">
+            <PaystackButton
+              amount={200}
+              email={user?.email || `${user?.phone.replace(/[^0-9]/g, "")}@fundihub.com`}
+              name={user?.name || "Fundi Partner"}
+              phone={user?.phone || ""}
+              onSuccess={async (ref) => {
+                setIsVerifyingRegistration(true)
+                setRegistrationError("")
+                try {
+                  const response = await fetch("/api/payments/verify-registration", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      reference: ref,
+                      userId: user?.id,
+                    }),
+                  })
+                  const data = await response.json()
+                  if (response.ok && data.success) {
+                    setRegistrationSuccess(true)
+                    await fetchProfile()
+                  } else {
+                    setRegistrationError(data.error || "Payment verification failed. Please try again.")
+                  }
+                } catch (err) {
+                  console.error("Payment verification error:", err)
+                  setRegistrationError("An error occurred during verification. Please try again.")
+                } finally {
+                  setIsVerifyingRegistration(false)
+                }
+              }}
+              onClose={() => {}}
+              disabled={isVerifyingRegistration || registrationSuccess}
+              className="w-full h-9.5 cursor-pointer rounded-lg bg-primary text-xs font-bold text-primary-foreground"
+            >
+              Pay Ksh 200 & Activate Profile
             </PaystackButton>
           </DialogFooter>
         </DialogContent>
