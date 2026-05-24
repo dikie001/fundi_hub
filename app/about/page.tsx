@@ -2,12 +2,7 @@
 
 import { Navigation } from "@/components/navigation"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
 import {
   Target,
@@ -34,7 +29,8 @@ export default function AboutPage() {
             About FundiHub
           </div>
           <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-            Empowering Kenya's <span className="text-primary">Skilled Workforce</span>
+            Empowering Kenya's{" "}
+            <span className="text-primary">Skilled Workforce</span>
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
             We're building the trusted bridge between skilled professionals and
@@ -55,7 +51,7 @@ export default function AboutPage() {
                 <CardTitle className="mt-3">Our Mission</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-sm leading-relaxed text-muted-foreground">
                   To digitally empower skilled workers across Kenya by giving
                   them a platform to showcase their expertise and connect with
                   clients who value quality craftsmanship.
@@ -71,7 +67,7 @@ export default function AboutPage() {
                 <CardTitle className="mt-3">Our Vision</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-sm leading-relaxed text-muted-foreground">
                   To be Africa's most trusted platform for skilled services —
                   where every fundi has access to opportunity and every client
                   finds reliable, verified professionals.
@@ -87,7 +83,7 @@ export default function AboutPage() {
                 <CardTitle className="mt-3">Our Values</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-sm leading-relaxed text-muted-foreground">
                   Trust, transparency, and community. We believe in fair
                   pricing, verified profiles, and direct communication — no
                   middlemen, no hidden fees.
@@ -123,8 +119,8 @@ export default function AboutPage() {
             <p>
               We built FundiHub to bridge that gap. A platform where verified
               professionals can build their reputation, and where clients can
-              connect directly with skilled experts in their area. No
-              middlemen. No inflated prices. Just real people doing great work.
+              connect directly with skilled experts in their area. No middlemen.
+              No inflated prices. Just real people doing great work.
             </p>
           </div>
         </div>
@@ -134,7 +130,9 @@ export default function AboutPage() {
       <section className="px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
-            <h2 className="text-2xl font-bold sm:text-3xl">Why Choose FundiHub?</h2>
+            <h2 className="text-2xl font-bold sm:text-3xl">
+              Why Choose FundiHub?
+            </h2>
             <p className="mt-2 text-sm text-muted-foreground">
               What makes us different
             </p>
@@ -188,11 +186,11 @@ export default function AboutPage() {
                 <div className="flex-1 text-center sm:text-left">
                   <h3 className="text-xl font-bold">Calvince Ouma</h3>
                   <p className="text-sm text-primary">Founder & CEO</p>
-                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-                    A Kenyan entrepreneur passionate about leveraging
-                    technology to solve everyday problems. Calvince founded
-                    FundiHub with a vision to empower skilled workers and make
-                    quality services accessible to everyone.
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                    A Kenyan entrepreneur passionate about leveraging technology
+                    to solve everyday problems. Calvince founded FundiHub with a
+                    vision to empower skilled workers and make quality services
+                    accessible to everyone.
                   </p>
                   <div className="mt-4 flex flex-wrap justify-center gap-3 sm:justify-start">
                     <a

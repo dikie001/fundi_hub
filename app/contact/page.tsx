@@ -5,21 +5,9 @@ import { Navigation } from "@/components/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
-import {
-  Mail,
-  Phone,
-  MapPin,
-  MessageCircle,
-  Clock,
-  Send,
-} from "lucide-react"
+import { Mail, Phone, MapPin, MessageCircle, Clock, Send } from "lucide-react"
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -108,7 +96,7 @@ export default function ContactPage() {
                     <p className="mt-0.5 text-sm text-muted-foreground">
                       We reply within 24 hours
                     </p>
-                    <p className="mt-1 text-sm font-medium text-primary break-all">
+                    <p className="mt-1 text-sm font-medium break-all text-primary">
                       calvincewise@gmail.com
                     </p>
                   </div>
@@ -147,9 +135,7 @@ export default function ContactPage() {
                     <p className="mt-0.5 text-sm text-muted-foreground">
                       Based in
                     </p>
-                    <p className="mt-1 text-sm font-medium">
-                      Nairobi, Kenya
-                    </p>
+                    <p className="mt-1 text-sm font-medium">Nairobi, Kenya</p>
                   </div>
                 </div>
               </div>
@@ -205,8 +191,8 @@ export default function ContactPage() {
                       Message Sent!
                     </h3>
                     <p className="mt-2 max-w-sm text-sm text-muted-foreground">
-                      Thanks for reaching out. We've opened your email client
-                      to send the message. We'll respond shortly.
+                      Thanks for reaching out. We've opened your email client to
+                      send the message. We'll respond shortly.
                     </p>
                     <Button
                       variant="outline"
@@ -309,7 +295,9 @@ export default function ContactPage() {
       {/* FAQ Quick Links */}
       <section className="bg-muted/20 px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl text-center">
-          <h2 className="text-xl font-bold sm:text-2xl">Looking for Something Else?</h2>
+          <h2 className="text-xl font-bold sm:text-2xl">
+            Looking for Something Else?
+          </h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Check out these resources
           </p>
