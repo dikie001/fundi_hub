@@ -186,7 +186,7 @@ export function DashboardSidebar(props: DashboardSidebarProps) {
                     asChild
                     variant="outline"
                     size="icon"
-                    className="h-8.5 w-8.5 cursor-pointer rounded-lg border-border/60 text-muted-foreground hover:bg-muted/50 transition-colors"
+                    className="h-8.5 w-8.5 cursor-pointer rounded-lg border-border/60 text-muted-foreground transition-colors hover:bg-muted/50"
                   >
                     <Link href="/fundi/dashboard/profile">
                       <User className="h-4 w-4" strokeWidth={1.8} />
@@ -209,7 +209,7 @@ export function DashboardSidebar(props: DashboardSidebarProps) {
                 >
                   Availability Status
                 </Label>
-                <p className="text-[10px] font-normal text-muted-foreground/80 leading-tight">
+                <p className="text-[10px] leading-tight font-normal text-muted-foreground/80">
                   {profile?.isAvailable
                     ? "Available - Visible in searches"
                     : "Unavailable - Hidden"}
@@ -221,14 +221,14 @@ export function DashboardSidebar(props: DashboardSidebarProps) {
                 onCheckedChange={() =>
                   handleToggleAvailability(profile?.isAvailable ?? false)
                 }
-                className="cursor-pointer scale-90"
+                className="scale-90 cursor-pointer"
               />
             </div>
 
             <Button
               asChild
               variant="outline"
-              className="w-full cursor-pointer rounded-lg border-border/60 hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors h-9 text-xs font-medium"
+              className="h-9 w-full cursor-pointer rounded-lg border-border/60 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
             >
               <Link
                 href="/fundi/dashboard/profile"
@@ -260,24 +260,24 @@ export function DashboardSidebar(props: DashboardSidebarProps) {
               <DialogDescription className="space-y-3">
                 {pendingAvailabilityValue ? (
                   <>
-                    <p className="font-medium text-foreground">
+                    <div className="font-medium text-foreground">
                       You will appear in client searches and receive job leads.
-                    </p>
-                    <p className="text-muted-foreground">
+                    </div>
+                    <div className="text-muted-foreground">
                       Clients searching for fundis in your trade will be able to
                       find and contact you.
-                    </p>
+                    </div>
                   </>
                 ) : (
                   <>
-                    <p className="font-medium text-foreground">
+                    <div className="font-medium text-foreground">
                       You will NOT appear in client searches and won't receive
                       new leads.
-                    </p>
-                    <p className="text-muted-foreground">
+                    </div>
+                    <div className="text-muted-foreground">
                       You can turn this back on anytime to start receiving leads
                       again.
-                    </p>
+                    </div>
                   </>
                 )}
               </DialogDescription>

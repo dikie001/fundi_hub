@@ -29,18 +29,18 @@ export function PaymentSuccessModal({
 }: PaymentSuccessModalProps) {
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && onContinue()}>
-      <DialogContent className="w-full max-w-sm rounded-xl border border-border bg-card p-0 shadow-lg">
+      <DialogContent className="w-full max-w-sm rounded-xl border border-primary/40 bg-card p-0 shadow-lg ring-1 shadow-primary/20 ring-primary/20">
         {/* Top accent bar */}
-        <div className="h-1 w-full rounded-t-xl bg-emerald-500" />
+        <div className="h-1 w-full rounded-t-xl bg-primary" />
 
         <div className="space-y-5 px-6 pt-5 pb-6">
           {/* Icon + header */}
           <div className="flex items-start gap-3.5">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10">
-              <Check className="h-5 w-5 text-emerald-500" strokeWidth={2.5} />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15">
+              <Check className="h-5 w-5 text-primary" strokeWidth={2.5} />
             </div>
             <DialogHeader className="space-y-1 text-left">
-              <DialogTitle className="text-base leading-tight font-bold text-foreground">
+              <DialogTitle className="text-base leading-tight font-bold text-primary">
                 {title}
               </DialogTitle>
               <DialogDescription className="text-xs leading-relaxed text-muted-foreground">
@@ -60,7 +60,7 @@ export function PaymentSuccessModal({
             <div className="h-px bg-border/50" />
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">Status</span>
-              <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+              <span className="text-xs font-semibold text-primary">
                 Confirmed
               </span>
             </div>
