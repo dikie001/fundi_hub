@@ -116,6 +116,11 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(buildReturnUrl(origin, returnTo, "/"))
       }
 
+      const user = await db.user.findUnique({ where: { id: userId } })
+      if (!user || user.role !== "fundi") {
+        return NextResponse.redirect(buildReturnUrl(origin, returnTo, "/"))
+      }
+
       await db.fundiProfile.update({
         where: { userId },
         data: { isRegistrationPaid: true },
@@ -127,19 +132,27 @@ export async function GET(request: NextRequest) {
         userId,
       })
 
-      const redirectUrl = buildReturnUrl(origin, returnTo, "/auth/signup")
+      const redirectUrl = buildReturnUrl(
+        origin,
+        continueTo || returnTo,
+        "/fundi/dashboard"
+      )
       addPaymentSuccessParams(redirectUrl, {
         purpose: "registration",
         reference,
         amount: "KSh 200",
         heading: "Welcome to FundiHub!",
       })
-      redirectUrl.searchParams.set(
-        "continueTo",
-        continueTo || "/auth/login?registered=true"
-      )
 
-      return NextResponse.redirect(redirectUrl)
+      const response = NextResponse.redirect(redirectUrl)
+      response.cookies.set("user_session", user.id, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 60 * 24 * 7,
+        path: "/",
+      })
+
+      return response
     }
 
     return NextResponse.redirect(buildReturnUrl(origin, returnTo, "/"))

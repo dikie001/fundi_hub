@@ -1200,10 +1200,8 @@ export default function SignupPage() {
                 callbackParams={{
                   purpose: "registration",
                   userId: registeredUserId,
-                  returnTo: "/auth/signup",
-                  continueTo: isGoogleSignup
-                    ? "/fundi/dashboard"
-                    : "/auth/login?registered=true",
+                  returnTo: "/fundi/dashboard",
+                  continueTo: "/fundi/dashboard",
                 }}
                 disabled={!registeredUserId}
                 skipConfirmation
