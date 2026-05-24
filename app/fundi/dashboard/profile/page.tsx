@@ -24,14 +24,16 @@ export default function ProfilePage() {
     skills,
     setSkills,
     avatarUrl,
-    handleAvatarChange,
     portfolioItems,
     isAddPortfolioOpen,
     setIsAddPortfolioOpen,
     completionScore,
     isUpdating,
+    isAvatarUploading,
     updateSuccess,
+    updateError,
     handleUpdateProfile,
+    handleAvatarUpload,
     setIsPremiumModalOpen,
     newPortfolioTitle,
     setNewPortfolioTitle,
@@ -65,13 +67,15 @@ export default function ProfilePage() {
       skills={skills}
       setSkills={setSkills}
       avatarUrl={avatarUrl}
-      handleAvatarChange={handleAvatarChange}
+      isAvatarUploading={isAvatarUploading}
+      handleAvatarUpload={handleAvatarUpload}
       portfolioItems={portfolioItems}
       isAddPortfolioOpen={isAddPortfolioOpen}
       setIsAddPortfolioOpen={setIsAddPortfolioOpen}
       completionScore={completionScore}
       isUpdating={isUpdating}
       updateSuccess={updateSuccess}
+      updateError={updateError}
       handleUpdateProfile={handleUpdateProfile}
       openPremiumModal={() => setIsPremiumModalOpen(true)}
       newPortfolioTitle={newPortfolioTitle}
