@@ -9,15 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import {
-  Loader2,
-  ShieldCheck,
-  Lock,
-  ArrowRight,
-  AlertTriangle,
-  X,
-  CheckCircle2,
-} from "lucide-react"
+import { Loader2, Lock, ArrowRight, X, Check } from "lucide-react"
 
 export interface PaystackButtonProps {
   amount: number
@@ -51,23 +43,19 @@ export function PaystackButtonClient({
 
   const purpose = callbackParams?.purpose
   const purposeLabel =
-    purpose === "premium" ? "Premium Upgrade" : "Profile Activation"
-  const purposeDesc =
-    purpose === "premium"
-      ? "You'll be redirected to Paystack's secure checkout to complete your premium upgrade. Your badge activates instantly after payment."
-      : "You'll be redirected to Paystack's secure checkout to activate your fundi profile. Once paid, your profile goes live immediately."
+    purpose === "premium" ? "Confirm Premium Upgrade" : "Confirm Activation"
 
   const valuePoints =
     purpose === "premium"
       ? [
           "Gold verified badge on your profile",
-          "5x boost in customer search results",
-          "Priority lead dispatch before standard profiles",
+          "5x boost in search results",
+          "Priority lead dispatch",
         ]
       : [
-          "Your profile goes live to thousands of clients",
-          "Start receiving job leads in your area",
-          "WhatsApp & call connections with clients",
+          "Profile goes live to clients",
+          "Receive job leads in your area",
+          "Direct WhatsApp & call connections",
         ]
 
   const initiatePayment = async () => {
@@ -107,7 +95,7 @@ export function PaystackButtonClient({
       setErrorState(
         error instanceof Error
           ? error.message
-          : "Unable to start Paystack checkout. Please try again."
+          : "Unable to start checkout. Please try again."
       )
     }
   }
@@ -130,120 +118,102 @@ export function PaystackButtonClient({
         {disabled || isRedirecting ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Redirecting to checkout...
+            Redirecting...
           </>
         ) : (
           children
         )}
       </Button>
 
-      {/* Pre-payment confirmation dialog */}
+      {/* Pre-payment confirmation */}
       <Dialog open={showConfirm} onOpenChange={setShowConfirm}>
-        <DialogContent className="w-full max-w-sm overflow-hidden rounded-2xl border border-primary/15 bg-card p-0 shadow-xl">
-          <div className="bg-linear-to-b from-primary/8 to-transparent px-6 pt-6 pb-4">
-            <DialogHeader className="space-y-1.5 text-left">
-              <DialogTitle className="flex items-center gap-2 text-base font-bold text-foreground">
-                <ShieldCheck className="h-5 w-5 text-primary" />
-                {purposeLabel}
-              </DialogTitle>
-              <DialogDescription className="text-xs leading-relaxed text-muted-foreground">
-                {purposeDesc}
-              </DialogDescription>
-            </DialogHeader>
-          </div>
+        <DialogContent className="w-full max-w-xs rounded-xl border border-border bg-card p-5 shadow-lg">
+          <DialogHeader className="space-y-1 text-left">
+            <DialogTitle className="text-sm font-bold text-foreground">
+              {purposeLabel}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              You&apos;ll be redirected to Paystack to complete payment.
+            </DialogDescription>
+          </DialogHeader>
 
-          <div className="space-y-4 px-6 pb-6">
-            {/* Amount summary */}
-            <div className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/30 px-4 py-3">
-              <span className="text-xs font-semibold text-muted-foreground">
-                Total
-              </span>
-              <span className="text-lg font-extrabold tracking-tight text-foreground">
+          <div className="mt-3 space-y-3">
+            <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 px-3.5 py-2.5">
+              <span className="text-xs text-muted-foreground">Total</span>
+              <span className="text-sm font-bold text-foreground">
                 KSh {amount.toLocaleString()}
               </span>
             </div>
 
-            {/* What you'll get */}
-            <div className="space-y-2">
-              <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-                What you get
-              </p>
+            <div className="space-y-1.5">
               {valuePoints.map((point, i) => (
-                <div key={i} className="flex items-start gap-2.5">
-                  <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                    <CheckCircle2 className="h-3 w-3" />
-                  </div>
+                <div key={i} className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
                   <span className="text-xs text-muted-foreground">{point}</span>
                 </div>
               ))}
             </div>
-
-            {/* Actions */}
-            <div className="flex items-center gap-2 pt-1">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => setShowConfirm(false)}
-                disabled={isRedirecting}
-                className="h-10 flex-1 rounded-xl text-xs font-semibold text-muted-foreground"
-              >
-                Cancel
-              </Button>
-              <Button
-                type="button"
-                onClick={initiatePayment}
-                disabled={isRedirecting}
-                className="h-10 flex-1 rounded-xl bg-primary text-xs font-bold text-primary-foreground shadow-md transition-all hover:bg-primary/90 active:scale-[0.98]"
-              >
-                {isRedirecting ? (
-                  <>
-                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                    Connecting...
-                  </>
-                ) : (
-                  <>
-                    Proceed to Pay
-                    <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-                  </>
-                )}
-              </Button>
-            </div>
-
-            <div className="flex items-center justify-center gap-1 text-[10px] text-muted-foreground/50">
-              <Lock className="h-3 w-3" />
-              <span>256-bit encrypted • Secured by Paystack</span>
-            </div>
           </div>
+
+          <div className="mt-4 flex items-center gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setShowConfirm(false)}
+              disabled={isRedirecting}
+              className="h-9 flex-1 rounded-lg text-xs font-medium text-muted-foreground"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={initiatePayment}
+              disabled={isRedirecting}
+              className="h-9 flex-1 rounded-lg text-xs font-semibold transition-colors"
+            >
+              {isRedirecting ? (
+                <>
+                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                  Connecting...
+                </>
+              ) : (
+                <>
+                  Pay Now
+                  <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                </>
+              )}
+            </Button>
+          </div>
+
+          <p className="mt-2 flex items-center justify-center gap-1 text-[10px] text-muted-foreground/50">
+            <Lock className="h-3 w-3" />
+            Secured by Paystack
+          </p>
         </DialogContent>
       </Dialog>
 
-      {/* Error feedback toast */}
+      {/* Error toast */}
       {errorState && (
-        <div className="fixed right-4 bottom-4 z-70 w-[min(92vw,400px)] animate-in duration-300 fade-in slide-in-from-bottom-2">
-          <div className="overflow-hidden rounded-2xl border border-red-500/20 bg-card/95 shadow-lg backdrop-blur-xl">
-            <div className="flex items-start gap-3 p-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-500/10 text-red-600 dark:text-red-400">
-                <AlertTriangle className="h-5 w-5" />
-              </div>
+        <div className="fixed right-4 bottom-4 z-70 w-[min(90vw,340px)] animate-in duration-200 fade-in slide-in-from-bottom-1">
+          <div className="rounded-lg border border-destructive/20 bg-card shadow-md">
+            <div className="flex items-start gap-3 p-3.5">
               <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <p className="text-[10px] font-bold tracking-widest text-red-600 uppercase dark:text-red-400">
-                      Payment Failed
-                    </p>
-                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                      {errorState}
-                    </p>
-                  </div>
+                  <p className="text-xs font-semibold text-destructive">
+                    Payment failed
+                  </p>
                   <button
                     onClick={() => setErrorState(null)}
-                    className="rounded-full p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+                    className="shrink-0 rounded p-0.5 text-muted-foreground transition-colors hover:text-foreground"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
                 </div>
-                <p className="mt-2 text-[10px] text-muted-foreground/60">
-                  No money was charged. Please try again or contact support.
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                  {errorState}
+                </p>
+                <p className="mt-1 text-[10px] text-muted-foreground/60">
+                  No money was charged.
                 </p>
               </div>
             </div>

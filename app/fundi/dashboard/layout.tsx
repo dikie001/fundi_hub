@@ -20,7 +20,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Check, Zap, Lock } from "lucide-react"
+import { Check, Lock } from "lucide-react"
 import {
   LayoutDashboard,
   Wrench,
@@ -195,105 +195,75 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       </SidebarInset>
 
       <Dialog open={isPremiumModalOpen} onOpenChange={setIsPremiumModalOpen}>
-        <DialogContent className="w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-xl">
-          <DialogHeader className="space-y-1.5 text-left">
-            <DialogTitle className="flex items-center gap-1.5 text-sm font-bold text-foreground">
-              <ShieldCheck className="h-4.5 w-4.5 text-primary" /> Activate
-              Premium Badge
+        <DialogContent className="w-full max-w-xs rounded-xl border border-border bg-card p-5 shadow-lg">
+          <DialogHeader className="space-y-1 text-left">
+            <DialogTitle className="text-sm font-bold text-foreground">
+              Upgrade to Premium
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
-              Boost your profile discovery rating and gain customer trust.
+              Stand out and get more clients.
             </DialogDescription>
           </DialogHeader>
-          <div className="my-3 space-y-4 border-t border-b border-border/30 py-4">
-            {/* Price Box */}
-            <div className="relative overflow-hidden rounded-xl border border-primary/20 bg-linear-to-b from-primary/10 via-primary/5 to-transparent p-4 text-center">
-              <span className="text-[10px] font-black tracking-wider text-primary uppercase">
-                Premium Upgrade
-              </span>
-              <div className="mt-1 flex items-baseline justify-center gap-1">
-                <span className="text-3.5xl font-extrabold tracking-tight text-foreground">
-                  KSh 500
-                </span>
-                <span className="text-xs font-semibold text-muted-foreground">
-                  /once
-                </span>
-              </div>
-              <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-                Add a gold trust badge to your profile and rank first in search.
-              </p>
+
+          <div className="mt-3 space-y-3">
+            <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 px-3.5 py-2.5">
+              <span className="text-xs text-muted-foreground">One-time fee</span>
+              <span className="text-base font-bold text-foreground">KSh 500</span>
             </div>
 
-            {/* Feature List */}
-            <div className="space-y-2.5 px-1 text-xs">
-              <div className="flex items-start gap-2.5">
-                <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Check className="h-3 w-3 stroke-3" />
-                </div>
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center gap-2.5">
+                <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
                 <span className="text-muted-foreground">
-                  <strong className="font-semibold text-foreground">
-                    Gold-verified badge
-                  </strong>{" "}
-                  displayed on search and profile pages
+                  <span className="font-medium text-foreground">Gold badge</span> on your profile
                 </span>
               </div>
-              <div className="flex items-start gap-2.5">
-                <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Check className="h-3 w-3 stroke-3" />
-                </div>
+              <div className="flex items-center gap-2.5">
+                <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
                 <span className="text-muted-foreground">
-                  <strong className="font-semibold text-foreground">
-                    5x search boost
-                  </strong>{" "}
-                  in customer searches
+                  <span className="font-medium text-foreground">5x search boost</span> in results
                 </span>
               </div>
-              <div className="flex items-start gap-2.5">
-                <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Check className="h-3 w-3 stroke-3" />
-                </div>
+              <div className="flex items-center gap-2.5">
+                <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
                 <span className="text-muted-foreground">
-                  <strong className="font-semibold text-foreground">
-                    Priority lead dispatch
-                  </strong>{" "}
-                  before standard profiles
+                  <span className="font-medium text-foreground">Priority leads</span> before others
                 </span>
               </div>
             </div>
           </div>
-          <DialogFooter className="flex flex-col gap-2.5">
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => setIsPremiumModalOpen(false)}
-                className="h-10 flex-1 cursor-pointer rounded-xl text-xs font-semibold text-muted-foreground hover:bg-muted"
-              >
-                Cancel
-              </Button>
-              <PaystackButton
-                amount={500}
-                email={user?.email || user?.phone + "@fundihub.com"}
-                name={user?.name || "User"}
-                phone={user?.phone || ""}
-                callbackPath="/api/payments/callback"
-                callbackParams={{
-                  purpose: "premium",
-                  premiumLevel: premiumModalType,
-                  returnTo: "/fundi/dashboard",
-                }}
-                skipConfirmation
-                className="h-10 flex-1 cursor-pointer rounded-xl bg-linear-to-r from-primary to-primary/95 text-xs font-bold text-primary-foreground shadow-md shadow-primary/10 transition-all hover:opacity-95 active:scale-[0.98]"
-              >
-                Pay KSh 500
-              </PaystackButton>
-            </div>
 
-            <div className="flex items-center justify-center gap-1 text-[10px] text-muted-foreground/60 select-none">
-              <Lock className="h-3 w-3" />
-              <span>Secured by Paystack • One-time charge</span>
-            </div>
-          </DialogFooter>
+          <div className="mt-4 flex items-center gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setIsPremiumModalOpen(false)}
+              className="h-9 flex-1 cursor-pointer rounded-lg text-xs font-medium text-muted-foreground"
+            >
+              Cancel
+            </Button>
+            <PaystackButton
+              amount={500}
+              email={user?.email || user?.phone + "@fundihub.com"}
+              name={user?.name || "User"}
+              phone={user?.phone || ""}
+              callbackPath="/api/payments/callback"
+              callbackParams={{
+                purpose: "premium",
+                premiumLevel: premiumModalType,
+                returnTo: "/fundi/dashboard",
+              }}
+              skipConfirmation
+              className="h-9 flex-1 cursor-pointer rounded-lg text-xs font-semibold transition-colors"
+            >
+              Pay KSh 500
+            </PaystackButton>
+          </div>
+
+          <p className="mt-2 flex items-center justify-center gap-1 text-[10px] text-muted-foreground/50 select-none">
+            <Lock className="h-3 w-3" />
+            Secured by Paystack
+          </p>
         </DialogContent>
       </Dialog>
 
@@ -324,32 +294,43 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
         onOpenChange={() => {}}
       >
         <DialogContent
-          className="w-full max-w-85 rounded-2xl border border-border bg-card p-6 shadow-xl select-none"
+          className="w-full max-w-xs rounded-xl border border-border bg-card p-5 shadow-lg select-none"
           showCloseButton={false}
           onPointerDownOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
         >
           <DialogHeader className="space-y-1 text-left">
-            <DialogTitle className="flex items-center gap-1.5 text-sm font-bold text-foreground">
-              <ShieldCheck className="h-4.5 w-4.5 text-primary" /> Activate
-              Profile
+            <DialogTitle className="text-sm font-bold text-foreground">
+              Activate Your Profile
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
-              A one-time verification fee is required to activate your partner
-              profile.
+              A one-time fee to go live and start receiving leads.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="my-4 flex flex-col items-center justify-center border-t border-b border-border/30 py-4 text-center">
-            <span className="text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
-              One-Time Activation Fee
-            </span>
-            <span className="mt-1 text-3xl font-extrabold tracking-tight text-primary">
-              KSh 200
-            </span>
+          <div className="mt-3 space-y-3">
+            <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 px-3.5 py-2.5">
+              <span className="text-xs text-muted-foreground">Activation fee</span>
+              <span className="text-base font-bold text-foreground">KSh 200</span>
+            </div>
+
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center gap-2.5">
+                <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
+                <span className="text-muted-foreground">Profile visible to clients</span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
+                <span className="text-muted-foreground">Receive job leads in your area</span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
+                <span className="text-muted-foreground">Direct client connections</span>
+              </div>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-3">
+          <div className="mt-4 flex flex-col gap-2">
             <PaystackButton
               amount={200}
               email={
@@ -365,15 +346,15 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
                 returnTo: "/fundi/dashboard",
               }}
               skipConfirmation
-              className="h-10 w-full cursor-pointer rounded-xl bg-primary text-xs font-bold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 active:scale-[0.98]"
+              className="h-9 w-full cursor-pointer rounded-lg text-xs font-semibold transition-colors"
             >
-              Pay KSh 200 & Activate Profile
+              Pay KSh 200 & Activate
             </PaystackButton>
 
-            <div className="flex items-center justify-center gap-1.5 text-[10px] text-muted-foreground/60 select-none">
-              <Lock className="h-3.5 w-3.5" />
-              <span>Secured by Paystack • One-time payment</span>
-            </div>
+            <p className="flex items-center justify-center gap-1 text-[10px] text-muted-foreground/50 select-none">
+              <Lock className="h-3 w-3" />
+              Secured by Paystack
+            </p>
           </div>
         </DialogContent>
       </Dialog>

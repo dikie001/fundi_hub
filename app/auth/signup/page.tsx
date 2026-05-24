@@ -1140,32 +1140,43 @@ export default function SignupPage() {
 
         <Dialog open={showPaymentModal} onOpenChange={() => {}}>
           <DialogContent
-            className="w-full max-w-85 rounded-2xl border border-border bg-card p-6 shadow-xl select-none"
+            className="w-full max-w-xs rounded-xl border border-border bg-card p-5 shadow-lg select-none"
             showCloseButton={false}
             onPointerDownOutside={(e) => e.preventDefault()}
             onEscapeKeyDown={(e) => e.preventDefault()}
           >
             <DialogHeader className="space-y-1 text-left">
-              <DialogTitle className="flex items-center gap-1.5 text-sm font-bold text-foreground">
-                <ShieldCheck className="h-4.5 w-4.5 text-primary" /> Activate
-                Profile
+              <DialogTitle className="text-sm font-bold text-foreground">
+                Activate Your Profile
               </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground">
-                A one-time verification fee is required to activate your partner
-                profile.
+                A one-time fee to go live and start receiving leads.
               </DialogDescription>
             </DialogHeader>
 
-            <div className="my-4 flex flex-col items-center justify-center border-t border-b border-border/30 py-4 text-center">
-              <span className="text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
-                One-Time Activation Fee
-              </span>
-              <span className="mt-1 text-3xl font-extrabold tracking-tight text-primary">
-                KSh 200
-              </span>
+            <div className="mt-3 space-y-3">
+              <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 px-3.5 py-2.5">
+                <span className="text-xs text-muted-foreground">Activation fee</span>
+                <span className="text-base font-bold text-foreground">KSh 200</span>
+              </div>
+
+              <div className="space-y-2 text-xs">
+                <div className="flex items-center gap-2.5">
+                  <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
+                  <span className="text-muted-foreground">Profile visible to clients</span>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
+                  <span className="text-muted-foreground">Receive job leads in your area</span>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <Check className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={2.5} />
+                  <span className="text-muted-foreground">Direct client connections</span>
+                </div>
+              </div>
             </div>
 
-            <div className="flex flex-col gap-3">
+            <div className="mt-4 flex flex-col gap-2">
               <PaystackButton
                 amount={200}
                 email={
@@ -1185,15 +1196,15 @@ export default function SignupPage() {
                 }}
                 disabled={!registeredUserId}
                 skipConfirmation
-                className="h-10 w-full cursor-pointer rounded-xl bg-primary text-xs font-bold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 active:scale-[0.98]"
+                className="h-9 w-full cursor-pointer rounded-lg text-xs font-semibold transition-colors"
               >
-                Pay KSh 200 & Activate Profile
+                Pay KSh 200 & Activate
               </PaystackButton>
 
-              <div className="flex items-center justify-center gap-1.5 text-[10px] text-muted-foreground/60 select-none">
-                <Lock className="h-3.5 w-3.5" />
-                <span>Secured by Paystack • One-time payment</span>
-              </div>
+              <p className="flex items-center justify-center gap-1 text-[10px] text-muted-foreground/50 select-none">
+                <Lock className="h-3 w-3" />
+                Secured by Paystack
+              </p>
             </div>
           </DialogContent>
         </Dialog>
