@@ -93,8 +93,8 @@ export default function OpenGraphImage() {
             color: "rgba(248, 250, 252, 0.9)",
           }}
         >
-          Help your fundi business grow with better visibility, stronger
-          leads, and a trusted profile that clients can find across Kenya.
+          Help your fundi business grow with better visibility, stronger leads,
+          and a trusted profile that clients can find across Kenya.
         </div>
       </div>
       <div
