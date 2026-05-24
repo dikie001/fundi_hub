@@ -68,21 +68,55 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
 
-    if (
-      params.get("payment") === "success" &&
-      params.get("paymentPurpose") === "premium"
-    ) {
-      setPaymentSuccessState({
-        title: params.get("paymentHeading") || "Payment successful",
-        description:
-          "Your gold verified badge is now active! You'll appear 5x higher in search results and receive priority leads from clients in your area.",
-        amountLabel: params.get("paymentAmount") || "KSh 500",
-        reference: params.get("paymentReference"),
-      })
+    if (params.get("payment") === "success") {
+      const purpose = params.get("paymentPurpose")
+      const heading = params.get("paymentHeading")
+      const amount = params.get("paymentAmount")
+      const reference = params.get("paymentReference")
+
+      if (purpose === "premium") {
+        setPaymentSuccessState({
+          title: heading || "You're now a Premium Fundi!",
+          description:
+            "Your gold verified badge is now active! You'll appear 5x higher in search results and receive priority leads from clients in your area.",
+          amountLabel: amount || "KSh 500",
+          reference,
+        })
+      } else if (purpose === "registration") {
+        setPaymentSuccessState({
+          title: heading || "Welcome to FundiHub!",
+          description:
+            "Your profile is now live! Clients across Kenya can find you, send you job leads, and connect with you directly via WhatsApp or phone call.",
+          amountLabel: amount || "KSh 200",
+          reference,
+        })
+      } else {
+        setPaymentSuccessState({
+          title: heading || "Payment Successful",
+          description:
+            "Your payment has been verified and your account has been updated.",
+          amountLabel: amount || "",
+          reference,
+        })
+      }
       setShowPaymentSuccess(true)
       setShowPaymentToast(true)
     }
   }, [])
+
+  const clearPaymentQuery = () => {
+    setShowPaymentSuccess(false)
+    setShowPaymentToast(false)
+    setPaymentSuccessState(null)
+    const url = new URL(window.location.href)
+    url.searchParams.delete("payment")
+    url.searchParams.delete("paymentPurpose")
+    url.searchParams.delete("paymentReference")
+    url.searchParams.delete("paymentAmount")
+    url.searchParams.delete("paymentHeading")
+    window.history.replaceState({}, "", url.pathname)
+  }
+
   const menuItems = [
     {
       id: "overview",
