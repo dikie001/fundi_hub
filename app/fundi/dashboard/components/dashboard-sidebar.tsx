@@ -147,7 +147,7 @@ export function DashboardSidebar(props: DashboardSidebarProps) {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="space-y-3 border-t border-border/25 bg-muted/5 p-4">
+      <SidebarFooter className="space-y-2.5 border-t border-border/25 bg-muted/5 p-4">
         {isCollapsed ? (
           <>
             <div className="flex justify-center py-1">
@@ -160,7 +160,7 @@ export function DashboardSidebar(props: DashboardSidebarProps) {
                       onCheckedChange={() =>
                         handleToggleAvailability(profile?.isAvailable ?? false)
                       }
-                      className="scale-85 cursor-pointer"
+                      className="scale-80 cursor-pointer"
                     />
                   </div>
                 </TooltipTrigger>
@@ -186,10 +186,10 @@ export function DashboardSidebar(props: DashboardSidebarProps) {
                     asChild
                     variant="outline"
                     size="icon"
-                    className="h-9 w-9 cursor-pointer rounded-lg"
+                    className="h-8.5 w-8.5 cursor-pointer rounded-lg border-border/60 text-muted-foreground hover:bg-muted/50 transition-colors"
                   >
                     <Link href="/fundi/dashboard/profile">
-                      <User className="h-4 w-4" />
+                      <User className="h-4 w-4" strokeWidth={1.8} />
                     </Link>
                   </Button>
                 </TooltipTrigger>
@@ -201,18 +201,18 @@ export function DashboardSidebar(props: DashboardSidebarProps) {
           </>
         ) : (
           <>
-            <div className="flex items-center justify-between rounded-lg border border-border bg-card p-3.5 shadow-2xs">
+            <div className="flex items-center justify-between rounded-lg border border-border/40 bg-card p-3 shadow-2xs">
               <div className="space-y-0.5">
                 <Label
                   htmlFor="availability-toggle"
-                  className="cursor-pointer text-xs font-medium text-foreground"
+                  className="cursor-pointer text-[11px] font-semibold text-foreground/90"
                 >
                   Availability Status
                 </Label>
-                <p className="text-[10px] font-normal text-muted-foreground">
+                <p className="text-[10px] font-normal text-muted-foreground/80 leading-tight">
                   {profile?.isAvailable
                     ? "Available - Visible in searches"
-                    : "Unavailable - Hidden from searches"}
+                    : "Unavailable - Hidden"}
                 </p>
               </div>
               <Switch
@@ -221,20 +221,20 @@ export function DashboardSidebar(props: DashboardSidebarProps) {
                 onCheckedChange={() =>
                   handleToggleAvailability(profile?.isAvailable ?? false)
                 }
-                className="cursor-pointer"
+                className="cursor-pointer scale-90"
               />
             </div>
 
             <Button
               asChild
               variant="outline"
-              className="w-full cursor-pointer rounded-lg border-border/40"
+              className="w-full cursor-pointer rounded-lg border-border/60 hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors h-9 text-xs font-medium"
             >
               <Link
                 href="/fundi/dashboard/profile"
-                className="flex items-center gap-2"
+                className="flex items-center justify-center gap-1.5"
               >
-                <User className="h-4 w-4" />
+                <User className="h-4 w-4" strokeWidth={1.8} />
                 <span>My Profile</span>
               </Link>
             </Button>
