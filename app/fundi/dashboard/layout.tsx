@@ -20,7 +20,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Check, Loader2, Zap } from "lucide-react"
+import { Check, Loader2, Zap, Lock, CheckCircle2 } from "lucide-react"
 import {
   LayoutDashboard,
   Wrench,
@@ -135,111 +135,166 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       </SidebarInset>
 
       <Dialog open={isPremiumModalOpen} onOpenChange={setIsPremiumModalOpen}>
-        <DialogContent className="w-full max-w-sm rounded-xl border border-border bg-card p-5 shadow-lg">
-          <DialogHeader>
+        <DialogContent className="w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-xl">
+          <DialogHeader className="space-y-1.5 text-left">
             <DialogTitle className="flex items-center gap-1.5 text-sm font-bold text-foreground">
-              <ShieldCheck className="h-4 w-4 text-primary" /> Activate Premium
-              Badge
+              <ShieldCheck className="h-4.5 w-4.5 text-primary" /> Activate Premium Badge
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
               Boost your profile discovery rating and gain customer trust.
             </DialogDescription>
           </DialogHeader>
-          <div className="my-2 space-y-4 border-t border-b border-border/30 py-4">
-            <div className="space-y-1.5 rounded-xl border border-border bg-muted/40 p-3.5 text-center">
-              <span className="text-[9px] font-black tracking-wider text-muted-foreground uppercase">
-                Premium Badge
+          <div className="my-3 space-y-4 border-t border-b border-border/30 py-4">
+            {/* Price Box */}
+            <div className="relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-b from-primary/10 via-primary/5 to-transparent p-4 text-center">
+              <span className="text-[10px] font-black tracking-wider text-primary uppercase">
+                Premium Upgrade
               </span>
-              <div className="text-2xl font-black text-primary">
-                Ksh 500 once
+              <div className="mt-1 flex items-baseline justify-center gap-1">
+                <span className="text-3.5xl font-extrabold text-foreground tracking-tight">KSh 500</span>
+                <span className="text-xs font-semibold text-muted-foreground">/once</span>
               </div>
-              <p className="text-xs leading-normal text-muted-foreground">
-                Verified trust tick, top search rankings, and 5x priority queue
-                dispatch for customer leads.
+              <p className="mt-2 text-[11px] text-muted-foreground leading-relaxed">
+                Add a gold trust badge to your profile and rank first in search.
               </p>
             </div>
-            <div className="space-y-2 rounded-lg border border-primary/10 bg-primary/5 p-3 text-xs leading-normal text-muted-foreground">
-              <div className="flex gap-1.5 font-medium">
-                <Check className="h-3.5 w-3.5 shrink-0 text-primary" />
-                <span>Immediate badge activation on profile search</span>
+
+            {/* Feature List */}
+            <div className="space-y-2.5 px-1 text-xs">
+              <div className="flex items-start gap-2.5">
+                <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Check className="h-3 w-3 stroke-[3]" />
+                </div>
+                <span className="text-muted-foreground">
+                  <strong className="font-semibold text-foreground">Gold-verified badge</strong> displayed on search and profile pages
+                </span>
               </div>
-              <div className="flex gap-1.5 font-medium">
-                <Check className="h-3.5 w-3.5 shrink-0 text-primary" />
-                <span>One-time activation fee</span>
+              <div className="flex items-start gap-2.5">
+                <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Check className="h-3 w-3 stroke-[3]" />
+                </div>
+                <span className="text-muted-foreground">
+                  <strong className="font-semibold text-foreground">5x search boost</strong> in customer searches
+                </span>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Check className="h-3 w-3 stroke-[3]" />
+                </div>
+                <span className="text-muted-foreground">
+                  <strong className="font-semibold text-foreground">Priority lead dispatch</strong> before standard profiles
+                </span>
               </div>
             </div>
           </div>
-          <DialogFooter className="flex items-center justify-end gap-2">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => setIsPremiumModalOpen(false)}
-              className="h-9.5 cursor-pointer rounded-lg px-4 text-xs text-muted-foreground"
-            >
-              Cancel
-            </Button>
-            <PaystackButton
-              amount={500}
-              email={user?.email || user?.phone + "@fundihub.com"}
-              name={user?.name || "User"}
-              phone={user?.phone || ""}
-              onSuccess={(reference) => handleActivateBadge(reference)}
-              onClose={() => setIsProcessingPayment(false)}
-              disabled={isProcessingPayment}
-              className="h-9.5 cursor-pointer rounded-lg bg-primary px-4 text-xs font-bold text-primary-foreground"
-            >
-              Pay Ksh 500 & Activate
-            </PaystackButton>
+          <DialogFooter className="flex flex-col gap-2.5">
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setIsPremiumModalOpen(false)}
+                className="h-10 flex-1 cursor-pointer rounded-xl text-xs font-semibold text-muted-foreground hover:bg-muted"
+              >
+                Cancel
+              </Button>
+              <PaystackButton
+                amount={500}
+                email={user?.email || user?.phone + "@fundihub.com"}
+                name={user?.name || "User"}
+                phone={user?.phone || ""}
+                onSuccess={(reference) => handleActivateBadge(reference)}
+                onClose={() => setIsProcessingPayment(false)}
+                disabled={isProcessingPayment}
+                className="h-10 flex-1 cursor-pointer rounded-xl bg-gradient-to-r from-primary to-primary/95 text-xs font-bold text-primary-foreground shadow-md shadow-primary/10 transition-all hover:opacity-95 active:scale-[0.98]"
+              >
+                Pay KSh 500
+              </PaystackButton>
+            </div>
+            
+            <div className="flex items-center justify-center gap-1 text-[10px] text-muted-foreground/60 select-none">
+              <Lock className="h-3 w-3" />
+              <span>Secured by Paystack • One-time charge</span>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       <Dialog open={mounted && !!profile && !profile.isRegistrationPaid} onOpenChange={() => {}}>
         <DialogContent
-          className="w-full max-w-sm rounded-xl border border-border bg-card p-5 shadow-lg select-none"
+          className="w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-xl select-none"
           showCloseButton={false}
           onPointerDownOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
         >
-          <DialogHeader>
+          <DialogHeader className="space-y-1.5 text-left">
             <DialogTitle className="flex items-center gap-1.5 text-sm font-bold text-foreground">
-              <ShieldCheck className="h-4 w-4 text-primary" /> Activate Account
+              <ShieldCheck className="h-4.5 w-4.5 text-primary" /> Profile Verification & Activation
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
-              A one-time registration fee is required to verify and activate your profile.
+              Verify your trade profile to connect with clients and start receiving direct job leads.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="my-2 space-y-4 border-t border-b border-border/30 py-4">
-            <div className="space-y-1.5 rounded-xl border border-border bg-muted/40 p-3.5 text-center">
-              <span className="text-[9px] font-black tracking-wider text-muted-foreground uppercase">
-                One-Time Activation Fee
+          <div className="my-3 space-y-4 border-t border-b border-border/30 py-4">
+            {/* Price Box */}
+            <div className="relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-b from-primary/10 via-primary/5 to-transparent p-4 text-center">
+              <span className="text-[10px] font-black tracking-wider text-primary uppercase">
+                One-Time Payment
               </span>
-              <div className="text-2xl font-black text-primary">
-                Ksh 200 once
+              <div className="mt-1 flex items-baseline justify-center gap-1">
+                <span className="text-3.5xl font-extrabold text-foreground tracking-tight">KSh 200</span>
+                <span className="text-xs font-semibold text-muted-foreground">/once</span>
               </div>
-              <p className="text-xs leading-normal text-muted-foreground">
-                This fee activates your profile for background checks, trade credentials verification, and priority search listings.
+              <p className="mt-2 text-[11px] text-muted-foreground leading-relaxed">
+                Covers setup costs, credentials check, and profile prioritization.
               </p>
             </div>
 
+            {/* Feature List */}
+            <div className="space-y-2.5 px-1 text-xs">
+              <div className="flex items-start gap-2.5">
+                <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Check className="h-3 w-3 stroke-[3]" />
+                </div>
+                <span className="text-muted-foreground">
+                  <strong className="font-semibold text-foreground">Background check</strong> and profile verification
+                </span>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Check className="h-3 w-3 stroke-[3]" />
+                </div>
+                <span className="text-muted-foreground">
+                  <strong className="font-semibold text-foreground">Priority listing</strong> on search & discovery filters
+                </span>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Check className="h-3 w-3 stroke-[3]" />
+                </div>
+                <span className="text-muted-foreground">
+                  <strong className="font-semibold text-foreground">Unlimited matching</strong> with direct client job leads
+                </span>
+              </div>
+            </div>
+
             {registrationSuccess ? (
-              <div className="flex items-center gap-2 rounded-lg border border-green-500/20 bg-green-500/10 px-3.5 py-2.5 text-xs text-green-600 dark:text-green-400">
-                <Check className="h-5 w-5 shrink-0" />
+              <div className="flex items-center gap-2.5 rounded-xl border border-green-500/20 bg-green-500/5 px-3.5 py-2.5 text-xs text-green-600 dark:text-green-400">
+                <CheckCircle2 className="h-5 w-5 shrink-0 text-green-500" />
                 <div>
                   <p className="font-semibold">Payment successful!</p>
                   <p className="text-[10px] opacity-80">Activating your account...</p>
                 </div>
               </div>
             ) : registrationError ? (
-              <div className="flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 px-3.5 py-2 text-[11px] text-destructive">
-                <ShieldCheck className="h-4 w-4 shrink-0 rotate-180" />
+              <div className="flex items-center gap-2.5 rounded-xl border border-destructive/20 bg-destructive/5 px-3.5 py-2.5 text-[11px] text-destructive">
+                <ShieldCheck className="h-4.5 w-4.5 shrink-0 rotate-180 text-destructive" />
                 <span>{registrationError}</span>
               </div>
             ) : null}
           </div>
 
-          <DialogFooter className="flex items-center justify-end">
+          <DialogFooter className="flex flex-col gap-2.5">
             <PaystackButton
               amount={200}
               email={user?.email || `${user?.phone.replace(/[^0-9]/g, "")}@fundihub.com`}
@@ -273,10 +328,15 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
               }}
               onClose={() => {}}
               disabled={isVerifyingRegistration || registrationSuccess}
-              className="w-full h-9.5 cursor-pointer rounded-lg bg-primary text-xs font-bold text-primary-foreground"
+              className="w-full h-10 cursor-pointer rounded-xl bg-gradient-to-r from-primary to-primary/95 text-xs font-bold text-primary-foreground shadow-md shadow-primary/10 transition-all hover:opacity-95 active:scale-[0.98]"
             >
-              Pay Ksh 200 & Activate Profile
+              Pay KSh 200 & Activate Profile
             </PaystackButton>
+            
+            <div className="flex items-center justify-center gap-1 text-[10px] text-muted-foreground/60 select-none">
+              <Lock className="h-3 w-3" />
+              <span>Secured by Paystack • No recurring charges</span>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
