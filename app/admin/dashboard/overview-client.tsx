@@ -88,7 +88,7 @@ interface Stats {
     rating: number
     reviews: number
     jobsCompleted: number
-    premiumLevel: string
+    isPremium: boolean
   }[]
 }
 
@@ -460,7 +460,7 @@ export function AdminOverview() {
                     {f.rating.toFixed(1)} ★ ({f.reviews})
                   </td>
                   <td className="p-3">{f.jobsCompleted}</td>
-                  <td className="p-3 capitalize">{f.premiumLevel}</td>
+                  <td className="p-3">{f.isPremium ? "Premium" : "Standard"}</td>
                 </tr>
               ))}
               {stats.topFundis.length === 0 && (

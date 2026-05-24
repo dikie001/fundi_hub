@@ -72,9 +72,7 @@ export async function PUT(request: Request) {
             ? preferredContact
             : user.fundiProfile?.preferredContact,
         isPremium:
-          isPremium !== undefined
-            ? isPremium
-            : user.fundiProfile?.isPremium,
+          isPremium !== undefined ? isPremium : user.fundiProfile?.isPremium,
         image: image !== undefined ? image : user.fundiProfile?.image,
         skills: skills !== undefined ? skills : user.fundiProfile?.skills,
         portfolio:

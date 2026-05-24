@@ -35,7 +35,7 @@ export async function GET(request: Request) {
       include: {
         fundiProfile: {
           select: {
-            premiumLevel: true,
+            isPremium: true,
             rating: true,
             reviews: true,
             jobsCompleted: true,

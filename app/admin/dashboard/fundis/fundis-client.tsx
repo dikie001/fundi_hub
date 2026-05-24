@@ -23,7 +23,7 @@ import {
 import { Switch } from "@/components/ui/switch"
 import { PageHeader } from "../../components/page-header"
 
-type Premium = "none" | "verified" | "top"
+type Premium = boolean
 
 interface FundiRow {
   id: string
@@ -38,7 +38,7 @@ interface FundiRow {
   jobsCompleted: number
   successRate: number
   jobEarnings: number
-  premiumLevel: Premium
+  isPremium: Premium
   isAvailable: boolean
   isNearby: boolean
   description: string | null
@@ -59,7 +59,7 @@ export function FundisClient() {
   const [fundis, setFundis] = useState<FundiRow[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [query, setQuery] = useState("")
-  const [tier, setTier] = useState<Premium | "all">("all")
+  const [tier, setTier] = useState<"all" | "true" | "false">("all")
   const [editing, setEditing] = useState<FundiRow | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<FundiRow | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -71,7 +71,7 @@ export function FundisClient() {
   const [serviceArea, setServiceArea] = useState("")
   const [skills, setSkills] = useState("")
   const [description, setDescription] = useState("")
-  const [premiumLevel, setPremiumLevel] = useState<Premium>("none")
+  const [isPremium, setIsPremium] = useState<Premium>(false)
   const [isAvailable, setIsAvailable] = useState(false)
   const [isNearby, setIsNearby] = useState(false)
   const [rating, setRating] = useState("5")
@@ -107,7 +107,7 @@ export function FundisClient() {
     setServiceArea(f.serviceArea)
     setSkills(f.skills)
     setDescription(f.description ?? "")
-    setPremiumLevel(f.premiumLevel)
+    setIsPremium(f.isPremium)
     setIsAvailable(f.isAvailable)
     setIsNearby(f.isNearby)
     setRating(String(f.rating))
@@ -132,7 +132,7 @@ export function FundisClient() {
           serviceArea,
           skills,
           description,
-          premiumLevel,
+          isPremium,
           isAvailable,
           isNearby,
           rating: parseFloat(rating) || 0,
@@ -167,18 +167,17 @@ export function FundisClient() {
     }
   }
 
-  const tierBadge = (level: Premium) => {
-    const map: Record<Premium, string> = {
-      top: "bg-amber-500/15 text-amber-700 dark:text-amber-300",
-      verified: "bg-blue-500/15 text-blue-700 dark:text-blue-300",
-      none: "bg-muted text-muted-foreground",
-    }
+  const tierBadge = (premium: Premium) => {
     return (
       <span
-        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium capitalize ${map[level]}`}
+        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${
+          premium
+            ? "bg-amber-500/15 text-amber-700 dark:text-amber-300"
+            : "bg-muted text-muted-foreground"
+        }`}
       >
-        {level !== "none" && <ShieldCheck className="h-3 w-3" />}
-        {level}
+        {premium && <ShieldCheck className="h-3 w-3" />}
+        {premium ? "Premium" : "Standard"}
       </span>
     )
   }
@@ -202,16 +201,15 @@ export function FundisClient() {
         </div>
         <Select
           value={tier}
-          onValueChange={(v) => setTier(v as Premium | "all")}
+          onValueChange={(v) => setTier(v as "all" | "true" | "false")}
         >
           <SelectTrigger className="w-full sm:w-44">
             <SelectValue placeholder="Tier" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All tiers</SelectItem>
-            <SelectItem value="top">Top</SelectItem>
-            <SelectItem value="verified">Verified</SelectItem>
-            <SelectItem value="none">Standard</SelectItem>
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="true">Premium</SelectItem>
+            <SelectItem value="false">Standard</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -248,7 +246,7 @@ export function FundisClient() {
                       </div>
                     </td>
                     <td className="p-3">{f.category}</td>
-                    <td className="p-3">{tierBadge(f.premiumLevel)}</td>
+                    <td className="p-3">{tierBadge(f.isPremium)}</td>
                     <td className="p-3">
                       {f.rating.toFixed(1)}★ ({f.reviews})
                     </td>
@@ -328,20 +326,16 @@ export function FundisClient() {
                     onChange={(e) => setServiceArea(e.target.value)}
                   />
                 </Field>
-                <Field label="Premium tier">
-                  <Select
-                    value={premiumLevel}
-                    onValueChange={(v) => setPremiumLevel(v as Premium)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">Standard</SelectItem>
-                      <SelectItem value="verified">Verified</SelectItem>
-                      <SelectItem value="top">Top</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <Field label="Premium">
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={isPremium}
+                      onCheckedChange={setIsPremium}
+                    />
+                    <span className="text-xs text-muted-foreground">
+                      {isPremium ? "Premium" : "Standard"}
+                    </span>
+                  </div>
                 </Field>
                 <Field label="Rating">
                   <Input

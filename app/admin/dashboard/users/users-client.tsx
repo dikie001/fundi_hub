@@ -33,7 +33,7 @@ interface AdminUser {
   image: string | null
   createdAt: string
   fundiProfile?: {
-    premiumLevel: string
+    isPremium: boolean
     rating: number
     reviews: number
     jobsCompleted: number
@@ -319,7 +319,7 @@ export function UsersClient() {
                         <span>
                           {u.fundiProfile.rating.toFixed(1)}★ ·{" "}
                           {u.fundiProfile.reviews} reviews ·{" "}
-                          {u.fundiProfile.premiumLevel}
+                          {u.fundiProfile.isPremium ? "Premium" : "Standard"}
                         </span>
                       )}
                       {u.role === "client" && u.clientProfile && (
