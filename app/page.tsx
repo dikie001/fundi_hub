@@ -170,7 +170,7 @@ export default function Home() {
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
               Kenya’s trusted platform for finding skilled fundis. Verified
               professionals.
-            </p>
+            </p> 
 
             {/* Integrated Search Bar */}
             <div
