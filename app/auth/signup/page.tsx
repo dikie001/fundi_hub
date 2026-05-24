@@ -1184,6 +1184,7 @@ export default function SignupPage() {
                     : "/auth/login?registered=true",
                 }}
                 disabled={!registeredUserId}
+                skipConfirmation
                 className="h-10 w-full cursor-pointer rounded-xl bg-primary text-xs font-bold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 active:scale-[0.98]"
               >
                 Pay KSh 200 & Activate Profile

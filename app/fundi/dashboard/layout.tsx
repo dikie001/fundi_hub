@@ -282,6 +282,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
                   premiumLevel: premiumModalType,
                   returnTo: "/fundi/dashboard",
                 }}
+                skipConfirmation
                 className="h-10 flex-1 cursor-pointer rounded-xl bg-linear-to-r from-primary to-primary/95 text-xs font-bold text-primary-foreground shadow-md shadow-primary/10 transition-all hover:opacity-95 active:scale-[0.98]"
               >
                 Pay KSh 500
@@ -363,6 +364,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
                 userId: user?.id || "",
                 returnTo: "/fundi/dashboard",
               }}
+              skipConfirmation
               className="h-10 w-full cursor-pointer rounded-xl bg-primary text-xs font-bold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 active:scale-[0.98]"
             >
               Pay KSh 200 & Activate Profile
