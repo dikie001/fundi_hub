@@ -33,7 +33,6 @@ export default function ProfilePage() {
     updateSuccess,
     handleUpdateProfile,
     setIsPremiumModalOpen,
-    setPremiumModalType,
     newPortfolioTitle,
     setNewPortfolioTitle,
     newPortfolioCategory,
@@ -74,10 +73,7 @@ export default function ProfilePage() {
       isUpdating={isUpdating}
       updateSuccess={updateSuccess}
       handleUpdateProfile={handleUpdateProfile}
-      openPremiumModal={(type: "verified" | "top") => {
-        setPremiumModalType(type)
-        setIsPremiumModalOpen(true)
-      }}
+      openPremiumModal={() => setIsPremiumModalOpen(true)}
       newPortfolioTitle={newPortfolioTitle}
       setNewPortfolioTitle={setNewPortfolioTitle}
       newPortfolioCategory={newPortfolioCategory}

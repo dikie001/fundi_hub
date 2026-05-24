@@ -215,16 +215,12 @@ export default function FindFundisPage() {
                   </p>
                 )}
 
-                {(fundi.premiumLevel === "top" ||
-                  fundi.premiumLevel === "verified") && (
+                {fundi.isPremium && (
                   <Badge
                     variant="outline"
                     className="border-amber-500/20 bg-amber-500/10 text-[10px] text-amber-600"
                   >
-                    â˜…{" "}
-                    {fundi.premiumLevel === "top"
-                      ? "Top Expert"
-                      : "Verified Pro"}
+                    â˜… Premium
                   </Badge>
                 )}
 

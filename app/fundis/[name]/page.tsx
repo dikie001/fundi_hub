@@ -51,7 +51,7 @@ type FundiPageData = {
   image: string
   phone: string
   whatsapp: string
-  premiumLevel: "none" | "verified" | "top"
+  isPremium: boolean
   isAvailable: boolean
   isNearby: boolean
   preferredContact: string
@@ -170,7 +170,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
       image: profile.image || "",
       phone: dbUser.phone,
       whatsapp: dbUser.phone,
-      premiumLevel: profile.premiumLevel,
+      isPremium: profile.isPremium,
       isAvailable: profile.isAvailable,
       isNearby: profile.isNearby,
       preferredContact: profile.preferredContact || "whatsapp",
@@ -212,8 +212,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
               {/* Profile Avatar */}
               <div
                 className={`relative flex h-20 w-20 shrink-0 items-center justify-center rounded-full border bg-muted/40 shadow-inner ring-4 sm:h-28 sm:w-28 ${
-                  fundiData.premiumLevel === "top" ||
-                  fundiData.premiumLevel === "verified"
+                  fundiData.isPremium
                     ? "border-indigo-500/40 ring-indigo-500/20"
                     : "border-border ring-border/20"
                 }`}
@@ -240,8 +239,7 @@ export default async function FundiProfilePage({ params }: PageProps) {
                     {fundiData.name}
                   </h1>
                   <div className="flex flex-wrap gap-1.5">
-                    {(fundiData.premiumLevel === "top" ||
-                      fundiData.premiumLevel === "verified") && (
+                    {fundiData.isPremium && (
                       <Badge
                         variant="outline"
                         className="flex items-center gap-1 border-indigo-500/25 bg-indigo-500/5 px-2 py-0.5 text-[10px] font-bold text-indigo-600 shadow-xs dark:text-indigo-400"

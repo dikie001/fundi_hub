@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import { Check, X } from "lucide-react"
 
 type PaymentSuccessToastProps = {
@@ -15,6 +16,12 @@ export function PaymentSuccessToast({
   description,
   onDismiss,
 }: PaymentSuccessToastProps) {
+  useEffect(() => {
+    if (!open) return
+    const timer = setTimeout(onDismiss, 10000)
+    return () => clearTimeout(timer)
+  }, [open, onDismiss])
+
   if (!open) return null
 
   return (

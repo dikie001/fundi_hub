@@ -23,11 +23,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { reference, premiumLevel } = body
+    const { reference } = body
 
-    if (!reference || !premiumLevel) {
+    if (!reference) {
       return NextResponse.json(
-        { error: "Reference and premium level are required" },
+        { error: "Reference is required" },
         { status: 400 }
       )
     }
@@ -64,13 +64,13 @@ export async function POST(request: NextRequest) {
     // Payment verified, update user's premium level
     const updatedProfile = await db.fundiProfile.update({
       where: { userId: user.id },
-      data: { premiumLevel },
+      data: { isPremium: true },
     })
 
     // Log the upgrade
     await logAudit({
       action: "PREMIUM_UPGRADE",
-      details: `User ${user.name} upgraded to ${premiumLevel} tier (Payment Ref: ${reference})`,
+      details: `User ${user.name} upgraded to premium (Payment Ref: ${reference})`,
       userId: user.id,
     })
 

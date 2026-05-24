@@ -28,7 +28,7 @@ type OverviewTabProps = {
   referralEarnings: number
   jobEarnings: number
   setActiveTab: (tab: string) => void
-  openPremiumModal: (type: "verified" | "top") => void
+  openPremiumModal: () => void
   portfolioItems: PortfolioItem[]
   setIsAddPortfolioOpen: (open: boolean) => void
   copyReferralLink: () => void
@@ -68,7 +68,16 @@ export function OverviewTab(props: OverviewTabProps) {
             {matchingLeads.length} matching job{" "}
             {matchingLeads.length === 1 ? "opportunity" : "opportunities"}
           </span>{" "}
-          in <span className="font-medium text-foreground">{profile?.trade ? profile.trade.split(',').map(s => s.trim()).join(', ') : "your trade"}</span> today.
+          in{" "}
+          <span className="font-medium text-foreground">
+            {profile?.trade
+              ? profile.trade
+                  .split(",")
+                  .map((s) => s.trim())
+                  .join(", ")
+              : "your trade"}
+          </span>{" "}
+          today.
         </p>
       </div>
 
@@ -76,12 +85,15 @@ export function OverviewTab(props: OverviewTabProps) {
         <div className="space-y-4 lg:col-span-2">
           <div className="flex items-center justify-between">
             <h2 className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-muted-foreground/80 uppercase">
-              <Wrench className="h-3.5 w-3.5 text-primary/80" strokeWidth={1.8} /> Matching Client Leads
-              ({matchingLeads.length})
+              <Wrench
+                className="h-3.5 w-3.5 text-primary/80"
+                strokeWidth={1.8}
+              />{" "}
+              Matching Client Leads ({matchingLeads.length})
             </h2>
             <button
               onClick={() => setActiveTab("leads")}
-              className="flex cursor-pointer items-center gap-0.5 text-xs font-semibold text-primary hover:underline transition-all"
+              className="flex cursor-pointer items-center gap-0.5 text-xs font-semibold text-primary transition-all hover:underline"
             >
               View All Leads <ChevronRight className="h-3.5 w-3.5" />
             </button>
@@ -96,14 +108,16 @@ export function OverviewTab(props: OverviewTabProps) {
                 const capitalizedLocation = lead.location
                   ? lead.location
                       .split(" ")
-                      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                      .map(
+                        (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                      )
                       .join(" ")
                   : ""
 
                 return (
                   <Card
                     key={lead.id}
-                    className="group overflow-hidden border border-border bg-card shadow-2xs transition-all duration-300 hover:shadow-xs hover:border-border-hover dark:hover:border-primary/20"
+                    className="group hover:border-border-hover overflow-hidden border border-border bg-card shadow-2xs transition-all duration-300 hover:shadow-xs dark:hover:border-primary/20"
                   >
                     <CardHeader className="border-b border-border/30 bg-muted/15 px-5 py-4 pb-3">
                       <div className="flex items-start justify-between gap-3">
@@ -117,8 +131,9 @@ export function OverviewTab(props: OverviewTabProps) {
                                 {tag.toLowerCase()}
                               </span>
                             ))}
-                            <span className="flex items-center gap-1 text-[11px] text-muted-foreground/70 ml-1">
-                              <Clock className="h-3 w-3" strokeWidth={1.5} /> {lead.createdAt}
+                            <span className="ml-1 flex items-center gap-1 text-[11px] text-muted-foreground/70">
+                              <Clock className="h-3 w-3" strokeWidth={1.5} />{" "}
+                              {lead.createdAt}
                             </span>
                           </div>
                           <CardTitle className="text-base font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary">
@@ -136,11 +151,19 @@ export function OverviewTab(props: OverviewTabProps) {
                       </p>
                       <div className="grid grid-cols-2 gap-3 border-t border-border/10 pt-3 text-xs">
                         <div className="flex items-center gap-1.5 text-muted-foreground/85">
-                          <MapPin className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50" strokeWidth={1.8} />
-                          <span className="truncate">{capitalizedLocation}</span>
+                          <MapPin
+                            className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50"
+                            strokeWidth={1.8}
+                          />
+                          <span className="truncate">
+                            {capitalizedLocation}
+                          </span>
                         </div>
                         <div className="flex items-center gap-1.5 text-muted-foreground/85">
-                          <Calendar className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50" strokeWidth={1.8} />
+                          <Calendar
+                            className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50"
+                            strokeWidth={1.8}
+                          />
                           <span className="truncate">{lead.urgency}</span>
                         </div>
                       </div>
@@ -165,7 +188,11 @@ export function OverviewTab(props: OverviewTabProps) {
                               href={`tel:${lead.phone}`}
                               className="flex items-center gap-1.5"
                             >
-                              <Phone className="h-3.5 w-3.5" strokeWidth={1.8} /> Call
+                              <Phone
+                                className="h-3.5 w-3.5"
+                                strokeWidth={1.8}
+                              />{" "}
+                              Call
                             </a>
                           </Button>
                           <Button
@@ -179,7 +206,11 @@ export function OverviewTab(props: OverviewTabProps) {
                               rel="noopener noreferrer"
                               className="flex items-center gap-1.5"
                             >
-                              <MessageSquare className="h-3.5 w-3.5" strokeWidth={1.8} /> WhatsApp
+                              <MessageSquare
+                                className="h-3.5 w-3.5"
+                                strokeWidth={1.8}
+                              />{" "}
+                              WhatsApp
                             </a>
                           </Button>
                         </div>
@@ -254,7 +285,7 @@ export function OverviewTab(props: OverviewTabProps) {
                 variant="outline"
                 size="sm"
                 onClick={() => setActiveTab("profile")}
-                className="h-8 w-full cursor-pointer rounded-lg text-xs font-medium border-border/60 hover:bg-muted/50 transition-colors"
+                className="h-8 w-full cursor-pointer rounded-lg border-border/60 text-xs font-medium transition-colors hover:bg-muted/50"
               >
                 Manage Portfolio
               </Button>
@@ -274,8 +305,11 @@ export function OverviewTab(props: OverviewTabProps) {
                   className="flex items-center justify-between p-3.5 text-muted-foreground/85 transition-all duration-200 hover:bg-muted/40 hover:text-foreground"
                 >
                   <span className="flex items-center gap-2.5 font-medium">
-                    <Download className="h-4 w-4 text-muted-foreground/60" strokeWidth={1.5} /> Invoice
-                    Template (PDF)
+                    <Download
+                      className="h-4 w-4 text-muted-foreground/60"
+                      strokeWidth={1.5}
+                    />{" "}
+                    Invoice Template (PDF)
                   </span>
                   <ExternalLink className="h-3 w-3 text-muted-foreground/45" />
                 </a>
@@ -284,8 +318,11 @@ export function OverviewTab(props: OverviewTabProps) {
                   className="flex items-center justify-between p-3.5 text-muted-foreground/85 transition-all duration-200 hover:bg-muted/40 hover:text-foreground"
                 >
                   <span className="flex items-center gap-2.5 font-medium">
-                    <HelpCircle className="h-4 w-4 text-muted-foreground/60" strokeWidth={1.5} /> Tax
-                    Compliance Guide
+                    <HelpCircle
+                      className="h-4 w-4 text-muted-foreground/60"
+                      strokeWidth={1.5}
+                    />{" "}
+                    Tax Compliance Guide
                   </span>
                   <ExternalLink className="h-3 w-3 text-muted-foreground/45" />
                 </a>
@@ -294,8 +331,11 @@ export function OverviewTab(props: OverviewTabProps) {
                   className="flex items-center justify-between p-3.5 text-muted-foreground/85 transition-all duration-200 hover:bg-muted/40 hover:text-foreground"
                 >
                   <span className="flex items-center gap-2.5 font-medium">
-                    <Phone className="h-4 w-4 text-muted-foreground/60" strokeWidth={1.5} /> 24/7 Agent
-                    Support
+                    <Phone
+                      className="h-4 w-4 text-muted-foreground/60"
+                      strokeWidth={1.5}
+                    />{" "}
+                    24/7 Agent Support
                   </span>
                   <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/45" />
                 </a>

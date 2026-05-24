@@ -37,7 +37,7 @@ export async function GET() {
       db.referral.count(),
       auditLog ? auditLog.count().catch(() => 0) : Promise.resolve(0),
       db.fundiProfile.groupBy({
-        by: ["premiumLevel"],
+        by: ["isPremium"],
         _count: { _all: true },
       }),
       db.fundiProfile.aggregate({ _avg: { rating: true } }),
@@ -183,7 +183,7 @@ export async function GET() {
         totalEarnings: earningsAgg._sum.jobEarnings ?? 0,
       },
       premiumBreakdown: premiumCounts.map((p) => ({
-        level: p.premiumLevel,
+        level: p.isPremium ? "Premium" : "Standard",
         count: p._count._all,
       })),
       referralBreakdown: referralStatusGroup.map((r) => ({
@@ -204,7 +204,7 @@ export async function GET() {
         rating: f.rating,
         reviews: f.reviews,
         jobsCompleted: f.jobsCompleted,
-        premiumLevel: f.premiumLevel,
+        isPremium: f.isPremium,
       })),
     })
   } catch (err) {

@@ -14,8 +14,8 @@ export async function GET(request: Request) {
     const premium = url.searchParams.get("premium")
 
     const where: Record<string, unknown> = {}
-    if (premium && ["none", "verified", "top"].includes(premium)) {
-      where.premiumLevel = premium
+    if (premium === "true" || premium === "false") {
+      where.isPremium = premium === "true"
     }
     if (q) {
       where.OR = [
@@ -28,7 +28,7 @@ export async function GET(request: Request) {
 
     const profiles = await db.fundiProfile.findMany({
       where,
-      orderBy: [{ premiumLevel: "desc" }, { rating: "desc" }],
+      orderBy: [{ isPremium: "desc" }, { rating: "desc" }],
       include: {
         user: { select: { id: true, name: true, phone: true, email: true } },
       },

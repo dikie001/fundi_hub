@@ -37,8 +37,6 @@ type DashboardContextType = {
   archivedLeadIds: string[]
   isPremiumModalOpen: boolean
   setIsPremiumModalOpen: (open: boolean) => void
-  premiumModalType: "verified" | "top"
-  setPremiumModalType: (type: "verified" | "top") => void
   isProcessingPayment: boolean
   setIsProcessingPayment: (processing: boolean) => void
   isAvailabilityDialogOpen: boolean
@@ -132,9 +130,6 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
   const [archivedLeadIds, setArchivedLeadIds] = useState<string[]>([])
 
   const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false)
-  const [premiumModalType, setPremiumModalType] = useState<"verified" | "top">(
-    "verified"
-  )
   const [isProcessingPayment, setIsProcessingPayment] = useState(false)
   const [isAvailabilityDialogOpen, setIsAvailabilityDialogOpen] =
     useState(false)
@@ -444,7 +439,6 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           reference: paymentReference,
-          premiumLevel: premiumModalType,
         }),
       })
       const data = await response.json()
@@ -519,8 +513,6 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         archivedLeadIds,
         isPremiumModalOpen,
         setIsPremiumModalOpen,
-        premiumModalType,
-        setPremiumModalType,
         isProcessingPayment,
         setIsProcessingPayment,
         isAvailabilityDialogOpen,
