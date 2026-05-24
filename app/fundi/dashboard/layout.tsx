@@ -73,7 +73,13 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       amountLabel: paymentAmount || "KSh 500",
       reference: paymentReference,
     }
-  }, [paymentAmount, paymentHeading, paymentPurpose, paymentReference, paymentStatus])
+  }, [
+    paymentAmount,
+    paymentHeading,
+    paymentPurpose,
+    paymentReference,
+    paymentStatus,
+  ])
 
   useEffect(() => {
     setShowPaymentSuccess(Boolean(successModalState))

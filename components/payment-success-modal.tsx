@@ -30,7 +30,7 @@ export function PaymentSuccessModal({
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && onContinue()}>
       <DialogContent className="w-full max-w-105 overflow-hidden rounded-[28px] border border-emerald-500/20 bg-linear-to-b from-card via-card to-emerald-500/5 p-0 shadow-[0_24px_80px_-28px_rgba(16,185,129,0.45)]">
-        <div className="relative px-6 pb-6 pt-7 sm:px-7">
+        <div className="relative px-6 pt-7 pb-6 sm:px-7">
           <div className="absolute inset-x-0 top-0 h-32 bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.24),transparent_65%)]" />
           <div className="relative flex justify-center">
             <div className="flex h-16 w-16 items-center justify-center rounded-full border border-emerald-500/20 bg-emerald-500/10 shadow-inner shadow-emerald-500/10">
@@ -72,7 +72,7 @@ export function PaymentSuccessModal({
                 <p className="text-[10px] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
                   Transaction Reference
                 </p>
-                <p className="mt-1 break-all text-xs font-medium text-foreground">
+                <p className="mt-1 text-xs font-medium break-all text-foreground">
                   {reference}
                 </p>
               </div>

@@ -159,7 +159,13 @@ export default function SignupPage() {
       amountLabel: paymentAmount || "KSh 200",
       reference: paymentReference,
     }
-  }, [paymentAmount, paymentHeading, paymentPurpose, paymentReference, paymentStatus])
+  }, [
+    paymentAmount,
+    paymentHeading,
+    paymentPurpose,
+    paymentReference,
+    paymentStatus,
+  ])
 
   useEffect(() => {
     setShowPaymentSuccessModal(Boolean(successModalState))

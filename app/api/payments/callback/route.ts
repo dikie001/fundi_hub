@@ -42,6 +42,10 @@ export async function GET(request: NextRequest) {
     const continueTo = searchParams.get("continueTo") || undefined
     const premiumLevel = searchParams.get("premiumLevel")
     const userId = searchParams.get("userId")
+    const validPremiumLevel =
+      premiumLevel === "verified" || premiumLevel === "top"
+        ? premiumLevel
+        : null
 
     if (!reference || !purpose) {
       return NextResponse.redirect(buildReturnUrl(origin, returnTo, "/"))
@@ -86,18 +90,18 @@ export async function GET(request: NextRequest) {
         include: { fundiProfile: true },
       })
 
-      if (!user || user.role !== "fundi" || !premiumLevel) {
+      if (!user || user.role !== "fundi" || !validPremiumLevel) {
         return NextResponse.redirect(buildReturnUrl(origin, returnTo, "/"))
       }
 
       await db.fundiProfile.update({
         where: { userId: user.id },
-        data: { premiumLevel },
+        data: { premiumLevel: validPremiumLevel },
       })
 
       await logAudit({
         action: "PREMIUM_UPGRADE",
-        details: `User ${user.name} upgraded to ${premiumLevel} tier (Payment Ref: ${reference})`,
+        details: `User ${user.name} upgraded to ${validPremiumLevel} tier (Payment Ref: ${reference})`,
         userId: user.id,
       })
 
@@ -128,11 +132,7 @@ export async function GET(request: NextRequest) {
         userId,
       })
 
-      const redirectUrl = buildReturnUrl(
-        origin,
-        returnTo,
-        "/auth/signup"
-      )
+      const redirectUrl = buildReturnUrl(origin, returnTo, "/auth/signup")
       addPaymentSuccessParams(redirectUrl, {
         purpose: "registration",
         reference,
