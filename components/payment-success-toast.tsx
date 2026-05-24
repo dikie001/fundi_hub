@@ -23,7 +23,7 @@ export function PaymentSuccessToast({
   if (!open) return null
 
   return (
-    <div className="fixed right-4 bottom-4 z-70 w-[min(92vw,420px)] animate-in slide-in-from-bottom-2 fade-in duration-300">
+    <div className="fixed right-4 bottom-4 z-70 w-[min(92vw,420px)] animate-in duration-300 fade-in slide-in-from-bottom-2">
       <div className="overflow-hidden rounded-2xl border border-emerald-500/20 bg-card/95 shadow-[0_18px_50px_-22px_rgba(16,185,129,0.65)] backdrop-blur-xl">
         <div className="flex items-start gap-3 p-4">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
@@ -69,7 +69,7 @@ export function PaymentSuccessToast({
                   <ShieldCheck className="h-3.5 w-3.5" />
                   Reference
                 </p>
-                <p className="mt-1 break-all text-xs font-medium text-foreground">
+                <p className="mt-1 text-xs font-medium break-all text-foreground">
                   {reference || "Verified"}
                 </p>
               </div>
